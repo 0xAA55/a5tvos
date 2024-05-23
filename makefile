@@ -8,7 +8,7 @@ CFLAGS ?= -march=armv5t
 CFLAGS += -flto -O3 -fPIC -static
 CXXSTD ?= -std=c++2a
 CXXFLAGS += $(CFLAGS) $(CXXSTD)
-LDLIBS += -lstdc++
+LDLIBS += -lstdc++ -lm
 LDFLAGS += $(CFLAGS)
 
 OBJS+=main.o
