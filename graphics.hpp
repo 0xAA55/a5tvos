@@ -10,14 +10,10 @@ namespace TVOS
 
 	struct ImageBlock
 	{
-		int x;
-		int y;
 		int w;
 		int h;
 		std::vector<uint32_t> Pixels;
 
-		int GetRight() const;
-		int GetBottom() const;
 		int GetStride() const;
 	};
 
@@ -68,3 +64,4 @@ namespace TVOS
 	};
 }
 
+#include "font.hpp"

@@ -20,16 +20,6 @@ namespace TVOS
 		cb = int(c & 0x000000FF) >>  0;
 	}
 
-	int ImageBlock::GetRight() const
-	{
-		return x + w - 1;
-	}
-
-	int ImageBlock::GetBottom() const
-	{
-		return y + h - 1;
-	}
-
 	int ImageBlock::GetStride() const
 	{
 		return w * 4;
@@ -40,8 +30,6 @@ namespace TVOS
 		ImageBlock ret;
 		int width, height;
 		if (!PreFitAreaGetWH(x, y, r, b, width, height)) return ret;
-		ret.x = x;
-		ret.y = y;
 		ret.w = width;
 		ret.h = height;
 
