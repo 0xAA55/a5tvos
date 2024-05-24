@@ -75,12 +75,12 @@ namespace TVOS
 		ImgOut.w = GlyphWidthMap[GlyphIndex];
 		auto X = GlyphXPos.at(Unicode);
 		ImgOut = ImageBlock();
-		ImgOut.Pixels.resize(Width * Height);
-		for(int iy = 0 ; iy < Height; iy ++)
+		ImgOut.Pixels.resize(ImgOut.w * ImgOut.h);
+		for(int iy = 0 ; iy < ImgOut.h; iy ++)
 		{
-			for(int ix = 0; ix < Width; ix ++)
+			for(int ix = 0; ix < ImgOut.w; ix ++)
 			{
-				ImgOut.Pixels[iy * Width + ix] = GetGlyphPixel(ix, iy) ? color1 : color2;
+				ImgOut.Pixels[iy * ImgOut.w + ix] = GetGlyphPixel(ix, iy) ? color1 : color2;
 			}
 		}
 	}
