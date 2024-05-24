@@ -3,6 +3,8 @@
 #include <fstream>
 #include <vector>
 #include <unordered_map>
+#include <map>
+#include <set>
 
 namespace TVOS
 {
@@ -17,6 +19,8 @@ namespace TVOS
 
 		int GetStride() const;
 		bool operator == (const ImageBlock& other) const;
+
+		size_t GetSizeInBytes() const;
 	};
 
 	class Graphics
@@ -40,17 +44,44 @@ namespace TVOS
 		void WriteData(int cr, int cg, int cb, int Repeat);
 
 		std::vector<uint32_t> ReadPixelsRow(int x, int y, int count);
+		
+		void DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy, int ops);
+		void DrawImage(const ImageBlock& ib, int x, int y, int ops);
 
 	public:
-		ImageBlock ReadPixels(int x, int y, int r, int b);
+		ImageBlock ReadPixelsRect(int x, int y, int r, int b);
+		ImageBlock ReadPixels(int x, int y, int w, int h);
 
 		void PutPixel(int x, int y, uint32_t color);
 		void PutPixel(int x, int y, int cr, int cg, int cb);
 
+		void DrawVLine(int x, int y1, int y2, uint32_t color);
+		void DrawVLine(int x, int y1, int y2, int cr, int cg, int cb);
+		void DrawVLineXor(int x, int y1, int y2);
+
+		void DrawHLine(int x1, int x2, int y, uint32_t color);
+		void DrawHLine(int x1, int x2, int y, int cr, int cg, int cb);
+		void DrawHLineXor(int x1, int x2, int y);
+
+		void DrawRect(int x, int y, int r, int b, uint32_t color);
+		void DrawRect(int x, int y, int r, int b, int cr, int cg, int cb);
+		void DrawRectXor(int x, int y, int r, int b);
+
 		void FillRect(int x, int y, int r, int b, uint32_t color);
 		void FillRect(int x, int y, int r, int b, int cr, int cg, int cb);
+		void FillRectXor(int x, int y, int r, int b);
 
-		void DrawImages(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy);
+		void DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy);
+		void DrawImage(const ImageBlock& ib, int x, int y);
+
+		void DrawImageAnd(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy);
+		void DrawImageAnd(const ImageBlock& ib, int x, int y);
+
+		void DrawImageOr(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy);
+		void DrawImageOr(const ImageBlock& ib, int x, int y);
+
+		void DrawImageXor(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy);
+		void DrawImageXor(const ImageBlock& ib, int x, int y);
 
 	public:
 		void DrawText(int x, int y, const std::string& t);
@@ -65,8 +96,10 @@ namespace TVOS
 		int Stride;
 
 		std::unordered_map<uint32_t, ImageBlock> Glyphs;
-		std::unordered_map<uint32_t, int> GlyphsUsage;
+		std::unordered_map<uint32_t, size_t> GlyphToUsageIndices;
+		std::vector<uint32_t> GlyphsUsage;
 		size_t GlyphMapMemoryUsage = 0;
+		size_t GlyphMapMaxMemoryUsage = 1024 * 256; // 256 K
 
 		void DrawGlyph(int x, int y, uint32_t Glyph);
 
@@ -104,4 +137,3 @@ namespace std
 	};
 }
 
-#include "font.hpp"

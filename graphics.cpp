@@ -1,4 +1,5 @@
 #include "graphics.hpp"
+#include "font.hpp"
 
 #include <cstring>
 
@@ -33,7 +34,12 @@ namespace TVOS
 			Pixels == other.Pixels;
 	}
 
-	ImageBlock Graphics::ReadPixels(int x, int y, int r, int b)
+	size_t ImageBlock::GetSizeInBytes() const
+	{
+		return (sizeof *this) + Pixels.size() * (sizeof Pixels[0]);
+	}
+
+	ImageBlock Graphics::ReadPixelsRect(int x, int y, int r, int b)
 	{
 		ImageBlock ret;
 		int width, height;
@@ -47,6 +53,11 @@ namespace TVOS
 			ret.Pixels.insert(ret.Pixels.end(), row.cbegin(), row.cend());
 		}
 		return ret;
+	}
+
+	ImageBlock ReadPixels(int x, int y, int w, int h)
+	{
+		return ReadPixelsRect(x, y, x + w - 1, y + h - 1);
 	}
 
 	Graphics::Graphics(const std::string& fbdev) :
@@ -192,6 +203,59 @@ namespace TVOS
 		return ret;
 	}
 
+	void Graphics::DrawVLine(int x, int y1, int y2, uint32_t color)
+	{
+		FillRect(x, y1, x, y2, color);
+	}
+
+	void Graphics::DrawVLine(int x, int y1, int y2, int cr, int cg, int cb)
+	{
+		DrawVLine(x, y1, y2, MakeColor(cr, cg, cb));
+	}
+	
+	void Graphics::DrawVLineXor(int x, int y1, int y2)
+	{
+		FillRectXor(x, y1, x, y2);
+	}
+
+	void Graphics::DrawHLine(int x1, int x2, int y, uint32_t color)
+	{
+		FillRect(x1, y, x2, y, color);
+	}
+
+	void Graphics::DrawHLine(int x1, int x2, int y, int cr, int cg, int cb)
+	{
+		DrawHLine(x1, x2, y, MakeColor(cr, cg, cb));
+	}
+	
+	void Graphics::DrawHLineXor(int x, int y1, int y2)
+	{
+		FillRectXor(x1, y, x2, y);
+	}
+
+	void Graphics::DrawRect(int x, int y, int r, int b, uint32_t color)
+	{
+		if (!PreFitXYRB(x, y, r, b)) return false;
+		DrawHLine(x, r, y, color);
+		DrawHLine(x, r, b, color);
+		DrawVLine(x, y + 1, b - 1, color);
+		DrawVLine(r, y + 1, b - 1, color);
+	}
+	
+	void Graphics::DrawRectXor(int x, int y, int r, int b)
+	{
+		if (!PreFitXYRB(x, y, r, b)) return false;
+		DrawHLineXor(x, r, y);
+		DrawHLineXor(x, r, b);
+		DrawVLineXor(x, y + 1, b - 1);
+		DrawVLineXor(r, y + 1, b - 1);
+	}
+
+	void Graphics::DrawRect(int x, int y, int r, int b, int cr, int cg, int cb)
+	{
+		DrawRect(x, y, r, b, MakeColor(cr, cg, cb));
+	}
+
 	void Graphics::FillRect(int x, int y, int r, int b, uint32_t color)
 	{
 		int w, h;
@@ -209,7 +273,45 @@ namespace TVOS
 		FillRect(x, y, r, b, MakeColor(cr, cg, cb));
 	}
 
-	void Graphics::DrawImages(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy)
+	void Graphics::FillRectXor(int x, int y, int r, int b)
+	{
+		if (!PreFitXYRB(x, y, r, b)) return false;
+
+		auto ImageSrc = ReadPixels(x, y, w, h);
+		for(size_t i = 0; i < ImageSrc.size(); i++)
+		{
+			ImageSrc[i] = 0xFFFFFF ^ ImageSrc[i];
+		}
+		DrawImage(ImageSrc, x, y);
+	}
+
+	void Graphics::DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy, int ops)
+	{
+		if (ops == 0) DrawImage(ib, x, y, w, h, srcx, srcy); break;
+		auto ImageSrc = ReadPixels(x, y, w, h);
+		for(int y = 0; y < ImageSrc.h; y++)
+		{
+			if (y >= ib.h) break;
+			for(int x = 0; x < ImageSrc.w; x++)
+			{
+				if (x >= ib.w) break;
+				switch(ops)
+				{
+				case 1:  ImageSrc.Pixels[y * ImageSrc.w + x] &= ib.Pixels[y * ib.w + x]; break;
+				case 2:  ImageSrc.Pixels[y * ImageSrc.w + x] |= ib.Pixels[y * ib.w + x]; break;
+				case 3:  ImageSrc.Pixels[y * ImageSrc.w + x] ^= ib.Pixels[y * ib.w + x]; break;
+				}
+			}
+		}
+		DrawImage(ImageSrc, x, y, w, h, srcx, srcy);
+	}
+
+	void Graphics::DrawImage(const ImageBlock& ib, int x, int y, int ops)
+	{
+		DrawImage(ib, x, y, ib.w, ib.h, 0, 0, ops);
+	}
+
+	void Graphics::DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy)
 	{
 		if (x < 0)
 		{
@@ -235,6 +337,77 @@ namespace TVOS
 		{
 			SetDrawPos(x, iy + y);
 			WriteData(&ib.Pixels[(iy + srcy) * ib.w + srcx], w);
+		}
+	}
+
+	void Graphics::DrawImage(const ImageBlock& ib, int x, int y)
+	{
+		DrawImage(ib, x, y, ib.w, ib.h, 0, 0);
+	}
+
+	void Graphics::DrawImageAnd(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy)
+	{
+		DrawImage(ib, x, y, w, h, srcx, srcy, 1);
+	}
+
+	void Graphics::DrawImageAnd(const ImageBlock& ib, int x, int y)
+	{
+		DrawImage(ib, x, y, 1);
+	}
+	
+	void Graphics::DrawImageOr(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy)
+	{
+		DrawImage(ib, x, y, w, h, srcx, srcy, 2);
+	}
+	
+	void Graphics::DrawImageOr(const ImageBlock& ib, int x, int y)
+	{
+		DrawImage(ib, x, y, 2);
+	}
+	
+	void Graphics::DrawImageXor(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy)
+	{
+		DrawImage(ib, x, y, w, h, srcx, srcy, 3);
+	}
+	
+	void Graphics::DrawImageXor(const ImageBlock& ib, int x, int y)
+	{
+		DrawImage(ib, x, y, 3);
+	}
+
+	void Graphics::DrawGlyph(int x, int y, uint32_t Glyph)
+	{
+		try
+		{
+			auto& GlyphImage = Glyphs.at(Glyph);
+			DrawImage(GlyphImage, x, y);
+
+			// 因为用过这个字，所以将其缓存优先级设为最高
+			auto& UsageIndex = GlyphToUsageIndices.at(Glyph);
+			std::swap(GlyphsUsage[0], GlyphsUsage[UsageIndex]);
+			UsageIndex = 0;
+		}
+		catch (const std::out_of_range&)
+		{
+			// 生成字体
+			auto& GlyphImage = Glyphs[Glyph];
+			ExtractGlyph(GlyphImage, Glyph, 0x00000000, 0xFFFFFFFF);
+
+			// 添加到缓存统计
+			GlyphToUsageIndices[Glyph] = 0;
+			GlyphsUsage.insert(GlyphsUsage.begin(), Glyph);
+
+			// 统计内存使用量（只统计字体的）
+			GlyphMapMemoryUsage += GlyphImage.GetSizeInBytes();
+			while (GlyphMapMemoryUsage > GlyphMapMaxMemoryUsage)
+			{
+				// 移除 GlyphsUsage 最末尾的字体。
+				auto LastUsedGlyph = GlyphsUsage.back();
+				GlyphsUsage.pop_back();
+				GlyphToUsageIndices.remove(LastUsedGlyph);
+				GlyphMapMemoryUsage -= Glyphs.at(LastUsedGlyph).GetSizeInBytes();
+				Glyphs.erase(LastUsedGlyph);
+			}
 		}
 	}
 }
