@@ -1,5 +1,6 @@
 #include "graphics.hpp"
 #include "font.hpp"
+#include "utf.hpp"
 
 #include <cstring>
 #include <iostream>
@@ -433,6 +434,12 @@ namespace TVOS
 	void Graphics::DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy, int ops)
 	{
 		if (ops == 0) DrawImage(ib, x, y, w, h, srcx, srcy); return;
+
+		if (Verbose)
+		{
+			std::cout << "[INFO] Drawing image " << std::hex << size_t(&ib) << std::dec << " at x=" << x << ", y=" << y << ", w=" << w << ", h=" << h << ", srcx=" << srcx << ", srcy=" << srcy << ", ops=" << ops << ".\n";
+		}
+
 		auto ImageSrc = ReadPixels(x, y, w, h);
 		for(int y = 0; y < ImageSrc.h; y++)
 		{
@@ -458,6 +465,11 @@ namespace TVOS
 
 	void Graphics::DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy)
 	{
+		if (Verbose)
+		{
+			std::cout << "[INFO] Drawing image " << std::hex << size_t(&ib) << std::dec << " at x=" << x << ", y=" << y << ", w=" << w << ", h=" << h << ", srcx=" << srcx << ", srcy=" << srcy << ".\n";
+		}
+
 		if (x < 0)
 		{
 			srcx -= x;
@@ -478,6 +490,7 @@ namespace TVOS
 		int srch = ib.h - srcy;
 		w = w > srcw ? srcw : w;
 		h = h > srch ? srch : h;
+
 		for(int iy = 0; iy < h; iy ++)
 		{
 			SetDrawPos(x, iy + y);
@@ -520,10 +533,29 @@ namespace TVOS
 		DrawImage(ib, x, y, 3);
 	}
 
+	void Graphics::GetGlyphMetrics(uint32_t Glyph, int& w, int& h) const
+	{ // 不能获取到字符大小的时候获取问号的字符大小
+		if (GetGlyphSize(Glyph, w, h)) return;
+		GetGlyphSize('?', w, h);
+	}
+
+	void Graphics::ClearScreen(uint32_t color)
+	{
+		FillRect(0, 0, Width - 1, Height - 1, color);
+	}
+
 	void Graphics::DrawGlyph(int x, int y, uint32_t Glyph, bool Transparent, uint32_t GlyphColor)
 	{
-		try
+		if (Verbose)
 		{
+			std::cout << "[INFO] Drawing a glyph U+" << std::hex << Glyph << std::dec << " at x=" << x << ", y=" << y << " with `Transparent=" << (Transparent ? "true" : "false") << "`.\n";
+		}
+		if (Glyphs.count(Glyph))
+		{
+			if (Verbose)
+			{
+				std::cout << "[INFO] Retrieving cached glyph U+" << std::hex << Glyph << std::dec << ".\n";
+			}
 			auto& GlyphImage = Glyphs.at(Glyph);
 			if (!Transparent && GlyphColor == 0)
 			{
@@ -539,33 +571,55 @@ namespace TVOS
 					DrawImageOr(NewGlyphImage, x, y);
 				}
 			}
-
-			// 因为用过这个字，所以将其缓存优先级设为最高
-			auto& UsageIndex = GlyphToUsageIndices.at(Glyph);
-			std::swap(GlyphsUsage[0], GlyphsUsage[UsageIndex]);
-			UsageIndex = 0;
 		}
-		catch (const std::out_of_range&)
+		else
 		{
-			// 生成字体
-			auto& GlyphImage = Glyphs[Glyph];
-			ExtractGlyph(GlyphImage, Glyph, 0x00000000, 0xFFFFFFFF);
-
-			// 添加到缓存统计
-			GlyphToUsageIndices[Glyph] = 0;
-			GlyphsUsage.insert(GlyphsUsage.begin(), Glyph);
-
-			// 统计内存使用量（只统计字体的）
-			GlyphMapMemoryUsage += GlyphImage.GetSizeInBytes();
-			while (GlyphMapMemoryUsage > GlyphMapMaxMemoryUsage)
+			if (Verbose)
 			{
-				// 移除 GlyphsUsage 最末尾的字体。
-				auto LastUsedGlyph = GlyphsUsage.back();
-				GlyphsUsage.pop_back();
-				GlyphToUsageIndices.erase(LastUsedGlyph);
-				GlyphMapMemoryUsage -= Glyphs.at(LastUsedGlyph).GetSizeInBytes();
-				Glyphs.erase(LastUsedGlyph);
+				std::cout << "[INFO] Creating glyph cache U+" << std::hex << Glyph << std::dec << ".\n";
 			}
+
+			// 生成字体
+			if (!ExtractGlyph(Glyphs[Glyph], Glyph, 0x00000000, 0xFFFFFFFF))
+			{ // 不能显示的字符使用问号
+				if (Verbose)
+				{
+					std::cout << "[INFO] Create glyph cache U+" << std::hex << Glyph << std::dec << " failed.\n";
+				}
+				DrawGlyph(x, y, '?', Transparent, GlyphColor);
+				return;
+			}
+
+			auto& GlyphImage = Glyphs[Glyph];
+			if (Verbose)
+			{
+				std::cout << "[INFO] Glyph cache U+" << std::hex << Glyph << std::dec << " has w=" << GlyphImage.w << ", h=" << GlyphImage.h << ".\n";
+			}
+		}
+	}
+
+	void Graphics::GetTextMetrics(const std::string& t, int& w, int& h) const
+	{
+		w = 0;
+		h = 0;
+
+		for(auto& ch: UTF::Utf8_to_Utf32(t))
+		{
+			int w_, h_;
+			GetGlyphMetrics(ch, w_, h_);
+			w += w_;
+			h = h < h_ ? h_ : h;
+		}
+	}
+
+	void Graphics::DrawText(int x, int y, const std::string& t, bool Transparent, uint32_t GlyphColor)
+	{
+		for(auto& ch: UTF::Utf8_to_Utf32(t))
+		{
+			int w, h;
+			GetGlyphMetrics(ch, w, h);
+			DrawGlyph(x, y, ch, Transparent, GlyphColor);
+			x += w;
 		}
 	}
 }

@@ -79,6 +79,8 @@ namespace TVOS
 		bool IsBackBufferMode(); // 是否在绘制到后台缓冲区的模式里
 		void RefreshFrontBuffer(); // 将后台缓冲区的内容刷新到前台缓冲区
 
+		void ClearScreen(uint32_t color);
+
 		ImageBlock ReadPixelsRect(int x, int y, int r, int b);
 		ImageBlock ReadPixels(int x, int y, int w, int h);
 
@@ -113,7 +115,7 @@ namespace TVOS
 		void DrawImageXor(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy);
 		void DrawImageXor(const ImageBlock& ib, int x, int y);
 
-		void DrawText(int x, int y, const std::string& t);
+		void DrawText(int x, int y, const std::string& t, bool Transparent, uint32_t GlyphColor);
 		void GetTextMetrics(const std::string& t, int& w, int& h) const;
 
 	protected:
@@ -124,11 +126,8 @@ namespace TVOS
 		int Stride;
 
 		std::unordered_map<uint32_t, ImageBlock> Glyphs;
-		std::unordered_map<uint32_t, size_t> GlyphToUsageIndices;
-		std::vector<uint32_t> GlyphsUsage;
-		size_t GlyphMapMemoryUsage = 0;
-		size_t GlyphMapMaxMemoryUsage = 1024 * 64; // 64 K
 
+		void GetGlyphMetrics(uint32_t Glyph, int& w, int& h) const;
 		void DrawGlyph(int x, int y, uint32_t Glyph, bool Transparent, uint32_t GlyphColor);
 
 		std::string ReadSimpleFile(const std::string& f);
