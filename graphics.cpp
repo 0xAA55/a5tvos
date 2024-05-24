@@ -2,7 +2,6 @@
 #include "font.hpp"
 
 #include <cstring>
-#include <fstream>
 #include <iostream>
 
 namespace TVOS
@@ -11,7 +10,6 @@ namespace TVOS
 		std::runtime_error(what)
 	{
 	}
-
 	uint32_t MakeColor(int cr, int cg, int cb)
 	{
 		return
@@ -98,14 +96,20 @@ namespace TVOS
 	}
 
 	Graphics::Graphics(const std::string& fbdev, bool Verbose):
-		fd(open((std::string("/dev/") + fbdev).c_str(), O_RDWR)),
+		fs(std::fstream(std::string("/dev/") + fbdev, std::ios::binary | std::ios::in | std::ios::out)),
 		Verbose(Verbose)
 	{
 		if (Verbose)
 		{
-			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in output mode.\n";
+			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary input/output mode.\n";
 		}
-		if (fd == -1) throw OpenDeviceFailed(std::string("Open `/dev/") + fbdev + "` failed: " + strerror(errno));
+		try
+		{
+			fs.exceptions(std::ios::badbit | std::ios::failbit);
+		} catch (const std::ios::failure& e)
+		{
+			throw OpenDeviceFailed(std::string("Open device `/dev/") + fbdev + "` failed: " + e.what());
+		}
 
 		GetFBSize(fbdev, Width, Height);
 		Stride = GetFBStride(fbdev);
@@ -222,7 +226,7 @@ namespace TVOS
 				std::cout << "[INFO] Set draw position: " << x << ", " << y << ".\n";
 			}
 			int Row = int(y) * Stride;
-			lseek(fd, Row + x * 4, SEEK_SET);
+			fs.seekp(Row + x * 4, std::ios::beg);
 		}
 		BBWritePosX = x;
 		BBWritePosY = y;
@@ -237,7 +241,7 @@ namespace TVOS
 				std::cout << "[INFO] Set read position: " << x << ", " << y << ".\n";
 			}
 			int Row = int(y) * Stride;
-			lseek(fd, Row + x * 4, SEEK_SET);
+			fs.seekg(Row + x * 4, std::ios::beg);
 		}
 		BBReadPosX = x;
 		BBReadPosY = y;
@@ -259,11 +263,11 @@ namespace TVOS
 		}
 		if (BackBufferMode)
 		{
-			write(fd, pixels, Count * 4);
+			memcpy(&BackBuffer.get()[BBWritePosY * BackBuffer->w + BBWritePosX], pixels, Count * 4);
 		}
 		else
 		{
-			memcpy(&BackBuffer.get()[BBWritePosY * BackBuffer->w + BBWritePosX], pixels, Count * 4);
+			fs.write(reinterpret_cast<const char*>(pixels), Count * 4);
 		}
 	}
 	
@@ -301,7 +305,7 @@ namespace TVOS
 		}
 		else
 		{
-			read(fd, &ret[0], count * 4);
+			fs.read(reinterpret_cast<char*>(&ret[0]), count * 4);
 		}
 		return ret;
 	}
@@ -558,10 +562,5 @@ namespace TVOS
 				Glyphs.erase(LastUsedGlyph);
 			}
 		}
-	}
-
-	Graphics::~Graphics()
-	{
-		if (fd != -1) close(fd);
 	}
 }
