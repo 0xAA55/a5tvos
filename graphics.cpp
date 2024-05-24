@@ -21,6 +21,13 @@ namespace TVOS
 		cb = int(c & 0x000000FF) >>  0;
 	}
 
+	ImageBlock::ImageBlock(int width, int height) :
+		w(width),
+		h(height)
+	{
+		Pixels.resize(w * h);
+	}
+
 	int ImageBlock::GetStride() const
 	{
 		return w * 4;
@@ -41,18 +48,18 @@ namespace TVOS
 
 	ImageBlock& ImageBlock::InvertPixelColors()
 	{
-		for(size_t i = 0; i < ImageBlock.Pixels; i++)
+		for(size_t i = 0; i < Pixels.size(); i++)
 		{
-			ImageBlock.Pixels[i] ^= 0xFFFFFF;
+			Pixels[i] ^= 0xFFFFFF;
 		}
 		return *this;
 	}
 
-	ImageBlock& ReplacePixelColors(uint32_t find, uint32_t replace)
+	ImageBlock& ImageBlock::ReplacePixelColors(uint32_t find, uint32_t replace)
 	{
-		for(size_t i = 0; i < ImageBlock.Pixels; i++)
+		for(size_t i = 0; i < Pixels.size(); i++)
 		{
-			if (ImageBlock.Pixels[i] == find) ImageBlock.Pixels[i] = replace;
+			if (Pixels[i] == find) Pixels[i] = replace;
 		}
 		return *this;
 	}
@@ -73,7 +80,7 @@ namespace TVOS
 		return ret;
 	}
 
-	ImageBlock ReadPixels(int x, int y, int w, int h)
+	ImageBlock Graphics::ReadPixels(int x, int y, int w, int h)
 	{
 		return ReadPixelsRect(x, y, x + w - 1, y + h - 1);
 	}
@@ -166,14 +173,30 @@ namespace TVOS
 
 	void Graphics::SetDrawPos(int x, int y)
 	{
-		int Row = int(y) * Stride;
-		ofs.seekp(Row + x * 4);
+		if (BackBufferMode)
+		{
+			BBWritePosX = x;
+			BBWritePosY = y;
+		}
+		else
+		{
+			int Row = int(y) * Stride;
+			ofs.seekp(Row + x * 4);
+		}
 	}
 
 	void Graphics::SetReadPos(int x, int y)
 	{
-		int Row = int(y) * Stride;
-		ifs.seekg(Row + x * 4);
+		if (BackBufferMode)
+		{
+			BBReadPosX = x;
+			BBReadPosY = y;
+		}
+		else
+		{
+			int Row = int(y) * Stride;
+			ifs.seekg(Row + x * 4);
+		}
 	}
 
 	void Graphics::WriteData(uint32_t color, int Repeat)
@@ -186,7 +209,14 @@ namespace TVOS
 
 	void Graphics::WriteData(const uint32_t* pixels, int Count)
 	{
-		ofs.write(reinterpret_cast<const char*>(pixels), Count * (sizeof pixels[0]));
+		if (BackBufferMode)
+		{
+			ofs.write(reinterpret_cast<const char*>(pixels), Count * (sizeof pixels[0]));
+		}
+		else
+		{
+			memcpy(&BackBuffer.get()[BBWritePosY * BackBuffer->w + BBWritePosX], pixels, Count * (sizeof pixels[0]));
+		}
 	}
 	
 	void Graphics::WriteData(const std::vector<uint32_t>& pixels)
@@ -217,8 +247,50 @@ namespace TVOS
 		if (count <= 0) return ret;
 		ret.resize(count);
 		SetReadPos(x, y);
-		ifs.read(reinterpret_cast<char*>(&ret[0]), count * 4);
+		if (BackBufferMode)
+		{
+			memcpy(&ret[0], &BackBuffer.get()[BBReadPosY * BackBuffer->w + BBReadPosX], count * 4);
+		}
+		else
+		{
+			ifs.read(reinterpret_cast<char*>(&ret[0]), count * 4);
+		}
 		return ret;
+	}
+
+	int Graphics::GetWidth() const
+	{
+		return Width;
+	}
+
+	int Graphics::GetHeight() const
+	{
+		return Height;
+	}
+
+	void Graphics::SetBackBufferMode()
+	{
+		BackBufferMode = true;
+		if (!BackBuffer)
+		{
+			BackBuffer = std::make_shared<ImageBlock>(Width, Height);
+			FillRect(0, 0, Width - 1, Height - 1, 0xFFFFFFFF);
+		}
+	}
+
+	void Graphics::SetFrontBufferMode()
+	{
+		BackBufferMode = false;
+	}
+	
+	bool Graphics::IsBackBufferMode()
+	{
+		return BackBufferMode;
+	}
+	
+	void Graphics::RefreshFrontBuffer()
+	{
+		DrawImage(*BackBuffer, 0, 0);
 	}
 
 	void Graphics::DrawVLine(int x, int y1, int y2, uint32_t color)
@@ -248,12 +320,12 @@ namespace TVOS
 	
 	void Graphics::DrawHLineXor(int x, int y1, int y2)
 	{
-		FillRectXor(x1, y, x2, y);
+		FillRectXor(x, y1, x, y2);
 	}
 
 	void Graphics::DrawRect(int x, int y, int r, int b, uint32_t color)
 	{
-		if (!PreFitXYRB(x, y, r, b)) return false;
+		if (!PreFitXYRB(x, y, r, b)) return;
 		DrawHLine(x, r, y, color);
 		DrawHLine(x, r, b, color);
 		if (b - y < 2) return;
@@ -263,7 +335,7 @@ namespace TVOS
 	
 	void Graphics::DrawRectXor(int x, int y, int r, int b)
 	{
-		if (!PreFitXYRB(x, y, r, b)) return false;
+		if (!PreFitXYRB(x, y, r, b)) return;
 		DrawHLineXor(x, r, y);
 		DrawHLineXor(x, r, b);
 		if (b - y < 2) return;
@@ -295,15 +367,15 @@ namespace TVOS
 
 	void Graphics::FillRectXor(int x, int y, int r, int b)
 	{
-		if (!PreFitXYRB(x, y, r, b)) return false;
+		if (!PreFitXYRB(x, y, r, b)) return;
 
-		auto ImageSrc = ReadPixels(x, y, w, h).InvertPixelColors();
+		auto ImageSrc = ReadPixelsRect(x, y, r, b).InvertPixelColors();
 		DrawImage(ImageSrc, x, y);
 	}
 
 	void Graphics::DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy, int ops)
 	{
-		if (ops == 0) DrawImage(ib, x, y, w, h, srcx, srcy); break;
+		if (ops == 0) DrawImage(ib, x, y, w, h, srcx, srcy); return;
 		auto ImageSrc = ReadPixels(x, y, w, h);
 		for(int y = 0; y < ImageSrc.h; y++)
 		{
@@ -433,7 +505,7 @@ namespace TVOS
 				// 移除 GlyphsUsage 最末尾的字体。
 				auto LastUsedGlyph = GlyphsUsage.back();
 				GlyphsUsage.pop_back();
-				GlyphToUsageIndices.remove(LastUsedGlyph);
+				GlyphToUsageIndices.erase(LastUsedGlyph);
 				GlyphMapMemoryUsage -= Glyphs.at(LastUsedGlyph).GetSizeInBytes();
 				Glyphs.erase(LastUsedGlyph);
 			}

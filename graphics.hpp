@@ -3,8 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <unordered_map>
-#include <map>
-#include <set>
+#include <memory>
 
 namespace TVOS
 {
@@ -13,11 +12,13 @@ namespace TVOS
 
 	struct ImageBlock
 	{
-		int w;
-		int h;
+		int w = 0;
+		int h = 0;
 		std::vector<uint32_t> Pixels;
 
+		ImageBlock() = default;
 		ImageBlock(const ImageBlock& ib) = default;
+		ImageBlock(int width, int height);
 
 		int GetStride() const;
 		bool operator == (const ImageBlock& other) const;
@@ -42,6 +43,10 @@ namespace TVOS
 
 		bool BackBufferMode = false;
 		std::shared_ptr<ImageBlock> BackBuffer = nullptr;
+		int BBReadPosX = 0;
+		int BBReadPosY = 0;
+		int BBWritePosX = 0;
+		int BBWritePosY = 0;
 
 		// 底层绘图操作
 		void SetReadPos(int x, int y);
@@ -56,6 +61,9 @@ namespace TVOS
 		void DrawImage(const ImageBlock& ib, int x, int y, int ops);
 
 	public:
+		int GetWidth() const;
+		int GetHeight() const;
+
 		void SetBackBufferMode(); // 绘制到后台缓冲区
 		void SetFrontBufferMode(); // 绘制到前台fb
 		bool IsBackBufferMode(); // 是否在绘制到后台缓冲区的模式里
@@ -95,7 +103,6 @@ namespace TVOS
 		void DrawImageXor(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy);
 		void DrawImageXor(const ImageBlock& ib, int x, int y);
 
-	public:
 		void DrawText(int x, int y, const std::string& t);
 		void GetTextMetrics(const std::string& t, int& w, int& h) const;
 
@@ -113,7 +120,7 @@ namespace TVOS
 		size_t GlyphMapMemoryUsage = 0;
 		size_t GlyphMapMaxMemoryUsage = 1024 * 64; // 64 K
 
-		void DrawGlyph(int x, int y, uint32_t Glyph);
+		void DrawGlyph(int x, int y, uint32_t Glyph, bool Transparent, uint32_t GlyphColor);
 
 		static std::string ReadFile(const std::string& f);
 		static void GetFBSize(const std::string& fbdev, int& Width, int& Height);
