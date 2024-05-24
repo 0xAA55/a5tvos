@@ -53,7 +53,7 @@ namespace TVOS
 	static const auto CharToGlyphMap = MakeCharToGlyphMap();
 	static const auto GlyphXPos = MakeCharToGlyphXPos();
 
-	static int GetPixel(int x, int y)
+	static int GetGlyphPixel(int x, int y)
 	{
 		int b = x % 32;
 		int i = x / 32;
@@ -61,7 +61,14 @@ namespace TVOS
 		return (GlyphBinaryCode[y * BinaryCodeStride / 4 + i] & bit) ? 1 : 0;
 	}
 
-	void ExtractFont(ImageBlock& ImgOut, uint32_t Unicode, int& Width, int& Height, uint32_t color1, uint32_t color2)
+	void GetGlyphSize(uint32_t Unicode, int& Width, int& Height)
+	{
+		auto GlyphIndex = CharToGlyphMap.at(Unicode);
+		Width = GlyphWidthMap[GlyphIndex];
+		Height = 22;
+	}
+
+	void ExtractGlyph(ImageBlock& ImgOut, uint32_t Unicode, int& Width, int& Height, uint32_t color1, uint32_t color2)
 	{
 		auto GlyphIndex = CharToGlyphMap.at(Unicode);
 		Height = 22;
@@ -75,7 +82,7 @@ namespace TVOS
 		{
 			for(int ix = 0; ix < Width; ix ++)
 			{
-				ImgOut.Pixels[iy * Width + ix] = GetPixel(ix, iy) ? color1 : color2;
+				ImgOut.Pixels[iy * Width + ix] = GetGlyphPixel(ix, iy) ? color1 : color2;
 			}
 		}
 	}
