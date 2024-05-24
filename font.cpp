@@ -98,7 +98,7 @@ namespace TVOS
 		{
 			for(int ix = 0; ix < ImgOut.w; ix ++)
 			{
-				ImgOut.Pixels[iy * ImgOut.w + ix] = GetGlyphPixel(X + ix, iy) ? color1 : color2;
+				ImgOut.Pixels[iy * ImgOut.w + ImgOut.w - 1 - ix] = GetGlyphPixel(X + ix, iy) ? color1 : color2;
 			}
 		}
 		return true;
