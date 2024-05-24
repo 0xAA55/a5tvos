@@ -1,12 +1,21 @@
 #pragma once
 #include <cstdint>
-#include <fstream>
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <stdexcept>
+
+#include <fcntl.h>
+#include <unistd.h>
 
 namespace TVOS
 {
+	class OpenDeviceFailed: public std::runtime_error
+	{
+	public:
+		OpenDeviceFailed(const std::string& what) noexcept;
+	};
+
 	uint32_t MakeColor(int cr, int cg, int cb);
 	void GetColor(const uint32_t c, int& cr, int& cg, int& cb);
 
@@ -112,7 +121,7 @@ namespace TVOS
 
 	protected:
 		std::string FBDev;
-		std::fstream fs;
+		int fd;
 		int Width;
 		int Height;
 		int Stride;
@@ -131,6 +140,8 @@ namespace TVOS
 
 	public:
 		bool Verbose = false;
+
+		~Graphics();
 	};
 }
 

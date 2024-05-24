@@ -2,10 +2,16 @@
 #include "font.hpp"
 
 #include <cstring>
+#include <fstream>
 #include <iostream>
 
 namespace TVOS
 {
+	OpenDeviceFailed::OpenDeviceFailed(const std::string& what) noexcept :
+		std::runtime_error(what)
+	{
+	}
+
 	uint32_t MakeColor(int cr, int cg, int cb)
 	{
 		return
@@ -92,30 +98,14 @@ namespace TVOS
 	}
 
 	Graphics::Graphics(const std::string& fbdev, bool Verbose):
-		fs(std::fstream(std::string("/dev/") + fbdev, std::ios::in | std::ios::out)),
+		fd(open((std::string("/dev/") + fbdev).c_str(), O_RDWR)),
 		Verbose(Verbose)
 	{
 		if (Verbose)
 		{
-			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in input/output mode.\n";
+			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in output mode.\n";
 		}
-		try
-		{
-			fs.exceptions(std::ios::badbit | std::ios::failbit);
-		} catch (const std::ios::failure& e)
-		{
-			std::cerr << "[WARN] Could not open `/dev/" << fbdev << "` for input/output mode, opening in output mode: `" << e.what() << "`\n";
-			fs = std::fstream(std::string("/dev/") + fbdev, std::ios::out);
-			if (Verbose)
-			{
-				std::cout << "[INFO] Opening `/dev/" << fbdev << "` in output mode.\n";
-			}
-			fs.exceptions(std::ios::badbit | std::ios::failbit);
-			if (Verbose)
-			{
-				std::cout << "[INFO] Opened `/dev/" << fbdev << "` in output mode.\n";
-			}
-		}
+		if (fd == -1) throw OpenDeviceFailed(std::string("Open `/dev/") + fbdev + "` failed: " + strerror(errno));
 
 		GetFBSize(fbdev, Width, Height);
 		Stride = GetFBStride(fbdev);
@@ -232,7 +222,7 @@ namespace TVOS
 				std::cout << "[INFO] Set draw position: " << x << ", " << y << ".\n";
 			}
 			int Row = int(y) * Stride;
-			fs.seekp(Row + x * 4, std::ios::beg);
+			lseek(fd, Row + x * 4, SEEK_SET);
 		}
 		BBWritePosX = x;
 		BBWritePosY = y;
@@ -247,7 +237,7 @@ namespace TVOS
 				std::cout << "[INFO] Set read position: " << x << ", " << y << ".\n";
 			}
 			int Row = int(y) * Stride;
-			fs.seekg(Row + x * 4, std::ios::beg);
+			lseek(fd, Row + x * 4, SEEK_SET);
 		}
 		BBReadPosX = x;
 		BBReadPosY = y;
@@ -269,7 +259,7 @@ namespace TVOS
 		}
 		if (BackBufferMode)
 		{
-			fs.write(reinterpret_cast<const char*>(pixels), Count * 4);
+			write(fd, pixels, Count * 4);
 		}
 		else
 		{
@@ -311,7 +301,7 @@ namespace TVOS
 		}
 		else
 		{
-			fs.read(reinterpret_cast<char*>(&ret[0]), count * 4);
+			read(fd, &ret[0], count * 4);
 		}
 		return ret;
 	}
@@ -568,5 +558,10 @@ namespace TVOS
 				Glyphs.erase(LastUsedGlyph);
 			}
 		}
+	}
+
+	Graphics::~Graphics()
+	{
+		if (fd != -1) close(fd);
 	}
 }
