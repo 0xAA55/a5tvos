@@ -102,10 +102,14 @@ namespace TVOS
 		try
 		{
 			fs.exceptions(std::ios::badbit | std::ios::failbit);
-		} catch (const std::exception& e)
+		} catch (const std::ios::failure& e)
 		{
 			std::cerr << "[WARN] Could not open `/dev/" << fbdev << "` for input/output mode, opening in output mode: `" << e.what() << "`\n";
 			fs = std::fstream(std::string("/dev/") + fbdev, std::ios::binary | std::ios::out);
+			if (Verbose)
+			{
+				std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary output mode.\n";
+			}
 			fs.exceptions(std::ios::badbit | std::ios::failbit);
 			if (Verbose)
 			{
@@ -155,22 +159,27 @@ namespace TVOS
 	{
 	}
 
-	std::string Graphics::ReadFile(const std::string& f)
+	std::string Graphics::ReadSimpleFile(const std::string& f)
 	{
-		std::ifstream r(f, std::ios::binary);
+		if (Verbose)
+		{
+			std::cout << "[INFO] Reading `" << f << "`.\n";
+		}
+		std::ifstream r(f);
 		r.exceptions(std::ios::badbit | std::ios::failbit);
-		r.seekg(0, std::ios::end);
-		int size = r.tellg();
-		std::string buffer(size, '\0');
-		r.seekg(0);
-		r.read(&buffer[0], size); 
-		return buffer;
+		std::string ret;
+		std::getline(r, ret);
+		if (Verbose)
+		{
+			std::cout << "[INFO] Got: `" << ret << "`.\n";
+		}
+		return ret;
 	}
 
 	void Graphics::GetFBSize(const std::string& fbdev, int& Width, int& Height)
 	{
 		Width = Height = 0;
-		auto StringSize = ReadFile(std::string("/sys/class/graphics/") + fbdev + "/virtual_size");
+		auto StringSize = ReadSimpleFile(std::string("/sys/class/graphics/") + fbdev + "/virtual_size");
 		if (StringSize.length())
 		{
 			StringSize.push_back('\0');
@@ -182,7 +191,7 @@ namespace TVOS
 
 	int Graphics::GetFBStride(const std::string& fbdev)
 	{
-		return std::stoi(ReadFile(std::string("/sys/class/graphics/") + fbdev + "/stride"));
+		return std::stoi(ReadSimpleFile(std::string("/sys/class/graphics/") + fbdev + "/stride"));
 	}
 
 	bool Graphics::PreFitXYRB(int& x, int& y, int& r, int& b) const
@@ -216,6 +225,10 @@ namespace TVOS
 
 	void Graphics::SetDrawPos(int x, int y)
 	{
+		if (Verbose)
+		{
+			std::cout << "[INFO] Set draw position: " << x << ", " << y << ".\n";
+		}
 		if (BackBufferMode)
 		{
 			BBWritePosX = x;
@@ -224,12 +237,16 @@ namespace TVOS
 		else
 		{
 			int Row = int(y) * Stride;
-			fs.seekp(Row + x * 4);
+			fs.seekp(Row + x * 4, std::ios::beg);
 		}
 	}
 
 	void Graphics::SetReadPos(int x, int y)
 	{
+		if (Verbose)
+		{
+			std::cout << "[INFO] Set read position: " << x << ", " << y << ".\n";
+		}
 		if (BackBufferMode)
 		{
 			BBReadPosX = x;
@@ -238,7 +255,7 @@ namespace TVOS
 		else
 		{
 			int Row = int(y) * Stride;
-			fs.seekg(Row + x * 4);
+			fs.seekg(Row + x * 4, std::ios::beg);
 		}
 	}
 
@@ -252,13 +269,17 @@ namespace TVOS
 
 	void Graphics::WriteData(const uint32_t* pixels, int Count)
 	{
+		if (Verbose)
+		{
+			std::cout << "[INFO] Writting " << Count << " pixels from pointer " << std::hex << pixels << ".\n";
+		}
 		if (BackBufferMode)
 		{
-			fs.write(reinterpret_cast<const char*>(pixels), Count * (sizeof pixels[0]));
+			fs.write(reinterpret_cast<const char*>(pixels), Count * 4);
 		}
 		else
 		{
-			memcpy(&BackBuffer.get()[BBWritePosY * BackBuffer->w + BBWritePosX], pixels, Count * (sizeof pixels[0]));
+			memcpy(&BackBuffer.get()[BBWritePosY * BackBuffer->w + BBWritePosX], pixels, Count * 4);
 		}
 	}
 	

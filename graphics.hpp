@@ -125,9 +125,9 @@ namespace TVOS
 
 		void DrawGlyph(int x, int y, uint32_t Glyph, bool Transparent, uint32_t GlyphColor);
 
-		static std::string ReadFile(const std::string& f);
-		static void GetFBSize(const std::string& fbdev, int& Width, int& Height);
-		static int GetFBStride(const std::string& fbdev);
+		std::string ReadSimpleFile(const std::string& f);
+		void GetFBSize(const std::string& fbdev, int& Width, int& Height);
+		int GetFBStride(const std::string& fbdev);
 
 	public:
 		bool Verbose = false;
