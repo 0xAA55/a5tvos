@@ -2,6 +2,7 @@
 #include "font.hpp"
 
 #include <cstring>
+#include <iostream>
 
 namespace TVOS
 {
@@ -95,11 +96,19 @@ namespace TVOS
 		ofs(std::ofstream(std::string("/dev/") + fbdev, std::ios::binary)),
 		Verbose(Verbose)
 	{
+		if (Verbose)
+		{
+			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary mode.\n"
+		}
 		ifs.exceptions(std::ios::badbit | std::ios::failbit);
 		ofs.exceptions(std::ios::badbit | std::ios::failbit);
 
 		GetFBSize(fbdev, Width, Height);
 		Stride = GetFBStride(fbdev);
+		if (Verbose)
+		{
+			std::cout << "[INFO] Resolution of `/dev/" << fbdev << "` is " << Width << "x" << Height << ", with stride = " << Stride << ".\n";
+		}
 	}
 	
 	Graphics::Graphics(const std::string& fbdev, int width, int height) :
@@ -113,6 +122,11 @@ namespace TVOS
 		Width = width;
 		Height = height;
 		Stride = GetFBStride(fbdev);
+
+		if (Verbose)
+		{
+			std::cout << "[INFO] Changed the resolution of `/dev/" << fbdev << "` to " << Width << "x" << Height << ".\n";
+		}
 	}
 
 	Graphics::Graphics() : Graphics("fb0")
