@@ -86,8 +86,14 @@ namespace TVOS
 	}
 
 	Graphics::Graphics(const std::string& fbdev) :
+		Graphics(fbdev, Verbose)
+	{
+	}
+
+	Graphics::Graphics(const std::string& fbdev, bool Verbose):
 		ifs(std::ifstream(std::string("/dev/") + fbdev, std::ios::binary)),
-		ofs(std::ofstream(std::string("/dev/") + fbdev, std::ios::binary))
+		ofs(std::ofstream(std::string("/dev/") + fbdev, std::ios::binary)),
+		Verbose(Verbose)
 	{
 		ifs.exceptions(std::ios::badbit | std::ios::failbit);
 		ofs.exceptions(std::ios::badbit | std::ios::failbit);
@@ -97,7 +103,12 @@ namespace TVOS
 	}
 	
 	Graphics::Graphics(const std::string& fbdev, int width, int height) :
-		Graphics(fbdev)
+		Graphics(fbdev, width, height, Verbose)
+	{
+	}
+
+	Graphics::Graphics(const std::string& fbdev, int width, int height, bool Verbose) :
+		Graphics(fbdev, Verbose)
 	{
 		Width = width;
 		Height = height;
@@ -108,7 +119,15 @@ namespace TVOS
 	{
 	}
 
+	Graphics::Graphics(bool Verbose) : Graphics("fb0", Verbose)
+	{
+	}
+
 	Graphics::Graphics(int width, int height) : Graphics("fb0", width, height)
+	{
+	}
+
+	Graphics::Graphics(int width, int height, bool Verbose) : Graphics("fb0", width, height, Verbose)
 	{
 	}
 

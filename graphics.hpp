@@ -32,9 +32,13 @@ namespace TVOS
 	{
 	public:
 		Graphics(const std::string& fbdev);
+		Graphics(const std::string& fbdev, bool Verbose);
 		Graphics(const std::string& fbdev, int width, int height);
+		Graphics(const std::string& fbdev, int width, int height, bool Verbose);
 		Graphics();
+		Graphics(bool Verbose);
 		Graphics(int width, int height);
+		Graphics(int width, int height, bool Verbose);
 
 	protected:
 		bool PreFitXYRB(int& x, int& y, int& r, int& b) const;
@@ -125,6 +129,9 @@ namespace TVOS
 		static std::string ReadFile(const std::string& f);
 		static void GetFBSize(const std::string& fbdev, int& Width, int& Height);
 		static int GetFBStride(const std::string& fbdev);
+
+	public:
+		bool Verbose = false;
 	};
 }
 

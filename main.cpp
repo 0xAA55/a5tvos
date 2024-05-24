@@ -8,7 +8,7 @@ using namespace TVOS;
 
 int main(int argc, char** argv, char** envp)
 {
-	auto FB = Graphics();
+	auto FB = Graphics(true);
 
 	for(int i = 0; i < 10000; i++)
 	{
