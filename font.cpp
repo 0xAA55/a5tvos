@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <cstddef>
+#include <iostream>
 
 namespace TVOS
 {
@@ -61,23 +62,37 @@ namespace TVOS
 		return (GlyphBinaryCode[y * BinaryCodeStride / 4 + i] & bit) ? 1 : 0;
 	}
 
-	bool GetGlyphSize(uint32_t Unicode, int& Width, int& Height)
+	bool GetGlyphSize(uint32_t Unicode, int& Width, int& Height, bool Verbose)
 	{
-		if (!CharToGlyphMap.count(Unicode)) return false;
+		if (!CharToGlyphMap.count(Unicode))
+		{
+			if (Verbose)
+			{
+				std::cerr << "[WARN] In the call to `GetGlyphSize()`: Glyph U+" << std::hex << Unicode << std::dec << " not found.\n";
+			}
+			return false;
+		}
 		auto GlyphIndex = CharToGlyphMap.at(Unicode);
 		Width = GlyphWidthMap[GlyphIndex];
 		Height = 22;
 		return true;
 	}
 
-	bool ExtractGlyph(ImageBlock& ImgOut, uint32_t Unicode, uint32_t color1, uint32_t color2)
+	bool ExtractGlyph(ImageBlock& ImgOut, uint32_t Unicode, uint32_t color1, uint32_t color2, bool Verbose)
 	{
-		if (!CharToGlyphMap.count(Unicode)) return false;
+		if (!CharToGlyphMap.count(Unicode))
+		{
+			if (Verbose)
+			{
+				std::cerr << "[WARN] In the call to `ExtractGlyph()`: Glyph U+" << std::hex << Unicode << std::dec << " not found.\n";
+			}
+			return false;
+		}
 		auto GlyphIndex = CharToGlyphMap.at(Unicode);
-		ImgOut.h = 22;
-		ImgOut.w = GlyphWidthMap[GlyphIndex];
 		auto X = GlyphXPos.at(Unicode);
 		ImgOut = ImageBlock();
+		ImgOut.h = 22;
+		ImgOut.w = GlyphWidthMap[GlyphIndex];
 		ImgOut.Pixels.resize(ImgOut.w * ImgOut.h);
 		for(int iy = 0 ; iy < ImgOut.h; iy ++)
 		{
