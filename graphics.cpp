@@ -224,7 +224,7 @@ namespace TVOS
 
 	void Graphics::SetDrawPos(int x, int y)
 	{
-		if (!BackBufferMode && (BBReadPosX != x || BBReadPosY !=y))
+		if (!BackBufferMode)
 		{
 			if (Verbose)
 			{
@@ -239,7 +239,7 @@ namespace TVOS
 
 	void Graphics::SetReadPos(int x, int y)
 	{
-		if (!BackBufferMode && (BBReadPosX != x || BBReadPosY !=y))
+		if (!BackBufferMode)
 		{
 			if (Verbose)
 			{
