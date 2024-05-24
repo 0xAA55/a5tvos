@@ -17,14 +17,15 @@ namespace UTF
 			{
 				if(i + 6 <= Utf8s.size())
 				{
-					ret.push_back()
-					ret.back() =
+					ret.push_back
+					(
 						((uint32_t(Utf8s[i + 0]) & 0x01) << 30)|
 						((uint32_t(Utf8s[i + 1]) & 0x3F) << 24)|
 						((uint32_t(Utf8s[i + 2]) & 0x3F) << 18)|
 						((uint32_t(Utf8s[i + 3]) & 0x3F) << 12)|
 						((uint32_t(Utf8s[i + 4]) & 0x3F) << 6)|
-						((uint32_t(Utf8s[i + 5]) & 0x3F) << 0);
+						((uint32_t(Utf8s[i + 5]) & 0x3F) << 0)
+					);
 					i += 6;
 				}
 				else
@@ -34,13 +35,14 @@ namespace UTF
 			{
 				if(i + 5 <= Utf8s.size())
 				{
-					ret.push_back()
-					ret.back() =
+					ret.push_back
+					(
 						((uint32_t(Utf8s[i + 0]) & 0x03) << 24)|
 						((uint32_t(Utf8s[i + 1]) & 0x3F) << 18)|
 						((uint32_t(Utf8s[i + 2]) & 0x3F) << 12)|
 						((uint32_t(Utf8s[i + 3]) & 0x3F) << 6)|
-						((uint32_t(Utf8s[i + 4]) & 0x3F) << 0);
+						((uint32_t(Utf8s[i + 4]) & 0x3F) << 0)
+					);
 					i += 5;
 				}
 				else
@@ -50,12 +52,13 @@ namespace UTF
 			{
 				if(i + 4 <= Utf8s.size())
 				{
-					ret.push_back()
-					ret.back() =
+					ret.push_back
+					(
 						((uint32_t(Utf8s[i + 0]) & 0x07) << 18)|
 						((uint32_t(Utf8s[i + 1]) & 0x3F) << 12)|
 						((uint32_t(Utf8s[i + 2]) & 0x3F) << 6)|
-						((uint32_t(Utf8s[i + 3]) & 0x3F) << 0);
+						((uint32_t(Utf8s[i + 3]) & 0x3F) << 0)
+					);
 					i += 4;
 				}
 				else
@@ -65,11 +68,12 @@ namespace UTF
 			{
 				if(i + 3 <= Utf8s.size())
 				{
-					ret.push_back()
-					ret.back() =
+					ret.push_back
+					(
 						((uint32_t(Utf8s[i + 0]) & 0x0F) << 12)|
 						((uint32_t(Utf8s[i + 1]) & 0x3F) << 6)|
-						((uint32_t(Utf8s[i + 2]) & 0x3F) << 0);
+						((uint32_t(Utf8s[i + 2]) & 0x3F) << 0)
+					);
 					i += 3;
 				}
 				else
@@ -79,10 +83,11 @@ namespace UTF
 			{
 				if(i + 2 <= Utf8s.size())
 				{
-					ret.push_back()
-					ret.back() =
+					ret.push_back
+					(
 						((uint32_t(Utf8s[i + 0]) & 0x1F) << 6)|
-						((uint32_t(Utf8s[i + 1]) & 0x3F) << 0);
+						((uint32_t(Utf8s[i + 1]) & 0x3F) << 0)
+					);
 					i += 2;
 				}
 				else
@@ -90,12 +95,11 @@ namespace UTF
 			}
 			else if((Utf8s[i] & 0xC0) == 0x80)//10xxxxxx
 			{
-				throw UtfConversionError(std::string("Invalid byte for UTF-8 string: ") + Utf8s[i]);
+				throw UtfConversionError(std::string("Invalid start byte for UTF-8 string: ") + std::to_string(Utf8s[i]));
 			}
 			else if((Utf8s[i] & 0x80) == 0x00)//0xxxxxxx
 			{
-				ret.push_back()
-				ret.back() = Utf8s[i] & 0x7F;
+				ret.push_back(Utf8s[i] & 0x7F);
 				i++;
 			}
 		}
