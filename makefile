@@ -14,6 +14,7 @@ LDFLAGS += $(CFLAGS)
 OBJS+=main.o
 OBJS+=graphics.o
 OBJS+=font.o
+OBJS+=utf.o
 
 all: tvos
 
