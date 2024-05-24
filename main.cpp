@@ -1,5 +1,9 @@
 
-#include <stdio.h>
+#include <cstdio>
+
+#include "graphics.hpp"
+
+using namespace TVOS;
 
 int main(int argc, char** argv, char** envp)
 {
