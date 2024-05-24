@@ -105,7 +105,7 @@ namespace TVOS
 		} catch (const std::ios::failure& e)
 		{
 			std::cerr << "[WARN] Could not open `/dev/" << fbdev << "` for input/output mode, opening in output mode: `" << e.what() << "`\n";
-			fs = std::fstream(std::string("/dev/") + fbdev | std::ios::out);
+			fs = std::fstream(std::string("/dev/") + fbdev, std::ios::out);
 			if (Verbose)
 			{
 				std::cout << "[INFO] Opening `/dev/" << fbdev << "` in output mode.\n";
