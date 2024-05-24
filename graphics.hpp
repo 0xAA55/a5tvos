@@ -17,10 +17,14 @@ namespace TVOS
 		int h;
 		std::vector<uint32_t> Pixels;
 
+		ImageBlock(const ImageBlock& ib) = default;
+
 		int GetStride() const;
 		bool operator == (const ImageBlock& other) const;
 
 		size_t GetSizeInBytes() const;
+		ImageBlock& InvertPixelColors();
+		ImageBlock& ReplacePixelColors(uint32_t find, uint32_t replace);
 	};
 
 	class Graphics
@@ -36,19 +40,27 @@ namespace TVOS
 		bool GetWidthHeight(int x, int y, int r, int b, int& width, int& height) const;
 		bool PreFitAreaGetWH(int& x, int& y, int& r, int& b, int& width, int& height) const;
 
+		bool BackBufferMode = false;
+		std::shared_ptr<ImageBlock> BackBuffer = nullptr;
+
+		// 底层绘图操作
 		void SetReadPos(int x, int y);
 		void SetDrawPos(int x, int y);
 		void WriteData(uint32_t color, int Repeat);
 		void WriteData(const uint32_t* pixels, int Count);
 		void WriteData(const std::vector<uint32_t>& pixels);
 		void WriteData(int cr, int cg, int cb, int Repeat);
-
 		std::vector<uint32_t> ReadPixelsRow(int x, int y, int count);
 		
 		void DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy, int ops);
 		void DrawImage(const ImageBlock& ib, int x, int y, int ops);
 
 	public:
+		void SetBackBufferMode(); // 绘制到后台缓冲区
+		void SetFrontBufferMode(); // 绘制到前台fb
+		bool IsBackBufferMode(); // 是否在绘制到后台缓冲区的模式里
+		void RefreshFrontBuffer(); // 将后台缓冲区的内容刷新到前台缓冲区
+
 		ImageBlock ReadPixelsRect(int x, int y, int r, int b);
 		ImageBlock ReadPixels(int x, int y, int w, int h);
 
@@ -99,7 +111,7 @@ namespace TVOS
 		std::unordered_map<uint32_t, size_t> GlyphToUsageIndices;
 		std::vector<uint32_t> GlyphsUsage;
 		size_t GlyphMapMemoryUsage = 0;
-		size_t GlyphMapMaxMemoryUsage = 1024 * 256; // 256 K
+		size_t GlyphMapMaxMemoryUsage = 1024 * 64; // 64 K
 
 		void DrawGlyph(int x, int y, uint32_t Glyph);
 
