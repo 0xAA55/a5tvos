@@ -99,7 +99,15 @@ namespace TVOS
 		{
 			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary input/output mode.\n";
 		}
-		fs.exceptions(std::ios::badbit | std::ios::failbit);
+		try
+		{
+			fs.exceptions(std::ios::badbit | std::ios::failbit);
+		} catch (const std::ios::failure& e)
+		{
+			std::cerr << "[WARN] Could not open `/dev/" << fbdev << "` for input/output mode, opening in output mode.\n";
+			fs = std::fstream(std::string("/dev/") + fbdev, std::ios::binary | std::ios::out);
+			fs.exceptions(std::ios::badbit | std::ios::failbit);
+		}
 
 		GetFBSize(fbdev, Width, Height);
 		Stride = GetFBStride(fbdev);
