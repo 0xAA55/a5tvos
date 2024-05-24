@@ -98,7 +98,7 @@ namespace TVOS
 	{
 		if (Verbose)
 		{
-			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary mode.\n"
+			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary mode.\n";
 		}
 		ifs.exceptions(std::ios::badbit | std::ios::failbit);
 		ofs.exceptions(std::ios::badbit | std::ios::failbit);
