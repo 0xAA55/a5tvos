@@ -11,7 +11,7 @@ int main(int argc, char** argv, char** envp)
 {
 	auto FB = Graphics(false);
 
-	for(int i = 0; i < 10000; i++)
+	for(int i = 0; i < 5; i++)
 	{
 		int putx = std::rand() % FB.GetWidth();
 		int puty = std::rand() % FB.GetHeight();
