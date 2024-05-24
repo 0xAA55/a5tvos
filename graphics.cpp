@@ -264,7 +264,7 @@ namespace TVOS
 	{
 		if (Verbose)
 		{
-			std::cout << "[INFO] Writting " << Count << " pixels from pointer " << std::hex << pixels << ".\n";
+			std::cout << "[INFO] Writting " << Count << " pixels from pointer " << std::hex << pixels << std::dec << ".\n";
 		}
 		if (BackBufferMode)
 		{
