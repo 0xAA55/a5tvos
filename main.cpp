@@ -9,17 +9,17 @@ using namespace TVOS;
 
 int main(int argc, char** argv, char** envp)
 {
-	auto FB = Graphics(false);
+	auto FB = Graphics(480, 272, false);
 
-	for(int i = 0; i < 5; i++)
+	for(int i = 0; i < 1000; i++)
 	{
 		int putx = std::rand() % FB.GetWidth();
 		int puty = std::rand() % FB.GetHeight();
 		int putr = std::rand() % FB.GetWidth();
 		int putb = std::rand() % FB.GetHeight();
-		// std::cout << "[INFO] Drawing rectangle at " << putx << ", " << puty << ", " << putr << ", " << putb << ".\n";
 		FB.FillRectXor(putx, puty, putr, putb);
 	}
+
 
 	return 0;
 }
