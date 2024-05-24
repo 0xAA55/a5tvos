@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
 
 namespace TVOS
 {
@@ -51,6 +52,10 @@ namespace TVOS
 
 		void DrawImages(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy);
 
+	public:
+		void DrawText(int x, int y, const std::string& t);
+		void GetTextMetrics(const std::string& t, int& w, int& h) const;
+
 	protected:
 		std::string FBDev;
 		std::ifstream ifs;
@@ -59,9 +64,43 @@ namespace TVOS
 		int Height;
 		int Stride;
 
+		std::unordered_map<uint32_t, ImageBlock> Glyphs;
+		std::unordered_map<uint32_t, int> GlyphsUsage;
+		size_t GlyphMapMemoryUsage = 0;
+
+		void DrawGlyph(int x, int y, uint32_t Glyph);
+
 		static std::string ReadFile(const std::string& f);
 		static void GetFBSize(const std::string& fbdev, int& Width, int& Height);
 		static int GetFBStride(const std::string& fbdev);
+	};
+}
+
+namespace std
+{
+	template<> struct hash<vector<uint32_t>>
+	{
+		inline size_t operator () (const vector<uint32_t>& v)
+		{
+			size_t h = 0;
+			for(size_t i = 0; i < v.size(); i++)
+			{
+				h = (h << 4) | (h >> ((sizeof h) * 8 - 4));
+				h += size_t(v[i]);
+			}
+			return h;
+		}
+	};
+	template<> struct hash<TVOS::ImageBlock>
+	{
+		inline size_t operator () (const TVOS::ImageBlock& b)
+		{
+			auto VectorHasher = hash<vector<uint32_t>>();
+			return
+				(size_t(b.w) << 0) +
+				(size_t(b.h) << 4) +
+				(VectorHasher(b.Pixels) << 8);
+		}
 	};
 }
 
