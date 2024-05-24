@@ -69,6 +69,35 @@ namespace TVOS
 		return *this;
 	}
 
+	bool Graphics::PreFitXYRB(int& x, int& y, int& r, int& b) const
+	{
+		if (x > r) {int t = r; r = x; x = t;}
+		if (y > b) {int t = b; b = y; y = t;}
+		if (x < 0) x = 0;
+		if (y < 0) y = 0;
+		if (x >= Width || y >= Height) return false;
+		if (r < 0 || b < 0) return false;
+		return true;
+	}
+	
+	bool Graphics::GetWidthHeight(int x, int y, int r, int b, int& width, int& height) const
+	{
+		if (!PreFitXYRB(x, y, r, b)) return false;
+
+		width = r + 1 - x;
+		height = b + 1 - y;
+		return true;
+	}
+
+	bool Graphics::PreFitAreaGetWH(int& x, int& y, int& r, int& b, int& width, int& height) const
+	{
+		if (!PreFitXYRB(x, y, r, b)) return false;
+
+		width = r + 1 - x;
+		height = b + 1 - y;
+		return true;
+	}
+
 	ImageBlock Graphics::ReadPixelsRect(int x, int y, int r, int b)
 	{
 		ImageBlock ret;
@@ -76,6 +105,11 @@ namespace TVOS
 		if (!PreFitAreaGetWH(x, y, r, b, width, height)) return ret;
 		ret.w = width;
 		ret.h = height;
+
+		if (Verbose)
+		{
+			std::cout << "[INFO] Reading rectangle pixels: x=" << x << ", y=" << y << ", r=" << r << ", b=" << b << ", w=" << width << ", h=" << height << ".\n";
+		}
 
 		for(int i = 0; i < height; i++)
 		{
@@ -186,35 +220,6 @@ namespace TVOS
 	int Graphics::GetFBStride(const std::string& fbdev)
 	{
 		return std::stoi(ReadSimpleFile(std::string("/sys/class/graphics/") + fbdev + "/stride"));
-	}
-
-	bool Graphics::PreFitXYRB(int& x, int& y, int& r, int& b) const
-	{
-		if (x > r) {int t = r; r = x; x = t;}
-		if (y > b) {int t = b; b = y; y = t;}
-		if (x < 0) x = 0;
-		if (y < 0) y = 0;
-		if (x >= Width || y >= Height) return false;
-		if (r < 0 || b < 0) return false;
-		return true;
-	}
-	
-	bool Graphics::GetWidthHeight(int x, int y, int r, int b, int& width, int& height) const
-	{
-		if (!PreFitXYRB(x, y, r, b)) return false;
-
-		width = r + 1 - x;
-		height = b + 1 - y;
-		return true;
-	}
-
-	bool Graphics::PreFitAreaGetWH(int& x, int& y, int& r, int& b, int& width, int& height) const
-	{
-		if (!PreFitXYRB(x, y, r, b)) return false;
-
-		width = r + 1 - x;
-		height = b + 1 - y;
-		return true;
 	}
 
 	void Graphics::SetDrawPos(int x, int y)
@@ -370,9 +375,9 @@ namespace TVOS
 		DrawHLine(x1, x2, y, MakeColor(cr, cg, cb));
 	}
 	
-	void Graphics::DrawHLineXor(int x, int y1, int y2)
+	void Graphics::DrawHLineXor(int x1, int x2, int y)
 	{
-		FillRectXor(x, y1, x, y2);
+		FillRectXor(x1, y, x2, y);
 	}
 
 	void Graphics::DrawRect(int x, int y, int r, int b, uint32_t color)
