@@ -15,6 +15,7 @@ namespace TVOS
 		std::vector<uint32_t> Pixels;
 
 		int GetStride() const;
+		bool operator == (const ImageBlock& other) const;
 	};
 
 	class Graphics

@@ -25,6 +25,14 @@ namespace TVOS
 		return w * 4;
 	}
 
+	bool ImageBlock::operator == (const ImageBlock& other) const
+	{
+		return
+			w == other.w &&
+			h == other.h &&
+			Pixels == other.Pixels;
+	}
+
 	ImageBlock Graphics::ReadPixels(int x, int y, int r, int b)
 	{
 		ImageBlock ret;
