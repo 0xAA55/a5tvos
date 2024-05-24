@@ -18,7 +18,7 @@ int main(int argc, char** argv, char** envp)
 		int putr = std::rand() % FB.GetWidth();
 		int putb = std::rand() % FB.GetHeight();
 		// std::cout << "[INFO] Drawing rectangle at " << putx << ", " << puty << ", " << putr << ", " << putb << ".\n";
-		FB.DrawRectXor(putx, puty, putr, putb);
+		FB.FillRectXor(putx, puty, putr, putb);
 	}
 
 	return 0;
