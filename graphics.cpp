@@ -92,12 +92,12 @@ namespace TVOS
 	}
 
 	Graphics::Graphics(const std::string& fbdev, bool Verbose):
-		fs(std::fstream(std::string("/dev/") + fbdev, std::ios::binary | std::ios::in | std::ios::out)),
+		fs(std::fstream(std::string("/dev/") + fbdev, std::ios::in | std::ios::out)),
 		Verbose(Verbose)
 	{
 		if (Verbose)
 		{
-			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary input/output mode.\n";
+			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in input/output mode.\n";
 		}
 		try
 		{
@@ -105,15 +105,15 @@ namespace TVOS
 		} catch (const std::ios::failure& e)
 		{
 			std::cerr << "[WARN] Could not open `/dev/" << fbdev << "` for input/output mode, opening in output mode: `" << e.what() << "`\n";
-			fs = std::fstream(std::string("/dev/") + fbdev, std::ios::binary | std::ios::out);
+			fs = std::fstream(std::string("/dev/") + fbdev | std::ios::out);
 			if (Verbose)
 			{
-				std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary output mode.\n";
+				std::cout << "[INFO] Opening `/dev/" << fbdev << "` in output mode.\n";
 			}
 			fs.exceptions(std::ios::badbit | std::ios::failbit);
 			if (Verbose)
 			{
-				std::cout << "[INFO] Opened `/dev/" << fbdev << "` in binary output mode.\n";
+				std::cout << "[INFO] Opened `/dev/" << fbdev << "` in output mode.\n";
 			}
 		}
 
@@ -225,38 +225,32 @@ namespace TVOS
 
 	void Graphics::SetDrawPos(int x, int y)
 	{
-		if (Verbose)
+		if (!BackBufferMode && (BBReadPosX != x || BBReadPosY !=y))
 		{
-			std::cout << "[INFO] Set draw position: " << x << ", " << y << ".\n";
-		}
-		if (BackBufferMode)
-		{
-			BBWritePosX = x;
-			BBWritePosY = y;
-		}
-		else
-		{
+			if (Verbose)
+			{
+				std::cout << "[INFO] Set draw position: " << x << ", " << y << ".\n";
+			}
 			int Row = int(y) * Stride;
 			fs.seekp(Row + x * 4, std::ios::beg);
 		}
+		BBWritePosX = x;
+		BBWritePosY = y;
 	}
 
 	void Graphics::SetReadPos(int x, int y)
 	{
-		if (Verbose)
+		if (!BackBufferMode && (BBReadPosX != x || BBReadPosY !=y))
 		{
-			std::cout << "[INFO] Set read position: " << x << ", " << y << ".\n";
-		}
-		if (BackBufferMode)
-		{
-			BBReadPosX = x;
-			BBReadPosY = y;
-		}
-		else
-		{
+			if (Verbose)
+			{
+				std::cout << "[INFO] Set read position: " << x << ", " << y << ".\n";
+			}
 			int Row = int(y) * Stride;
 			fs.seekg(Row + x * 4, std::ios::beg);
 		}
+		BBReadPosX = x;
+		BBReadPosY = y;
 	}
 
 	void Graphics::WriteData(uint32_t color, int Repeat)
