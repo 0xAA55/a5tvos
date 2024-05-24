@@ -113,7 +113,7 @@ namespace TVOS
 
 		for(int i = 0; i < height; i++)
 		{
-			auto row = ReadPixelsRow(x, i, width);
+			auto row = ReadPixelsRow(x, y + i, width);
 			ret.Pixels.insert(ret.Pixels.end(), row.cbegin(), row.cend());
 		}
 		return ret;
