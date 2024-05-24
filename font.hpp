@@ -7,5 +7,5 @@
 namespace TVOS
 {
 	void GetGlyphSize(uint32_t Unicode, int& Width, int& Height);
-	void ExtractGlyph(ImageBlock& ImgOut, uint32_t Unicode, int& Width, int& Height, uint32_t color1, uint32_t color2);
+	void ExtractGlyph(ImageBlock& ImgOut, uint32_t Unicode, uint32_t color1, uint32_t color2);
 }

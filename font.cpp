@@ -68,15 +68,13 @@ namespace TVOS
 		Height = 22;
 	}
 
-	void ExtractGlyph(ImageBlock& ImgOut, uint32_t Unicode, int& Width, int& Height, uint32_t color1, uint32_t color2)
+	void ExtractGlyph(ImageBlock& ImgOut, uint32_t Unicode, uint32_t color1, uint32_t color2)
 	{
 		auto GlyphIndex = CharToGlyphMap.at(Unicode);
-		Height = 22;
-		Width = GlyphWidthMap[GlyphIndex];
+		ImgOut.h = 22;
+		ImgOut.w = GlyphWidthMap[GlyphIndex];
 		auto X = GlyphXPos.at(Unicode);
 		ImgOut = ImageBlock();
-		ImgOut.w = Width;
-		ImgOut.h = Height;
 		ImgOut.Pixels.resize(Width * Height);
 		for(int iy = 0 ; iy < Height; iy ++)
 		{
