@@ -535,8 +535,8 @@ namespace TVOS
 
 	void Graphics::GetGlyphMetrics(uint32_t Glyph, int& w, int& h) const
 	{ // 不能获取到字符大小的时候获取问号的字符大小
-		if (GetGlyphSize(Glyph, w, h)) return;
-		GetGlyphSize('?', w, h);
+		if (GetGlyphSize(Glyph, w, h, Verbose)) return;
+		GetGlyphSize('?', w, h, Verbose);
 	}
 
 	void Graphics::ClearScreen(uint32_t color)
@@ -580,7 +580,7 @@ namespace TVOS
 			}
 
 			// 生成字体
-			if (!ExtractGlyph(Glyphs[Glyph], Glyph, 0x00000000, 0xFFFFFFFF))
+			if (!ExtractGlyph(Glyphs[Glyph], Glyph, 0x00000000, 0xFFFFFFFF, Verbose))
 			{ // 不能显示的字符使用问号
 				if (Verbose)
 				{
