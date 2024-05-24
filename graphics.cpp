@@ -92,20 +92,14 @@ namespace TVOS
 	}
 
 	Graphics::Graphics(const std::string& fbdev, bool Verbose):
-		ifs(std::ifstream(std::string("/dev/") + fbdev, std::ios::binary)),
-		ofs(std::ofstream(std::string("/dev/") + fbdev, std::ios::binary)),
+		fs(std::fstream(std::string("/dev/") + fbdev, std::ios::binary | std::ios::in | std::ios::out)),
 		Verbose(Verbose)
 	{
 		if (Verbose)
 		{
-			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary output mode.\n";
+			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary input/output mode.\n";
 		}
-		ofs.exceptions(std::ios::badbit | std::ios::failbit);
-		if (Verbose)
-		{
-			std::cout << "[INFO] Opening `/dev/" << fbdev << "` in binary input mode.\n";
-		}
-		ifs.exceptions(std::ios::badbit | std::ios::failbit);
+		fs.exceptions(std::ios::badbit | std::ios::failbit);
 
 		GetFBSize(fbdev, Width, Height);
 		Stride = GetFBStride(fbdev);
@@ -218,7 +212,7 @@ namespace TVOS
 		else
 		{
 			int Row = int(y) * Stride;
-			ofs.seekp(Row + x * 4);
+			fs.seekp(Row + x * 4);
 		}
 	}
 
@@ -232,7 +226,7 @@ namespace TVOS
 		else
 		{
 			int Row = int(y) * Stride;
-			ifs.seekg(Row + x * 4);
+			fs.seekg(Row + x * 4);
 		}
 	}
 
@@ -248,7 +242,7 @@ namespace TVOS
 	{
 		if (BackBufferMode)
 		{
-			ofs.write(reinterpret_cast<const char*>(pixels), Count * (sizeof pixels[0]));
+			fs.write(reinterpret_cast<const char*>(pixels), Count * (sizeof pixels[0]));
 		}
 		else
 		{
@@ -290,7 +284,7 @@ namespace TVOS
 		}
 		else
 		{
-			ifs.read(reinterpret_cast<char*>(&ret[0]), count * 4);
+			fs.read(reinterpret_cast<char*>(&ret[0]), count * 4);
 		}
 		return ret;
 	}

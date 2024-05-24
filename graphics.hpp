@@ -112,8 +112,7 @@ namespace TVOS
 
 	protected:
 		std::string FBDev;
-		std::ifstream ifs;
-		std::ofstream ofs;
+		std::fstream fs;
 		int Width;
 		int Height;
 		int Stride;
