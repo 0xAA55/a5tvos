@@ -36,22 +36,22 @@ namespace TVOS
 		return ret;
 	}
 
-	static std::unordered_map<uint16_t, int> MakeCharToGlyphXPos()
+	static std::unordered_map<uint32_t, int> MakeCharToGlyphXPos()
 	{
-		std::unordered_map<uint16_t, int> ret;
+		std::unordered_map<uint32_t, int> ret;
 
 		int xpos = 0;
 		for(size_t i = 0; i < NumGlyphs; i++)
 		{
-			ret[i] = xpos;
+			ret[AllGlyphsSet[i]] = xpos;
 			xpos += GlyphWidthMap[i];
 		}
 
 		return ret;
 	}
 
-	static const auto CharToGlyphMap = MakeCharToGlyphMap();
-	static const auto GlyphXPos = MakeCharToGlyphXPos();
+	static auto CharToGlyphMap = MakeCharToGlyphMap();
+	static auto GlyphXPos = MakeCharToGlyphXPos();
 
 	static int GetGlyphPixel(int x, int y)
 	{
@@ -61,15 +61,18 @@ namespace TVOS
 		return (GlyphBinaryCode[y * BinaryCodeStride / 4 + i] & bit) ? 1 : 0;
 	}
 
-	void GetGlyphSize(uint32_t Unicode, int& Width, int& Height)
+	bool GetGlyphSize(uint32_t Unicode, int& Width, int& Height)
 	{
+		if (!CharToGlyphMap.count(Unicode)) return false;
 		auto GlyphIndex = CharToGlyphMap.at(Unicode);
 		Width = GlyphWidthMap[GlyphIndex];
 		Height = 22;
+		return true;
 	}
 
-	void ExtractGlyph(ImageBlock& ImgOut, uint32_t Unicode, uint32_t color1, uint32_t color2)
+	bool ExtractGlyph(ImageBlock& ImgOut, uint32_t Unicode, uint32_t color1, uint32_t color2)
 	{
+		if (!CharToGlyphMap.count(Unicode)) return false;
 		auto GlyphIndex = CharToGlyphMap.at(Unicode);
 		ImgOut.h = 22;
 		ImgOut.w = GlyphWidthMap[GlyphIndex];
@@ -80,8 +83,9 @@ namespace TVOS
 		{
 			for(int ix = 0; ix < ImgOut.w; ix ++)
 			{
-				ImgOut.Pixels[iy * ImgOut.w + ix] = GetGlyphPixel(ix, iy) ? color1 : color2;
+				ImgOut.Pixels[iy * ImgOut.w + ix] = GetGlyphPixel(X + ix, iy) ? color1 : color2;
 			}
 		}
+		return true;
 	}
 }
