@@ -332,7 +332,7 @@ namespace TVOS
 		if (!BackBuffer)
 		{
 			BackBuffer = std::make_shared<ImageBlock>(Width, Height);
-			FillRect(0, 0, Width - 1, Height - 1, 0xFFFFFFFF);
+			ClearScreen(0xFFFFFFFF);
 		}
 	}
 
