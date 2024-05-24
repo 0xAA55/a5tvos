@@ -39,6 +39,24 @@ namespace TVOS
 		return (sizeof *this) + Pixels.size() * (sizeof Pixels[0]);
 	}
 
+	ImageBlock& ImageBlock::InvertPixelColors()
+	{
+		for(size_t i = 0; i < ImageBlock.Pixels; i++)
+		{
+			ImageBlock.Pixels[i] ^= 0xFFFFFF;
+		}
+		return *this;
+	}
+
+	ImageBlock& ReplacePixelColors(uint32_t find, uint32_t replace)
+	{
+		for(size_t i = 0; i < ImageBlock.Pixels; i++)
+		{
+			if (ImageBlock.Pixels[i] == find) ImageBlock.Pixels[i] = replace;
+		}
+		return *this;
+	}
+
 	ImageBlock Graphics::ReadPixelsRect(int x, int y, int r, int b)
 	{
 		ImageBlock ret;
@@ -238,6 +256,7 @@ namespace TVOS
 		if (!PreFitXYRB(x, y, r, b)) return false;
 		DrawHLine(x, r, y, color);
 		DrawHLine(x, r, b, color);
+		if (b - y < 2) return;
 		DrawVLine(x, y + 1, b - 1, color);
 		DrawVLine(r, y + 1, b - 1, color);
 	}
@@ -247,6 +266,7 @@ namespace TVOS
 		if (!PreFitXYRB(x, y, r, b)) return false;
 		DrawHLineXor(x, r, y);
 		DrawHLineXor(x, r, b);
+		if (b - y < 2) return;
 		DrawVLineXor(x, y + 1, b - 1);
 		DrawVLineXor(r, y + 1, b - 1);
 	}
@@ -277,11 +297,7 @@ namespace TVOS
 	{
 		if (!PreFitXYRB(x, y, r, b)) return false;
 
-		auto ImageSrc = ReadPixels(x, y, w, h);
-		for(size_t i = 0; i < ImageSrc.size(); i++)
-		{
-			ImageSrc[i] = 0xFFFFFF ^ ImageSrc[i];
-		}
+		auto ImageSrc = ReadPixels(x, y, w, h).InvertPixelColors();
 		DrawImage(ImageSrc, x, y);
 	}
 
@@ -375,12 +391,25 @@ namespace TVOS
 		DrawImage(ib, x, y, 3);
 	}
 
-	void Graphics::DrawGlyph(int x, int y, uint32_t Glyph)
+	void Graphics::DrawGlyph(int x, int y, uint32_t Glyph, bool Transparent, uint32_t GlyphColor)
 	{
 		try
 		{
 			auto& GlyphImage = Glyphs.at(Glyph);
-			DrawImage(GlyphImage, x, y);
+			if (!Transparent && GlyphColor == 0)
+			{
+				DrawImage(GlyphImage, x, y);
+			}
+			else
+			{
+				if (Transparent) DrawImageAnd(GlyphImage, x, y);
+				if (GlyphColor != 0)
+				{
+					ImageBlock NewGlyphImage = GlyphImage;
+					NewGlyphImage.InvertPixelColors().ReplacePixelColors(0xFFFFFFFF, GlyphColor);
+					DrawImageOr(NewGlyphImage, x, y);
+				}
+			}
 
 			// 因为用过这个字，所以将其缓存优先级设为最高
 			auto& UsageIndex = GlyphToUsageIndices.at(Glyph);
