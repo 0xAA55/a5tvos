@@ -56,8 +56,8 @@ namespace DIBWin
 
 	static LRESULT CALLBACK WndProcA(HWND hWnd, uint32_t Msg, size_t WParam, size_t LParam)
 	{
-		auto& window = *reinterpret_cast<Window*>(GetWindowLongPtrA(hWnd, 0));
-		return Window::OnWndProc(window, Msg, WParam, LParam);
+		auto* window = reinterpret_cast<Window*>(GetWindowLongPtrA(hWnd, 0));
+		return Window::OnWndProc(window, hWnd, Msg, WParam, LParam);
 	}
 
 	const std::string Window::ClassName = "DIBWin_Window";
@@ -82,33 +82,32 @@ namespace DIBWin
 		RegisterClassExA(&WCEx);
 	}
 
-	size_t Window::OnWndProc(Window& window, uint32_t Msg, size_t WParam, size_t LParam)
+	size_t Window::OnWndProc(Window* window, void* hWnd, uint32_t Msg, size_t WParam, size_t LParam)
 	{
-		HWND hWnd = window.GetWindow();
 		switch (Msg)
 		{
 		case WM_CREATE:
 			do
 			{
 				auto* CreationParam = reinterpret_cast<CREATESTRUCTA*>(LParam);
-				SetWindowLongPtrA(hWnd, 0, size_t(CreationParam->lpCreateParams));
+				SetWindowLongPtrA(HWND(hWnd), 0, size_t(CreationParam->lpCreateParams));
 			} while (false);
 			break;
 		case WM_PAINT:
 			do
 			{
 				PAINTSTRUCT ps;
-				auto hDC = BeginPaint(hWnd, &ps);
-				BitBlt(hDC, 0, 0, window.CreationWidth, window.CreationHeight, window.GetDC(), 0, 0, SRCCOPY);
-				EndPaint(hWnd, &ps);
+				auto hDC = BeginPaint(HWND(hWnd), &ps);
+				BitBlt(hDC, 0, 0, window->CreationWidth, window->CreationHeight, window->GetDC(), 0, 0, SRCCOPY);
+				EndPaint(HWND(hWnd), &ps);
 			} while (false);
 			break;
 		case WM_DESTROY:
-			SetWindowLongPtrA(hWnd, 0, 0);
-			window.WindowIsDestroyed = true;
+			SetWindowLongPtrA(HWND(hWnd), 0, 0);
+			window->WindowIsDestroyed = true;
 			break;
 		default:
-			return DefWindowProcA(hWnd, Msg, WParam, LParam);
+			return DefWindowProcA(HWND(hWnd), Msg, WParam, LParam);
 		}
 		return 0;
 	}
