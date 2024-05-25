@@ -609,7 +609,7 @@ namespace TVOS
 			}
 
 			// 生成字体
-			if (!ExtractGlyph(Glyphs[Glyph], Glyph, 0x00000000, 0xFFFFFFFF, Verbose))
+			if (!ExtractGlyph(Glyphs[Glyph], Glyph, 0xFF000000, 0xFFFFFFFF, Verbose))
 			{ // 不能显示的字符使用问号
 				if (Verbose)
 				{
