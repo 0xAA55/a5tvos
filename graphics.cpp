@@ -624,6 +624,7 @@ namespace TVOS
 			{
 				std::cout << "[INFO] Glyph cache U+" << std::hex << Glyph << std::dec << " has w=" << GlyphImage.w << ", h=" << GlyphImage.h << ".\n";
 			}
+			DrawGlyph(x, y, Glyph, Transparent, GlyphColor);
 		}
 	}
 
