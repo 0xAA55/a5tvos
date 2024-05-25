@@ -39,7 +39,7 @@ namespace DIBWin
 	{
 		auto ret = BMIF32();
 		ret.biWidth = Width;
-		ret.biHeight = Height;
+		ret.biHeight = -Height;
 		ret.biSizeImage = Width * Height * 4;
 		return ret;
 	}
