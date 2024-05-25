@@ -50,7 +50,7 @@ namespace DIBWin
 		void* GetFBPtr();
 		void RefreshFB();
 
-		virtual void ProcessMessage();
+		void ProcessMessage();
 		virtual int MainLoop();
 
 	public:
