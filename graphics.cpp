@@ -1,4 +1,4 @@
-#include "graphics.hpp"
+﻿#include "graphics.hpp"
 #include "font.hpp"
 #include "utf.hpp"
 
@@ -294,17 +294,18 @@ namespace TVOS
 		}
 		if (BackBufferMode)
 		{
-			memcpy(&BackBuffer.get()[BBWritePosY * BackBuffer->w + BBWritePosX], pixels, Count * 4);
+			auto* Buffer = BackBuffer.get();
+			memcpy(&Buffer->Pixels[BBWritePosY * Buffer->w + BBWritePosX], pixels, size_t(Count) * 4);
 		}
 		else
 		{
-			fs.write(reinterpret_cast<const char*>(pixels), Count * 4);
+			fs.write(reinterpret_cast<const char*>(pixels), size_t(Count) * 4);
 		}
 	}
 	
 	void Graphics::WriteData(const std::vector<uint32_t>& pixels)
 	{
-		WriteData(&pixels[0], pixels.size());
+		WriteData(&pixels[0], int(pixels.size()));
 	}
 	
 	void Graphics::WriteData(int cr, int cg, int cb, int Repeat)
@@ -328,15 +329,17 @@ namespace TVOS
 		std::vector<uint32_t> ret;
 		if (x + count > Width) count = Width - x;
 		if (count <= 0) return ret;
-		ret.resize(count);
 		SetReadPos(x, y);
 		if (BackBufferMode)
 		{
-			memcpy(&ret[0], &BackBuffer.get()[BBReadPosY * BackBuffer->w + BBReadPosX], count * 4);
+			auto Buffer = BackBuffer.get();
+			ret.resize(count);
+			memcpy(&ret[0], &Buffer->Pixels[BBReadPosY * Buffer->w + BBReadPosX], size_t(count) * 4);
 		}
 		else
 		{
-			fs.read(reinterpret_cast<char*>(&ret[0]), count * 4);
+			ret.resize(count);
+			fs.read(reinterpret_cast<char*>(&ret[0]), size_t(count) * 4);
 		}
 		return ret;
 	}
