@@ -120,6 +120,7 @@ namespace TVOS
 		void DrawImageXor(const ImageBlock& ib, int x, int y);
 
 		void DrawText(int x, int y, const std::string& t, bool Transparent, uint32_t GlyphColor);
+		void DrawTextXor(int x, int y, const std::string& t);
 		void GetTextMetrics(const std::string& t, int& w, int& h) const;
 
 		const ImageBlock& GetBackBuffer() const;
@@ -133,8 +134,10 @@ namespace TVOS
 
 		std::unordered_map<uint32_t, ImageBlock> Glyphs;
 
-		void GetGlyphMetrics(uint32_t Glyph, int& w, int& h) const;
-		void DrawGlyph(int x, int y, uint32_t Glyph, bool Transparent, uint32_t GlyphColor);
+		void GetGlyphMetrics(uint32_t GlyphUnicode, int& w, int& h) const;
+		const ImageBlock& GetGlyph(uint32_t GlyphUnicode);
+		void DrawGlyph(int x, int y, uint32_t GlyphUnicode, bool Transparent, uint32_t GlyphColor);
+		void DrawGlyphXor(int x, int y, uint32_t GlyphUnicode);
 
 		std::string ReadSimpleFile(const std::string& f);
 		void GetFBSize(const std::string& fbdev, int& Width, int& Height);
