@@ -445,7 +445,7 @@ namespace TVOS
 
 		for(int iy = y; iy <= b; iy ++)
 		{
-			SetDrawPos(iy, x);
+			SetDrawPos(x, iy);
 			WriteData(color, w);
 		}
 	}
