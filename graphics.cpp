@@ -207,6 +207,7 @@ namespace TVOS
 		Width(width),
 		Height(height),
 		Stride(width * 4),
+		Verbose(Verbose),
 		BackBufferMode(true),
 		BackBuffer(std::make_shared<ImageBlock>(width, height))
 	{
