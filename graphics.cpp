@@ -65,7 +65,10 @@ namespace TVOS
 	{
 		for(size_t i = 0; i < Pixels.size(); i++)
 		{
-			if (Pixels[i] == find) Pixels[i] = replace;
+			if (Pixels[i] == find)
+			{
+				Pixels[i] = replace;
+			}
 		}
 		return *this;
 	}
