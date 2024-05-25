@@ -612,6 +612,11 @@ namespace TVOS
 		}
 	}
 
+	const ImageBlock& Graphics::GetBackBuffer() const
+	{
+		return *BackBuffer;
+	}
+
 	void Graphics::DrawText(int x, int y, const std::string& t, bool Transparent, uint32_t GlyphColor)
 	{
 		for(auto& ch: UTF::Utf8_to_Utf32(t))

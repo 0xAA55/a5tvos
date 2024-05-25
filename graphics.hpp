@@ -118,6 +118,8 @@ namespace TVOS
 		void DrawText(int x, int y, const std::string& t, bool Transparent, uint32_t GlyphColor);
 		void GetTextMetrics(const std::string& t, int& w, int& h) const;
 
+		const ImageBlock& GetBackBuffer() const;
+
 	protected:
 		std::string FBDev;
 		std::fstream fs;
