@@ -146,6 +146,7 @@ namespace DIBWin
 		auto BorderWidth = (rcOuter.right - rcOuter.left) - (rcInner.right - rcInner.left);
 		auto BorderHeight = (rcOuter.bottom - rcOuter.top) - (rcInner.bottom - rcInner.top);
 		MoveWindow(GetWindow(), rcOuter.left, rcOuter.top, CreationWidth + BorderWidth, CreationHeight + BorderHeight, FALSE);
+		ShowWindow(GetWindow(), SW_SHOW);
 	}
 
 	void* Window::GetFBPtr()
