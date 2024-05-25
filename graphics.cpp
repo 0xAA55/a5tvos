@@ -210,7 +210,7 @@ namespace TVOS
 		BackBufferMode(true),
 		BackBuffer(std::make_shared<ImageBlock>(width, height))
 	{
-		memcpy(&BackBuffer->Pixels[0], FBPtr, Stride * Height);
+		if (FBPtr) memcpy(&BackBuffer->Pixels[0], FBPtr, Stride * Height);
 	}
 
 	std::string Graphics::ReadSimpleFile(const std::string& f)
