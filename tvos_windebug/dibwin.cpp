@@ -128,13 +128,18 @@ namespace DIBWin
 			this));
 		CreationWidth = Width;
 		CreationHeight = Height;
-		Ptr_hDC = std::make_shared<HDCInternal>(CreateDIBSection(
+		auto BMIF = CreateBMIF(Width, Height);
+		Ptr_hDC = std::make_shared<HDCInternal>(CreateCompatibleDC(NULL));
+		auto hBmp = CreateDIBSection(
 			NULL,
-			reinterpret_cast<BITMAPINFO*>(&CreateBMIF(Width, Height)),
+			reinterpret_cast<BITMAPINFO*>(&BMIF),
 			DIB_RGB_COLORS,
 			&FBPtr,
 			NULL,
-			0));
+			0);
+		if (!hBmp) throw std::runtime_error("`CreateDIBSection()` failed.");
+		DeleteObject(SelectObject(GetDC(), hBmp));
+		DeleteObject(hBmp);
 
 		RECT rcOuter, rcInner;
 		GetWindowRect(GetWindow(), &rcOuter);
