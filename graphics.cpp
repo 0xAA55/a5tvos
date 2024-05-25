@@ -465,7 +465,7 @@ namespace TVOS
 
 	void Graphics::DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy, int ops)
 	{
-		if (ops == 0) DrawImage(ib, x, y, w, h, srcx, srcy); return;
+		if (ops == 0) { DrawImage(ib, x, y, w, h, srcx, srcy); return; }
 
 		if (Verbose)
 		{
