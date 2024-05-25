@@ -1,4 +1,5 @@
 tvos
+tools
 *.o
 *.a
 tvos_windebug/.vs
