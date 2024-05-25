@@ -590,7 +590,7 @@ namespace TVOS
 		{
 			if (Verbose)
 			{
-				std::cout << "[INFO] Creating glyph cache U+" << std::hex << Glyph << std::dec << ".\n";
+				std::cout << "[INFO] Creating glyph cache U+" << std::hex << GlyphUnicode << std::dec << ".\n";
 			}
 
 			// 生成字体
