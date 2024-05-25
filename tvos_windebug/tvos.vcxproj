@@ -192,6 +192,7 @@
     <ClInclude Include="..\graphics.hpp" />
     <ClInclude Include="..\utf.hpp" />
     <ClInclude Include="dibwin.hpp" />
+    <ClInclude Include="tvos.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

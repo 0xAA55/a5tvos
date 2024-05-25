@@ -1,60 +1,16 @@
 ﻿
-#include <graphics.hpp>
-#include "dibwin.hpp"
-
 #include <iostream>
 
+#include "tvos.hpp"
+
 using namespace TVOS;
-using namespace DIBWin;
-
-class MyTestApp :
-	public Window,
-	public Graphics
-{
-public:
-	MyTestApp();
-	MyTestApp(bool Verbose);
-	MyTestApp(int Width, int Height);
-	MyTestApp(int Width, int Height, bool Verbose);
-
-	void RefreshFB();
-};
 
 int main()
 {
 	auto FB = MyTestApp(true);
 	
-	// FB.FillRectXor(200, 200, 800 - 200, 480 - 200);
 	FB.DrawText(200, 200, "啊!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ", false, 0);
 
 	FB.RefreshFB();
 	FB.MainLoop();
-}
-
-MyTestApp::MyTestApp() :
-	MyTestApp(800, 480, Verbose)
-{
-}
-
-MyTestApp::MyTestApp(bool Verbose) :
-	MyTestApp(800, 480, Verbose)
-{
-}
-
-MyTestApp::MyTestApp(int Width, int Height) :
-	Window(Width, Height, "TVOS"),
-	Graphics(nullptr, Width, Height, Verbose)
-{
-}
-
-MyTestApp::MyTestApp(int Width, int Height, bool Verbose) :
-	Window(Width, Height, "TVOS"),
-	Graphics(nullptr, Width, Height, Verbose)
-{
-}
-
-void MyTestApp::RefreshFB()
-{
-	memcpy(GetFBPtr(), &BackBuffer->Pixels[0], BackBuffer->GetStride() * BackBuffer->h);
-	Window::RefreshFB();
 }
