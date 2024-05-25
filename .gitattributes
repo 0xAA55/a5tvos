@@ -1,0 +1,2 @@
+tools.z01 filter=lfs diff=lfs merge=lfs -text
+tools.zip filter=lfs diff=lfs merge=lfs -text
