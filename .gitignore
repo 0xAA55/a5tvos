@@ -1,3 +1,5 @@
 tvos
 *.o
 *.a
+tvos_windebug/.vs
+tvos_windebug/out
