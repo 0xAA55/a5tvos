@@ -595,7 +595,10 @@ namespace TVOS
 			}
 			else
 			{
-				if (Transparent) DrawImageAnd(GlyphImage, x, y);
+				if (Transparent)
+				{
+					DrawImageAnd(GlyphImage, x, y);
+				}
 				if (GlyphColor != 0)
 				{
 					ImageBlock NewGlyphImage = GlyphImage;
