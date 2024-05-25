@@ -299,7 +299,7 @@ namespace TVOS
 		if (BackBufferMode)
 		{
 			auto* Buffer = BackBuffer.get();
-			memcpy(&Buffer->Pixels[BBWritePosY * Buffer->w + BBWritePosX], pixels, size_t(Count) * 4);
+			memcpy(&Buffer->Pixels[size_t(BBWritePosY) * Buffer->w + BBWritePosX], pixels, size_t(Count) * 4);
 		}
 		else
 		{
