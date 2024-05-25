@@ -54,6 +54,6 @@ namespace DIBWin
 		virtual int MainLoop();
 
 	public:
-		static size_t OnWndProc(Window* window, void *hWNd, uint32_t Msg, size_t WParam, size_t LParam);
+		static size_t OnWndProc(Window* window, void *hWnd, uint32_t Msg, size_t WParam, size_t LParam);
 	};
 }
