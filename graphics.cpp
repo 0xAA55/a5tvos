@@ -643,7 +643,7 @@ namespace TVOS
 	{
 		if (Verbose)
 		{
-			std::cout << "[INFO] Drawing a glyph U+" << std::hex << GlyphUnicode << std::dec << " at x=" << x << ", y=" << y << " with `Transparent=" << (Transparent ? "true" : "false") << "`.\n";
+			std::cout << "[INFO] Drawing a glyph U+" << std::hex << GlyphUnicode << std::dec << " at x=" << x << ", y=" << y << " with `XOR` opcode.\n";
 		}
 		ImageBlock GlyphImage = GetGlyph(GlyphUnicode);
 		GlyphImage.InvertPixelColors();
