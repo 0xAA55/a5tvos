@@ -654,7 +654,7 @@ namespace TVOS
 			int w, h;
 			GetGlyphMetrics(ch, w, h);
 			DrawGlyph(x, y, ch, Transparent, GlyphColor);
-			x += w * 2;
+			x += w;
 		}
 	}
 }
