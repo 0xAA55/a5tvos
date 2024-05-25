@@ -9,7 +9,7 @@ int main()
 {
 	auto FB = MyTestApp(true);
 	
-	FB.DrawText(200, 200, "啊!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ", false, 0);
+	FB.DrawText(200, 200, "啊!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ", true, 0xFFFF0000);
 
 	FB.RefreshFB();
 	FB.MainLoop();
