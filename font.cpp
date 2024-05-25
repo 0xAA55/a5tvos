@@ -51,8 +51,21 @@ namespace TVOS
 		return ret;
 	}
 
+	static std::unordered_map<uint32_t, int> MakeCharToGlyphWidth()
+	{
+		std::unordered_map<uint32_t, int> ret;
+
+		for (size_t i = 0; i < NumGlyphs; i++)
+		{
+			ret[AllGlyphsSet[i]] = GlyphWidthMap[i];
+		}
+
+		return ret;
+	}
+
 	static auto CharToGlyphMap = MakeCharToGlyphMap();
 	static auto GlyphXPos = MakeCharToGlyphXPos();
+	static auto GlyphWidth = MakeCharToGlyphWidth();
 
 	static int GetGlyphPixel(int x, int y)
 	{
@@ -73,7 +86,7 @@ namespace TVOS
 			return false;
 		}
 		auto GlyphIndex = CharToGlyphMap.at(Unicode);
-		Width = GlyphWidthMap[GlyphIndex];
+		Width = GlyphWidth.at(Unicode);
 		Height = 22;
 		return true;
 	}
@@ -92,7 +105,7 @@ namespace TVOS
 		auto X = GlyphXPos.at(Unicode);
 		ImgOut = ImageBlock();
 		ImgOut.h = 22;
-		ImgOut.w = GlyphWidthMap[GlyphIndex];
+		ImgOut.w = GlyphWidth.at(Unicode);
 		ImgOut.Pixels.resize(size_t(ImgOut.w) * ImgOut.h);
 		for(int iy = 0 ; iy < ImgOut.h; iy ++)
 		{
