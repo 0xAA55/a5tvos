@@ -31,7 +31,7 @@ namespace TVOS
 
 		for(size_t i = 0; i < NumGlyphs; i++)
 		{
-			ret[AllGlyphsSet[i]] = i;
+			ret[AllGlyphsSet[i]] = int(i);
 		}
 
 		return ret;
