@@ -469,7 +469,7 @@ namespace TVOS
 
 		if (Verbose)
 		{
-			std::cout << "[INFO] Drawing image " << std::hex << size_t(&ib) << std::dec << " at x=" << x << ", y=" << y << ", w=" << w << ", h=" << h << ", srcx=" << srcx << ", srcy=" << srcy << ", ops=" << ops << ".\n";
+			std::cout << "[INFO] Drawing image 0x" << std::hex << size_t(&ib) << std::dec << " at x=" << x << ", y=" << y << ", w=" << w << ", h=" << h << ", srcx=" << srcx << ", srcy=" << srcy << ", ops=" << ops << ".\n";
 		}
 
 		auto ImageSrc = ReadPixels(x, y, w, h);
@@ -499,7 +499,7 @@ namespace TVOS
 	{
 		if (Verbose)
 		{
-			std::cout << "[INFO] Drawing image " << std::hex << size_t(&ib) << std::dec << " at x=" << x << ", y=" << y << ", w=" << w << ", h=" << h << ", srcx=" << srcx << ", srcy=" << srcy << ".\n";
+			std::cout << "[INFO] Drawing image 0x" << std::hex << size_t(&ib) << std::dec << " at x=" << x << ", y=" << y << ", w=" << w << ", h=" << h << ", srcx=" << srcx << ", srcy=" << srcy << ".\n";
 		}
 
 		if (x < 0)
