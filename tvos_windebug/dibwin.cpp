@@ -156,7 +156,17 @@ namespace DIBWin
 		ReleaseDC(GetWindow(), hWndDC);
 	}
 
-	int Window::MainLoopForAllWindows()
+	void Window::ProcessMessage()
+	{
+		MSG msg;
+		if (GetMessageA(&msg, GetWindow(), 0, 0))
+		{
+			TranslateMessage(&msg);
+			DispatchMessageA(&msg);
+		}
+	}
+
+	int Window::MainLoop()
 	{
 		while (!WindowIsDestroyed)
 		{

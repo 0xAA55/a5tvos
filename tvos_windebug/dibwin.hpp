@@ -51,7 +51,7 @@ namespace DIBWin
 		void RefreshFB();
 
 		virtual void ProcessMessage();
-		virtual int MainLoopForAllWindows();
+		virtual int MainLoop();
 
 	public:
 		static size_t OnWndProc(Window& window, uint32_t Msg, size_t WParam, size_t LParam);
