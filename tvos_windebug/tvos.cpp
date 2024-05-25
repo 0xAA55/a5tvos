@@ -13,6 +13,7 @@ class MyTestApp :
 {
 public:
 	MyTestApp();
+	MyTestApp(bool Verbose);
 	MyTestApp(int Width, int Height);
 	MyTestApp(int Width, int Height, bool Verbose);
 
@@ -21,7 +22,7 @@ public:
 
 int main()
 {
-	auto FB = MyTestApp();
+	auto FB = MyTestApp(true);
 	
 	FB.FillRectXor(200, 200, 800 - 200, 480 - 200);
 	FB.DrawText(200, 200, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ", false, 0);
@@ -31,7 +32,12 @@ int main()
 }
 
 MyTestApp::MyTestApp() :
-	MyTestApp(800, 480)
+	MyTestApp(800, 480, Verbose)
+{
+}
+
+MyTestApp::MyTestApp(bool Verbose) :
+	MyTestApp(800, 480, Verbose)
 {
 }
 
