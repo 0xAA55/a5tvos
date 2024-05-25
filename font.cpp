@@ -69,10 +69,11 @@ namespace TVOS
 
 	static int GetGlyphPixel(int x, int y)
 	{
-		int b = x % 32;
-		int i = x / 32;
+		auto BytePtr = reinterpret_cast<const uint8_t*>(GlyphBinaryCode);
+		int b = 7 - x % 8;
+		int i = x / 8;
 		int bit = 1 << b;
-		return (GlyphBinaryCode[y * BinaryCodeStride / 4 + i] & bit) ? 1 : 0;
+		return (BytePtr[y * BinaryCodeStride + i] & bit) ? 1 : 0;
 	}
 
 	bool GetGlyphSize(uint32_t Unicode, int& Width, int& Height, bool Verbose)
