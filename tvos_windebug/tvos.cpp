@@ -24,8 +24,8 @@ int main()
 {
 	auto FB = MyTestApp(true);
 	
-	FB.FillRectXor(200, 200, 800 - 200, 480 - 200);
-	FB.DrawText(200, 200, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ", false, 0);
+	// FB.FillRectXor(200, 200, 800 - 200, 480 - 200);
+	FB.DrawText(200, 200, "啊!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ", false, 0);
 
 	FB.RefreshFB();
 	FB.MainLoop();
