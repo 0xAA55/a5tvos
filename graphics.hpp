@@ -45,6 +45,10 @@ namespace TVOS
 		Graphics(bool Verbose);
 		Graphics(int width, int height);
 		Graphics(int width, int height, bool Verbose);
+		Graphics(void* FBPtr);
+		Graphics(void* FBPtr, bool Verbose);
+		Graphics(void* FBPtr, int width, int height);
+		Graphics(void* FBPtr, int width, int height, bool Verbose);
 
 	protected:
 		bool PreFitXYRB(int& x, int& y, int& r, int& b) const;

@@ -188,6 +188,31 @@ namespace TVOS
 	{
 	}
 
+	Graphics::Graphics(void* FBPtr) :
+		Graphics(FBPtr, 800, 480, Verbose)
+	{
+	}
+
+	Graphics::Graphics(void* FBPtr, bool Verbose) :
+		Graphics(FBPtr, 800, 480, Verbose)
+	{
+	}
+
+	Graphics::Graphics(void* FBPtr, int width, int height) :
+		Graphics(FBPtr, width, height, Verbose)
+	{
+	}
+
+	Graphics::Graphics(void* FBPtr, int width, int height, bool Verbose) :
+		Width(width),
+		Height(height),
+		Stride(width * 4),
+		BackBufferMode(true),
+		BackBuffer(std::make_shared<ImageBlock>(width, height))
+	{
+		memcpy(&BackBuffer->Pixels[0], FBPtr, Stride * Height);
+	}
+
 	std::string Graphics::ReadSimpleFile(const std::string& f)
 	{
 		if (Verbose)
