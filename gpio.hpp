@@ -25,7 +25,7 @@ protected:
 	void SetMode(int Port, uint32_t Mode);
 };
 
-const GPIO_PeriphType* GPIO_Periph = reinterpret_cast<GPIO_PeriphType*>(0x01C20800);
+GPIO_PeriphType * const GPIO_Periph = reinterpret_cast<GPIO_PeriphType * const>(0x01C20800);
 
 enum GPIO_GroupEnumType
 {
