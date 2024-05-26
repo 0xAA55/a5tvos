@@ -30,6 +30,12 @@
     <ClCompile Include="..\font.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\gui.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gpio.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dibwin.hpp">
@@ -45,6 +51,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="tvos.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gui.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\gpio.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

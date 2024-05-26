@@ -182,14 +182,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\font.cpp" />
+    <ClCompile Include="..\gpio.cpp" />
     <ClCompile Include="..\graphics.cpp" />
+    <ClCompile Include="..\gui.cpp" />
     <ClCompile Include="..\utf.cpp" />
     <ClCompile Include="dibwin.cpp" />
     <ClCompile Include="tvos.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\font.hpp" />
+    <ClInclude Include="..\gpio.hpp" />
     <ClInclude Include="..\graphics.hpp" />
+    <ClInclude Include="..\gui.hpp" />
     <ClInclude Include="..\utf.hpp" />
     <ClInclude Include="dibwin.hpp" />
     <ClInclude Include="tvos.hpp" />
