@@ -5,10 +5,10 @@ bool GPIO_PeriphType::ReadBit(int Port) const
 	return (DATA & (1 << Port)) ? true : false;
 }
 
-void GPIO_PeriphType::WriteBit(int Port)
+void GPIO_PeriphType::WriteBit(int Port, bool Value)
 {
 	uint32_t Bit = 1 << Port;
-	DATA = (DATA & (~Bit)) | Bit;
+	DATA = (DATA & (~Bit)) | (Value ? Bit: 0);
 }
 
 void GPIO_PeriphType::SetModeIn(int Port)

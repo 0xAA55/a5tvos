@@ -15,7 +15,7 @@ struct GPIO_PeriphType
 	volatile uint32_t PUL1;
 
 	bool ReadBit(int Port) const;
-	void WriteBit(int Port);
+	void WriteBit(int Port, bool Value);
 
 	void SetModeIn(int Port);
 	void SetModeOut(int Port);
