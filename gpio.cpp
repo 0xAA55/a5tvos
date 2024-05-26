@@ -2,7 +2,7 @@
 
 bool GPIO_PeriphType::ReadBit(int Port) const
 {
-	return DATA & (1 << Port);
+	return (DATA & (1 << Port)) ? true : false;
 }
 
 void GPIO_PeriphType::WriteBit(int Port)
