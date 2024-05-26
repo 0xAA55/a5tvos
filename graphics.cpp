@@ -633,7 +633,7 @@ namespace TVOS
 			{
 				ImageBlock NewGlyphImage = GlyphImage;
 				NewGlyphImage.InvertPixelColors();
-				NewGlyphImage.ReplacePixelColors(0xFFFFFFFF, GlyphColor);
+				if (GlyphColor != 0xFFFFFFFF) NewGlyphImage.ReplacePixelColors(0xFFFFFFFF, GlyphColor);
 				DrawImageOr(NewGlyphImage, x, y);
 			}
 		}
