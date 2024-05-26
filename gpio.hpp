@@ -36,3 +36,17 @@ enum GPIO_GroupEnumType
 	GPIO_E = 0,
 	GPIO_F = 0,
 };
+
+void WriteGPIOA(int Port, bool Value);
+void WriteGPIOB(int Port, bool Value);
+void WriteGPIOC(int Port, bool Value);
+void WriteGPIOD(int Port, bool Value);
+void WriteGPIOE(int Port, bool Value);
+void WriteGPIOF(int Port, bool Value);
+
+bool ReadGPIOA(int Port);
+bool ReadGPIOB(int Port);
+bool ReadGPIOC(int Port);
+bool ReadGPIOD(int Port);
+bool ReadGPIOE(int Port);
+bool ReadGPIOF(int Port);
