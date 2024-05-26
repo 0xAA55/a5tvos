@@ -20,6 +20,9 @@ struct GPIO_PeriphType
 	void SetModeIn(int Port);
 	void SetModeOut(int Port);
 	void SetModeDisabled(int Port);
+
+protected:
+	void SetMode(int Port, uint32_t Mode);
 };
 
 const GPIO_PeriphType* GPIO_Periph = reinterpret_cast<GPIO_PeriphType*>(0x01C20800);
