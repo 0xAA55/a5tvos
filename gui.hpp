@@ -20,30 +20,11 @@ namespace TVOS
 		RightBottom = 10,
 	};
 
-	bool IsLeft(Alignment alignment)
-	{
-		return int(alignment) & (int(Alignment::LeftTop) | int(Alignment::LeftCenter) | int(Alignment::LeftBottom)) ? true : false;
-	}
-
-	bool IsTop(Alignment alignment)
-	{
-		return int(alignment) & (int(Alignment::LeftTop) | int(Alignment::CenterTop) | int(Alignment::RightTop)) ? true : false;
-	}
-
-	bool IsRight(Alignment alignment)
-	{
-		return int(alignment) & (int(Alignment::RightTop) | int(Alignment::RightCenter) | int(Alignment::RightBottom)) ? true : false;
-	}
-
-	bool IsBottom(Alignment alignment)
-	{
-		return int(alignment) & (int(Alignment::LeftBottom) | int(Alignment::CenterBottom) | int(Alignment::RightBottom)) ? true : false;
-	}
-
-	bool IsCenter(Alignment alignment)
-	{
-		return int(alignment) & (int(Alignment::LeftCenter) | int(Alignment::CenterCenter) | int(Alignment::RightCenter)) ? true : false;
-	}
+	bool IsLeft(Alignment alignment);
+	bool IsTop(Alignment alignment);
+	bool IsRight(Alignment alignment);
+	bool IsBottom(Alignment alignment);
+	bool IsCenter(Alignment alignment);
 
 	class UIElementBase
 	{
