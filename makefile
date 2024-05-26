@@ -15,6 +15,8 @@ OBJS+=main.o
 OBJS+=graphics.o
 OBJS+=font.o
 OBJS+=utf.o
+OBJS+=gui.o
+OBJS+=gpio.o
 
 all: tvos
 
