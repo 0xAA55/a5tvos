@@ -1,6 +1,7 @@
 #pragma once
 
 #include <graphics.hpp>
+#include <gui.hpp>
 #include "dibwin.hpp"
 
 class MyTestApp :
