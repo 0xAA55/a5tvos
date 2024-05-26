@@ -16,6 +16,10 @@ struct GPIO_PeriphType
 
 	bool ReadBit(int Port) const;
 	void WriteBit(int Port);
+
+	void SetModeIn(int Port);
+	void SetModeOut(int Port);
+	void SetModeDisabled(int Port);
 };
 
 const GPIO_PeriphType* GPIO_Periph = reinterpret_cast<GPIO_PeriphType*>(0x01C20800);
