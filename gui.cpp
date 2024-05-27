@@ -86,15 +86,21 @@ namespace TVOS
 			elem.second->ArrangedContainerWidth = WidthLimit - cx;
 			elem.second->ArrangeSubElements(elem.second->ArrangedContainerWidth, HeightLimit, w, h);
 
-			if (elem.second->ExpandToParent)
+			if (elem.second->ExpandToParentX)
 			{
 				elem.second->ArrangedWidth = elem.second->ArrangedContainerWidth;
+			}
+			else
+			{
+				elem.second->ArrangedWidth = w;
+			}
+			if (elem.second->ExpandToParentY)
+			{
 				elem.second->ArrangedHeight = HeightLimit;
 				elem.second->ArrangedContainerHeight = HeightLimit;
 			}
 			else
 			{
-				elem.second->ArrangedWidth = w;
 				elem.second->ArrangedHeight = h;
 			}
 
@@ -149,7 +155,7 @@ namespace TVOS
 			}
 			for (auto& elem : Row)
 			{
-				if (!elem->ExpandToParent)
+				if (!elem->ExpandToParentY)
 				{
 					elem->ArrangedContainerHeight = RowHeight;
 				}
@@ -166,6 +172,14 @@ namespace TVOS
 			cy += RowHeight;
 		}
 		TotalHeight = cy;
+		if (ExpandToParentX)
+		{
+			if (ActualWidth < WidthLimit) ActualWidth = WidthLimit;
+		}
+		if (ExpandToParentY)
+		{
+			if (TotalHeight < HeightLimit) TotalHeight = HeightLimit;
+		}
 	}
 
 	void UIElementBase::ArrangeSubElementsAbsPos(int x, int y)
@@ -207,19 +221,36 @@ namespace TVOS
 		int cw, ch;
 		ArrangeSubElements(w, h, cw, ch);
 		ArrangeSubElementsAbsPos(x, y);
+
+		ArrangedRelX = 0;
+		ArrangedRelY = 0;
+		ArrangedContainerWidth = w;
+		ArrangedContainerHeight = h;
+		ArrangedAbsX = x;
+		ArrangedAbsY = y;
+		if (ExpandToParentX)
+			ArrangedWidth = w;
+		else
+			ArrangedWidth = cw;
+		if (ExpandToParentY)
+			ArrangedHeight = h;
+		else
+			ArrangedHeight = ch;
 	}
 
 	void UIElementBase::Render(int x, int y, int w, int h)
 	{
-		int ActualWidth, TotalHeight;
 		ArrangeElements(x, y, w, h);
+
+		int ArrangedAbsR = ArrangedAbsX + ArrangedWidth - 1;
+		int ArrangedAbsB = ArrangedAbsY + ArrangedHeight - 1;
 
 		if (!Transparent)
 		{
 			int FillX = ArrangedAbsX + XMargin + XBorder + 1;
 			int FillY = ArrangedAbsY + YMargin + YBorder + 1;
-			int FillR = ArrangedAbsX + ArrangedWidth - 1 - XMargin - XBorder - 1;
-			int FillB = ArrangedAbsY + ArrangedHeight - 1 - YMargin - YBorder - 1;
+			int FillR = ArrangedAbsR - XMargin - XBorder - 1;
+			int FillB = ArrangedAbsB - YMargin - YBorder - 1;
 			int FillW = FillR + 1 - FillX;
 			int FillH = FillB + 1 - FillY;
 			if (FillW > 0 && FillH > 0)
@@ -231,17 +262,17 @@ namespace TVOS
 		if (XBorder > 0 || YBorder > 0)
 		{
 			int BorderLX = ArrangedAbsX + XMargin;
-			int BorderLY = ArrangedAbsY + YMargin + YBorder;
-			int BorderLR = BorderLX + XBorder;
-			int BorderLB = ArrangedAbsY + ArrangedHeight - 1 - YMargin - YBorder;
-			int BorderRX = ArrangedAbsX + ArrangedWidth - 1 - XMargin - XBorder;
+			int BorderLY = ArrangedAbsY + YMargin + YBorder - 1;
+			int BorderLR = BorderLX + XBorder - 1;
+			int BorderLB = ArrangedAbsB - YMargin - YBorder + 1;
+			int BorderRX = ArrangedAbsR - XMargin - XBorder + 1;
 			int BorderRY = BorderLY;
-			int BorderRR = ArrangedAbsX + ArrangedWidth - 1 - XMargin;
+			int BorderRR = ArrangedAbsR - XMargin;
 			int BorderRB = BorderLB;
-			int BorderLW = BorderLR + 1 - BorderLX;
-			int BorderLH = BorderLB + 1 - BorderLY;
-			int BorderRW = BorderRR + 1 - BorderRX;
-			int BorderRH = BorderRB + 1 - BorderRY;
+			int BorderLW = BorderLR - BorderLX + 1;
+			int BorderLH = BorderLB - BorderLY + 1;
+			int BorderRW = BorderRR - BorderRX + 1;
+			int BorderRH = BorderRB - BorderRY + 1;
 			if (XBorder > 0)
 			{
 				if (BorderLW > 0 && BorderLH > 0)
@@ -253,23 +284,27 @@ namespace TVOS
 					FB.FillRect(BorderRX, BorderRY, BorderRR, BorderRB, BorderColor);
 				}
 			}
-			BorderLY -= YBorder;
-			BorderLB += YBorder;
-			BorderRY -= YBorder;
-			BorderRB += YBorder;
-			BorderLW = BorderLR + 1 - BorderLX;
-			BorderLH = BorderLB + 1 - BorderLY;
-			BorderRW = BorderRR + 1 - BorderRX;
-			BorderRH = BorderRB + 1 - BorderRY;
+			int BorderTX = BorderLX;
+			int BorderTY = BorderLY - YBorder;
+			int BorderTR = BorderRR;
+			int BorderTB = BorderLY - 1;
+			int BorderBX = BorderLX;
+			int BorderBY = BorderLB + 1;
+			int BorderBR = BorderRR;
+			int BorderBB = BorderRB + YBorder;
+			int BorderTW = BorderTR - BorderTX + 1;
+			int BorderTH = BorderTB - BorderTY + 1;
+			int BorderBW = BorderBR - BorderBX + 1;
+			int BorderBH = BorderBB - BorderBY + 1;
 			if (YBorder > 0)
 			{
-				if (BorderLW > 0 && BorderLH > 0)
+				if (BorderTW > 0 && BorderTH > 0)
 				{
-					FB.FillRect(BorderLX, BorderLY, BorderLR, BorderLB, BorderColor);
+					FB.FillRect(BorderTX, BorderTY, BorderTR, BorderTB, BorderColor);
 				}
-				if (BorderRW > 0 && BorderRH > 0)
+				if (BorderBW > 0 && BorderBH > 0)
 				{
-					FB.FillRect(BorderRX, BorderRY, BorderRR, BorderRB, BorderColor);
+					FB.FillRect(BorderBX, BorderBY, BorderBR, BorderBB, BorderColor);
 				}
 			}
 		}
