@@ -87,6 +87,12 @@ namespace TVOS
 
 		UIElementBase& InsertElement(std::shared_ptr<UIElementBase> Element);
 		bool RemoveElement(const std::string& Name);
+		void ClearElements();
+
+		decltype(SubElements.cbegin()) cbegin() const;
+		decltype(SubElements.cend()) cend() const;
+		decltype(SubElements.begin()) begin();
+		decltype(SubElements.end()) end();
 	};
 
 	class UIElementLabel : public UIElementBase

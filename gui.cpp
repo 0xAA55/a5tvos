@@ -381,6 +381,32 @@ namespace TVOS
 		return false;
 	}
 
+	void UIElementBase::ClearElements()
+	{
+		SubElementsMap.clear();
+		SubElements.clear();
+	}
+
+	decltype(UIElementBase::SubElements.cbegin()) UIElementBase::cbegin() const
+	{
+		return SubElements.cbegin();
+	}
+
+	decltype(UIElementBase::SubElements.cend()) UIElementBase::cend() const
+	{
+		return SubElements.cend();
+	}
+
+	decltype(UIElementBase::SubElements.begin()) UIElementBase::begin()
+	{
+		return SubElements.begin();
+	}
+
+	decltype(UIElementBase::SubElements.end()) UIElementBase::end()
+	{
+		return SubElements.end();
+	}
+
 	UIElementLabel::UIElementLabel(Graphics& FB, const std::string& Name) :
 		UIElementBase(FB, Name)
 	{
