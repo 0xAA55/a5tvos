@@ -470,6 +470,33 @@ namespace TVOS
 		DrawImage(ImageSrc, x, y);
 	}
 
+	void Graphics::FillRectXor(int x, int y, int r, int b, uint32_t color)
+	{
+		if (!PreFitXYRB(x, y, r, b)) return;
+
+		auto ImageSrc = ReadPixelsRect(x, y, r, b);
+		for (auto& Pix : ImageSrc.Pixels) { Pix ^= color; }
+		DrawImage(ImageSrc, x, y);
+	}
+
+	void Graphics::FillRectAnd(int x, int y, int r, int b, uint32_t color)
+	{
+		if (!PreFitXYRB(x, y, r, b)) return;
+
+		auto ImageSrc = ReadPixelsRect(x, y, r, b);
+		for (auto& Pix : ImageSrc.Pixels) { Pix &= color; }
+		DrawImage(ImageSrc, x, y);
+	}
+
+	void Graphics::FillRectOr(int x, int y, int r, int b, uint32_t color)
+	{
+		if (!PreFitXYRB(x, y, r, b)) return;
+
+		auto ImageSrc = ReadPixelsRect(x, y, r, b);
+		for (auto& Pix : ImageSrc.Pixels) { Pix |= color; }
+		DrawImage(ImageSrc, x, y);
+	}
+
 	void Graphics::DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy, int ops)
 	{
 		if (ops == 0) { DrawImage(ib, x, y, w, h, srcx, srcy); return; }

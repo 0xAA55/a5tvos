@@ -107,6 +107,9 @@ namespace TVOS
 		void FillRect(int x, int y, int r, int b, uint32_t color);
 		void FillRect(int x, int y, int r, int b, int cr, int cg, int cb);
 		void FillRectXor(int x, int y, int r, int b);
+		void FillRectXor(int x, int y, int r, int b, uint32_t color);
+		void FillRectAnd(int x, int y, int r, int b, uint32_t color);
+		void FillRectOr(int x, int y, int r, int b, uint32_t color);
 
 		void DrawImage(const ImageBlock& ib, int x, int y, int w, int h, int srcx, int srcy);
 		void DrawImage(const ImageBlock& ib, int x, int y);
