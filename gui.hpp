@@ -40,6 +40,8 @@ namespace TVOS
 		int ArrangedRelY = 0;
 		int ArrangedWidth = 0;
 		int ArrangedHeight = 0;
+		int ArrangedContainerWidth = 0;
+		int ArrangedContainerHeight = 0;
 		int ArrangedAbsX = 0;
 		int ArrangedAbsY = 0;
 

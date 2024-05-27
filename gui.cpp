@@ -83,7 +83,20 @@ namespace TVOS
 
 			// 取得子控件的宽度和高度
 			int w, h;
-			elem.second->ArrangeElements(WidthLimit - cx, HeightLimit, w, h);
+			elem.second->ArrangedContainerWidth = WidthLimit - cx;
+			elem.second->ArrangeSubElements(elem.second->ArrangedContainerWidth, HeightLimit, w, h);
+
+			if (elem.second->ExpandToParent)
+			{
+				elem.second->ArrangedWidth = elem.second->ArrangedContainerWidth;
+				elem.second->ArrangedHeight = HeightLimit;
+				elem.second->ArrangedContainerHeight = HeightLimit;
+			}
+			else
+			{
+				elem.second->ArrangedWidth = w;
+				elem.second->ArrangedHeight = h;
+			}
 
 			// 超出横向限制，换行
 			if (cx + w >= WidthLimit)
@@ -100,15 +113,11 @@ namespace TVOS
 					RowsOfElements.back().push_back(elem.second);
 				}
 				elem.second->ArrangedRelX = cx;
-				elem.second->ArrangedWidth = w;
-				elem.second->ArrangedHeight = h;
 			}
 			else
 			{ // 没有超出横向限制，继续向右排布
 				CurRow.push_back(elem.second);
 				elem.second->ArrangedRelX = cx;
-				elem.second->ArrangedWidth = w;
-				elem.second->ArrangedHeight = h;
 				cx += w;
 			}
 		}
@@ -138,6 +147,13 @@ namespace TVOS
 				// 统计当前行宽
 				RowWidth += elem->ArrangedWidth;
 			}
+			for (auto& elem : Row)
+			{
+				if (!elem->ExpandToParent)
+				{
+					elem->ArrangedContainerHeight = RowHeight;
+				}
+			}
 			// 统计最大行宽
 			if (ActualWidth < RowWidth) ActualWidth = RowWidth;
 
@@ -163,8 +179,8 @@ namespace TVOS
 			{
 				int FillX = ArrangedAbsX + XMargin + XBorder + 1;
 				int FillY = ArrangedAbsY + YMargin + YBorder + 1;
-				int FillR = ArrangedAbsX + ArrangedWidth - 1 + XMargin + XBorder - 1;
-				int FillB = ArrangedAbsY + ArrangedHeight - 1 + YMargin + YBorder - 1;
+				int FillR = ArrangedAbsX + ArrangedWidth - 1 - XMargin - XBorder - 1;
+				int FillB = ArrangedAbsY + ArrangedHeight - 1 - YMargin - YBorder - 1;
 				int FillW = FillR + 1 - FillX;
 				int FillH = FillB + 1 - FillY;
 				if (FillW <= 0 || FillH <= 0) break;
@@ -178,8 +194,8 @@ namespace TVOS
 			{
 				int BorderX = ArrangedAbsX + XMargin;
 				int BorderY = ArrangedAbsY + YMargin;
-				int BorderR = ArrangedAbsX + XMargin;
-				int BorderB = ArrangedAbsY + YMargin;
+				int BorderR = ArrangedAbsX + ArrangedWidth - 1 - XMargin - 1;
+				int BorderB = ArrangedAbsY + ArrangedHeight - 1 - YMargin - 1;
 			}
 		} while (false);
 	}
