@@ -664,6 +664,38 @@ namespace TVOS
 		}
 	}
 
+	void Graphics::GetTextMetrics(const std::string& t, int xlimit, int& w, int& h) const
+	{
+		int x = 0;
+		int y = 0;
+		for (auto& ch : UTF::Utf8_to_Utf32(t))
+		{
+			int w_, h_;
+			int LineHeight = 0;
+			GetGlyphMetrics(ch, w_, h_);
+			if (LineHeight < h_) LineHeight = h_;
+			if (x + w_> xlimit)
+			{
+				if (x > w)
+				{
+					w = x;
+				}
+				else if (x == 0)
+				{
+					if (w < w_) w = w_;
+				}
+				x = 0;
+				y += LineHeight;
+			}
+			else
+			{
+				x += w;
+				if (y < LineHeight) y = LineHeight;
+			}
+		}
+		h = y;
+	}
+
 	const ImageBlock& Graphics::GetBackBuffer() const
 	{
 		return *BackBuffer;

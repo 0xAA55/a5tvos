@@ -122,6 +122,7 @@ namespace TVOS
 		void DrawText(int x, int y, const std::string& t, bool Transparent, uint32_t GlyphColor);
 		void DrawTextXor(int x, int y, const std::string& t);
 		void GetTextMetrics(const std::string& t, int& w, int& h) const;
+		void GetTextMetrics(const std::string& t, int xlimit, int& w, int& h) const;
 
 		const ImageBlock& GetBackBuffer() const;
 
