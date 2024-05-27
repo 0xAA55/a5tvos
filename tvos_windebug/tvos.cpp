@@ -35,11 +35,10 @@ int main()
 		Sub->XPadding = 2;
 		Sub->YPadding = 2;
 		Sub->BorderColor = 0xFFFFFFFF;
-		Sub->ExpandToParentX = true;
-		// Sub->LineBreak = true;
+		Sub->ExpandToParentX = false;
+		Sub->LineBreak = false;
 		Sub->Transparent = true;
 		Sub->SetCaption(Sub->GetName());
-
 	}
 
 	GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
