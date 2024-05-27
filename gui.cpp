@@ -1,4 +1,4 @@
-#include "gui.hpp"
+ï»¿#include "gui.hpp"
 
 
 namespace TVOS
@@ -66,7 +66,7 @@ namespace TVOS
 		using ElemRowType = std::vector<std::shared_ptr<UIElementBase>>;
 		std::vector<ElemRowType> RowsOfElements;
 
-		// ´æ´¢¸øÓè¿Ø¼şµÄ¿í¶È¿Õ¼ä
+		// å­˜å‚¨ç»™äºˆæ§ä»¶çš„å®½åº¦ç©ºé—´
 		int WidthSpace = WidthLimit;
 		int HeightSpace = HeightLimit;
 
@@ -75,27 +75,27 @@ namespace TVOS
 		HeightLimit -= GetFrameHeight() * 2;
 		if (HeightLimit < 0) HeightLimit = 0;
 
-		// ÏÈ°´ÕÕ¿í¶ÈÏŞÖÆ½«ËùÓĞµÄ×Ó¿Ø¼ş¹éÀàµ½¶ÔÓ¦µÄĞĞÀï
+		// å…ˆæŒ‰ç…§å®½åº¦é™åˆ¶å°†æ‰€æœ‰çš„å­æ§ä»¶å½’ç±»åˆ°å¯¹åº”çš„è¡Œé‡Œ
 		for (auto& elem : SubElements)
 		{
-			// µ±Ç°ĞĞ
+			// å½“å‰è¡Œ
 			auto& CurRow = RowsOfElements.back();
 
-			// È¡µÃ×Ó¿Ø¼şµÄ¿í¶ÈºÍ¸ß¶È
+			// å–å¾—å­æ§ä»¶çš„å®½åº¦å’Œé«˜åº¦
 			int w, h;
 			elem.second->ArrangeElements(WidthLimit - cx, HeightLimit, w, h);
 
-			// ³¬³öºáÏòÏŞÖÆ£¬»»ĞĞ
+			// è¶…å‡ºæ¨ªå‘é™åˆ¶ï¼Œæ¢è¡Œ
 			if (cx + w >= WidthLimit)
 			{
 				cx = 0;
 				if (CurRow.size() == 0)
-				{ // Èç¹ûµ±Ç°ĞĞÃ»ÓĞÈÎºÎ¿Ø¼ş¾ÍÒª»»ĞĞ£¬ÔòÇ¿ĞĞ²åÈë¿Ø¼ş¡£
+				{ // å¦‚æœå½“å‰è¡Œæ²¡æœ‰ä»»ä½•æ§ä»¶å°±è¦æ¢è¡Œï¼Œåˆ™å¼ºè¡Œæ’å…¥æ§ä»¶ã€‚
 					CurRow.push_back(elem.second);
 					RowsOfElements.push_back(ElemRowType());
 				}
 				else
-				{ // ·ñÔò»»ĞĞºó£¬²åÈë¿Ø¼şµ½ĞÂĞĞ
+				{ // å¦åˆ™æ¢è¡Œåï¼Œæ’å…¥æ§ä»¶åˆ°æ–°è¡Œ
 					RowsOfElements.push_back(ElemRowType());
 					RowsOfElements.back().push_back(elem.second);
 				}
@@ -104,7 +104,7 @@ namespace TVOS
 				elem.second->ArrangedHeight = h;
 			}
 			else
-			{ // Ã»ÓĞ³¬³öºáÏòÏŞÖÆ£¬¼ÌĞøÏòÓÒÅÅ²¼
+			{ // æ²¡æœ‰è¶…å‡ºæ¨ªå‘é™åˆ¶ï¼Œç»§ç»­å‘å³æ’å¸ƒ
 				CurRow.push_back(elem.second);
 				elem.second->ArrangedRelX = cx;
 				elem.second->ArrangedWidth = w;
@@ -113,35 +113,35 @@ namespace TVOS
 			}
 		}
 
-		// È¥³ıÄ©Î²µÄ¿ÕĞĞ
+		// å»é™¤æœ«å°¾çš„ç©ºè¡Œ
 		while (RowsOfElements.size())
 		{
 			if (RowsOfElements.back().size() == 0) RowsOfElements.pop_back();
 			else break;
 		}
 
-		// ¿ªÊ¼×İÏòÅÅ²¼¿Ø¼ş
+		// å¼€å§‹çºµå‘æ’å¸ƒæ§ä»¶
 		int cy = 0;
-		ActualWidth = 0; // Í³¼Æ¿í¶È
+		ActualWidth = 0; // ç»Ÿè®¡å®½åº¦
 		for (auto& Row : RowsOfElements)
 		{
 			int RowWidth = 0;
 			int RowHeight = 0;
 
-			// ÏÈÍ³¼ÆĞĞ¸ß£¬Ë³´øÍ³¼Æ×Ü¿í¶È
+			// å…ˆç»Ÿè®¡è¡Œé«˜ï¼Œé¡ºå¸¦ç»Ÿè®¡æ€»å®½åº¦
 			for (auto& elem : Row)
 			{
 				if (RowHeight < elem->ArrangedHeight)
 				{
 					RowHeight = elem->ArrangedHeight;
 				}
-				// Í³¼Æµ±Ç°ĞĞ¿í
+				// ç»Ÿè®¡å½“å‰è¡Œå®½
 				RowWidth += elem->ArrangedWidth;
 			}
-			// Í³¼Æ×î´óĞĞ¿í
+			// ç»Ÿè®¡æœ€å¤§è¡Œå®½
 			if (ActualWidth < RowWidth) ActualWidth = RowWidth;
 
-			// ÔÙÉèÖÃÕâĞĞÃ¿¸ö¿Ø¼şµÄÎ»ÖÃ
+			// å†è®¾ç½®è¿™è¡Œæ¯ä¸ªæ§ä»¶çš„ä½ç½®
 			for (auto& elem : Row)
 			{
 				elem->ArrangedRelY = cy;
@@ -176,7 +176,10 @@ namespace TVOS
 		{
 			if (XBorder)
 			{
-				// TODO
+				int BorderX = ArrangedAbsX + XMargin;
+				int BorderY = ArrangedAbsY + YMargin;
+				int BorderR = ArrangedAbsX + XMargin;
+				int BorderB = ArrangedAbsY + YMargin;
 			}
 		} while (false);
 	}
