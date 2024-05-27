@@ -31,7 +31,7 @@ namespace TVOS
 		w(width),
 		h(height)
 	{
-		Pixels.resize(w * h);
+		Pixels.resize(size_t(w) * h);
 	}
 
 	int ImageBlock::GetStride() const
