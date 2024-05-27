@@ -343,8 +343,8 @@ namespace TVOS
 			{
 				elem->Render(elem->ArrangedAbsX, elem->ArrangedAbsY, elem->ArrangedWidth, elem->ArrangedHeight);
 			}
-			// FB.DrawImageAnd(RectAreaImage, 0, 0);
-			// FB.DrawImageOr(ImageMask, 0, 0);
+			FB.DrawImageAnd(RectAreaImage, 0, 0);
+			FB.DrawImageOr(ImageMask, 0, 0);
 		}
 	}
 
@@ -383,11 +383,11 @@ namespace TVOS
 
 	void UIElementLabel::ArrangeSubElements(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
 	{
-		int w_, h_;
-		FB.GetTextMetrics(Caption, w_, h_);
+		int TextW = CaptionWidth + XPadding * 2;
+		int TextH = CaptionHeight + YPadding * 2;
 		UIElementBase::ArrangeSubElements(WidthLimit, HeightLimit, ActualWidth, TotalHeight);
-		if (ActualWidth < w_) ActualWidth = w_;
-		if (TotalHeight < h_) TotalHeight = h_;
+		if (ActualWidth < TextW) ActualWidth = TextW;
+		if (TotalHeight < TextH) TotalHeight = TextH;
 	}
 
 	void UIElementLabel::SetCaption(const std::string& Caption)
@@ -411,8 +411,7 @@ namespace TVOS
 	{
 		UIElementBase::Render(x, y, w, h);
 
-		int tw, th;
-		FB.GetTextMetrics(Caption, tw, th);
+		int tw = CaptionWidth, th = CaptionHeight;
 
 		int tx, ty;
 		if (IsLeft(alignment))
