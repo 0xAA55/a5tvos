@@ -155,7 +155,7 @@ namespace TVOS
 	void UIElementBase::Render(int x, int y, int w, int h)
 	{
 		int ActualWidth, TotalHeight;
-		ArrangeElements(w, h, ActualWidth, TotalHeight);
+		ArrangeSubElements(w, h, ActualWidth, TotalHeight);
 
 		do
 		{
