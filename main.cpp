@@ -43,7 +43,7 @@ int main(int argc, char** argv, char** envp)
 		Sub->XPadding = 2;
 		Sub->YPadding = 2;
 		Sub->BorderColor = 0xFFFFFFFF;
-		Sub->ExpandToParentX = false;
+		Sub->ExpandToParentX = true;
 		Sub->LineBreak = false;
 		Sub->Transparent = true;
 		Sub->SetCaption(Sub->GetName());
