@@ -18,12 +18,12 @@ public:
 };
 
 MyTestApp::MyTestApp() :
-	MyTestApp(800, 480, Verbose)
+	MyTestApp(480, 272, Verbose)
 {
 }
 
 MyTestApp::MyTestApp(bool Verbose) :
-	MyTestApp(800, 480, Verbose)
+	MyTestApp(480, 272, Verbose)
 {
 }
 
