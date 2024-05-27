@@ -672,14 +672,32 @@ namespace TVOS
 		{
 			int w_, h_;
 			int LineHeight = 0;
+			if (ch == '\t')
+			{
+				GetGlyphMetrics(' ', w_, h_);
+				int newx = (x / (w_ * 8) + 1) * (w_ * 8);
+				w_ = newx - x;
+			}
+			else if (ch == '\n')
+			{
+				GetGlyphMetrics(' ', w_, h_);
+				w_ = 0;
+				if (x > w) w = x;
+				x = 0;
+				y += h_;
+			}
+			else if (ch == '\r')
+			{
+				w_ = h_ = 0;
+			}
+			else
+			{
 			GetGlyphMetrics(ch, w_, h_);
+			}
 			if (LineHeight < h_) LineHeight = h_;
 			if (x + w_> xlimit)
 			{
-				if (x > w)
-				{
-					w = x;
-				}
+				if (x > w) w = x;
 				else if (x == 0)
 				{
 					if (w < w_) w = w_;
