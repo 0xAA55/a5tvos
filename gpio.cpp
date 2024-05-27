@@ -90,35 +90,35 @@ void WriteGPIOF(int Port, bool Value)
 bool ReadGPIOA(int Port)
 {
 	GPIO_Periph[GPIO_A].SetModeIn(Port);
-	GPIO_Periph[GPIO_A].ReadBit(Port);
+	return GPIO_Periph[GPIO_A].ReadBit(Port);
 }
 
 bool ReadGPIOB(int Port)
 {
 	GPIO_Periph[GPIO_B].SetModeIn(Port);
-	GPIO_Periph[GPIO_B].ReadBit(Port);
+	return GPIO_Periph[GPIO_B].ReadBit(Port);
 }
 
 bool ReadGPIOC(int Port)
 {
 	GPIO_Periph[GPIO_C].SetModeIn(Port);
-	GPIO_Periph[GPIO_C].ReadBit(Port);
+	return GPIO_Periph[GPIO_C].ReadBit(Port);
 }
 
 bool ReadGPIOD(int Port)
 {
 	GPIO_Periph[GPIO_D].SetModeIn(Port);
-	GPIO_Periph[GPIO_D].ReadBit(Port);
+	return GPIO_Periph[GPIO_D].ReadBit(Port);
 }
 
 bool ReadGPIOE(int Port)
 {
 	GPIO_Periph[GPIO_E].SetModeIn(Port);
-	GPIO_Periph[GPIO_E].ReadBit(Port);
+	return GPIO_Periph[GPIO_E].ReadBit(Port);
 }
 
 bool ReadGPIOF(int Port)
 {
 	GPIO_Periph[GPIO_F].SetModeIn(Port);
-	GPIO_Periph[GPIO_F].ReadBit(Port);
+	return GPIO_Periph[GPIO_F].ReadBit(Port);
 }
