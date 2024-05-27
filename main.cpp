@@ -1,5 +1,6 @@
 
 #include "graphics.hpp"
+#include "gui.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -13,45 +14,48 @@ using namespace TVOS;
 
 int main(int argc, char** argv, char** envp)
 {
-	const ResoW = 480;
-	const ResoH = 272;
+	const int ResoW = 480;
+	const int ResoH = 272;
 	auto FB = Graphics(ResoW, ResoH, false);
+	auto GUI = UIElementBase(FB, "root");
+	FB.ClearScreen(0);
 
-	int SplashTextW;
-	int SplashTextH;
-	FB.GetTextMetrics("请插入 SD 卡。", SplashTextW, SplashTextH);
+	GUI.XMargin = 2;
+	GUI.YMargin = 2;
+	GUI.XBorder = 2;
+	GUI.YBorder = 2;
+	GUI.XPadding = 0;
+	GUI.YPadding = 0;
+	GUI.BorderColor = 0xFFFFFFFF;
+	GUI.FillColor = 0;
+	GUI.Transparent = true;
+	GUI.ExpandToParentX = true;
+	GUI.ExpandToParentY = true;
+
+	for (int i = 0; i < 100; i++)
+	{
+		auto Sub = std::make_shared<UIElementLabel>(FB, std::string("test") + std::to_string(i));
+		GUI.InsertElement(Sub);
+		Sub->XMargin = 2;
+		Sub->YMargin = 2;
+		Sub->XBorder = 1;
+		Sub->YBorder = 1;
+		Sub->XPadding = 2;
+		Sub->YPadding = 2;
+		Sub->BorderColor = 0xFFFFFFFF;
+		Sub->ExpandToParentX = false;
+		Sub->LineBreak = false;
+		Sub->Transparent = true;
+		Sub->SetCaption(Sub->GetName());
+	}
+
+	GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
+	GUI.Render();
+
 	while (true);
 	{
-		int SplashX = 0;
-		int SplashY = 0;
-		int SplashPadding = 20;
-		int SplashMoveX = 20;
-		int SplashMoveY = 20;
-		while (!std::filesystem::exists(std::filesystem::path("/dev/mmcblk0p1")))
-		{
-			int SplashR = SplashX + SplashTextW + SplashPadding * 2 - 1;
-			int SplashB = SplashY + SplashTextH + SplashPadding * 2 - 1;
-			if (SplashR + 1 >= ResoW)
-			{
-				SplashR = ResoW - 1;
-				SplashX = ResoW - SplashTextW - SplashPadding * 2 - 1;
-				SplashMoveX = -20;
-			}
-			if (SplashB + 1 >= ResoH)
-			{
-				SplashB = ResoH - 1;
-				SplashY = ResoH - SplashTextH - SplashPadding * 2 - 1;
-				SplashMoveY = -20;
-			}
-			if (SplashX < 0)
-			{
-				SplashX = 0;
-			}
-			FB.ClearScreen(0);
-			FB.FillRect(SplashX, SplashY, SplashR, SplashB, 0xFFA0A0A0);
-			FB.DrawText(SplashX + SplashPadding, SplashY + SplashPadding, "请插入 SD 卡。", true, 0xFFFFFFFF);
-			std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		}
+		
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 
 	return 0;
