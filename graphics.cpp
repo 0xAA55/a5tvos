@@ -670,13 +670,11 @@ namespace TVOS
 			else if (ch == '\n')
 			{
 				GetGlyphMetrics(' ', w_, h_);
-				if (w > maxw) maxw = w;
 				w = 0;
 				h += h_;
 			}
 			else if (ch == '\r')
 			{
-				if (w > maxw) maxw = w;
 				w_ = h_ = w = 0;
 			}
 			else
@@ -684,6 +682,7 @@ namespace TVOS
 			GetGlyphMetrics(ch, w_, h_);
 			}
 			w += w_;
+			if (w > maxw) maxw = w;
 			if (!h) h = h_;
 		}
 		w = maxw;
