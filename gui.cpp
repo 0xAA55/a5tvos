@@ -63,7 +63,7 @@ namespace TVOS
 		return YPadding + YBorder + YMargin;
 	}
 
-	void UIElementBase::ArrangeSubElements(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
+	void UIElementBase::GetClientContentsSize(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
 	{
 		int cx = 0;
 		using ElemRowType = std::vector<std::shared_ptr<UIElementBase>>;
@@ -86,7 +86,7 @@ namespace TVOS
 			// 取得子控件的宽度和高度
 			int w, h;
 			elem->ArrangedContainerWidth = WidthLimit - cx;
-			elem->ArrangeSubElements(elem->ArrangedContainerWidth, HeightLimit, w, h);
+			elem->GetClientContentsSize(elem->ArrangedContainerWidth, HeightLimit, w, h);
 
 			if (elem->ExpandToParentX)
 			{
@@ -229,7 +229,7 @@ namespace TVOS
 	void UIElementBase::ArrangeElements(int x, int y, int w, int h)
 	{
 		int cw, ch;
-		ArrangeSubElements(w, h, cw, ch);
+		GetClientContentsSize(w, h, cw, ch);
 		ArrangeSubElementsAbsPos(x, y);
 
 		ArrangedRelX = 0;
@@ -348,6 +348,11 @@ namespace TVOS
 		}
 	}
 
+	void UIElementBase::Render()
+	{
+		Render(0, 0, FB.GetWidth(), FB.GetHeight());
+	}
+
 	std::shared_ptr<UIElementBase> UIElementBase::GetElementByName(const std::string& Name)
 	{
 		return SubElementsMap.at(Name);
@@ -381,11 +386,11 @@ namespace TVOS
 	{
 	}
 
-	void UIElementLabel::ArrangeSubElements(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
+	void UIElementLabel::GetClientContentsSize(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
 	{
 		int TextW = CaptionWidth + XPadding * 2;
 		int TextH = CaptionHeight + YPadding * 2;
-		UIElementBase::ArrangeSubElements(WidthLimit, HeightLimit, ActualWidth, TotalHeight);
+		UIElementBase::GetClientContentsSize(WidthLimit, HeightLimit, ActualWidth, TotalHeight);
 		if (ActualWidth < TextW) ActualWidth = TextW;
 		if (TotalHeight < TextH) TotalHeight = TextH;
 	}

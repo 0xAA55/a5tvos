@@ -68,7 +68,7 @@ namespace TVOS
 
 		// 使所有的子组件进行顺序位置的排列，然后统计出 Bounding Box 的大小。
 		// 子组件的 `ArrangedRelX` `ArrangedRelY` `ArrangedWidth` `ArrangedHeight` `ArrangedContainerWidth` `ArrangedContainerHeight` 会被修改。
-		virtual void ArrangeSubElements(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight);
+		virtual void GetClientContentsSize(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight);
 
 		void ArrangeSubElementsAbsPos(int x, int y);
 
@@ -76,6 +76,7 @@ namespace TVOS
 		void ArrangeElements(int x, int y, int w, int h);
 	 
 		virtual void Render(int x, int y, int w, int h);
+		void Render();
 
 	protected:
 		std::map<std::string, std::shared_ptr<UIElementBase>> SubElementsMap;
@@ -100,7 +101,7 @@ namespace TVOS
 
 		uint32_t FontColor = 0xFFFFFFFF;
 
-		virtual void ArrangeSubElements(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight);
+		virtual void GetClientContentsSize(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight);
 
 		void SetCaption(const std::string& Caption);
 		const std::string& GetCaption() const;
