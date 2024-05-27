@@ -320,10 +320,13 @@ namespace TVOS
 			}
 		}
 
-		int ClientX = GetFrameWidth();
-		int ClientY = GetFrameHeight();
-		int ClientW = w - ClientX - GetFrameWidth();
-		int ClientH = h - ClientY - GetFrameHeight();
+		int ClientX = ArrangedAbsX + GetFrameWidth();
+		int ClientY = ArrangedAbsY + GetFrameHeight();
+		int ClientW = ArrangedAbsR - GetFrameWidth();
+		int ClientH = ArrangedAbsB - GetFrameHeight();
+		auto Image = FB.ReadPixels();
+		auto RectAreaImage = ImageBlock(FB.GetWidth(), FB.GetHeight(), 0);
+
 		for (auto& elem : SubElements)
 		{
 			elem->Render(elem->ArrangedAbsX, elem->ArrangedAbsY, elem->ArrangedWidth, elem->ArrangedHeight);
