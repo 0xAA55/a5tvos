@@ -679,7 +679,7 @@ namespace TVOS
 			}
 			else
 			{
-			GetGlyphMetrics(ch, w_, h_);
+				GetGlyphMetrics(ch, w_, h_);
 			}
 			w += w_;
 			if (w > maxw) maxw = w;
@@ -714,17 +714,16 @@ namespace TVOS
 			}
 			else if (ch == '\r')
 			{
-				w_ = h_ = 0;
+				w_ = 0;
 			}
 			else
 			{
-			GetGlyphMetrics(ch, w_, h_);
+				GetGlyphMetrics(ch, w_, h_);
 			}
 			if (LineHeight < h_) LineHeight = h_;
 			if (x + w_> xlimit)
 			{
-				if (x > w) w = x;
-				else if (x == 0)
+				if (x == 0)
 				{
 					if (w < w_) w = w_;
 				}
@@ -733,7 +732,8 @@ namespace TVOS
 			}
 			else
 			{
-				x += w;
+				x += w_;
+				if (x > w) w = x;
 				if (y < LineHeight) y = LineHeight;
 			}
 		}
