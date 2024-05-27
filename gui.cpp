@@ -165,7 +165,7 @@ namespace TVOS
 
 			cy += RowHeight;
 		}
-		TotalHeight = cy + GetFrameHeight();
+		TotalHeight = cy;
 	}
 
 	void UIElementBase::ArrangeSubElementsAbsPos(int x, int y)
