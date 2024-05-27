@@ -32,6 +32,9 @@ namespace TVOS
 		size_t GetSizeInBytes() const;
 		ImageBlock& InvertPixelColors();
 		ImageBlock& ReplacePixelColors(uint32_t find, uint32_t replace);
+		uint32_t& GetPixel(int x, int y);
+		uint32_t GetPixel(int x, int y) const;
+		void PutPixel(int x, int y, uint32_t color);
 	};
 
 	class Graphics

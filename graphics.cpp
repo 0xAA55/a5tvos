@@ -73,6 +73,21 @@ namespace TVOS
 		return *this;
 	}
 
+	uint32_t& ImageBlock::GetPixel(int x, int y)
+	{
+		return Pixels[size_t(y) * w + x];
+	}
+
+	uint32_t ImageBlock::GetPixel(int x, int y) const
+	{
+		return Pixels[size_t(y) * w + x];
+	}
+
+	void ImageBlock::PutPixel(int x, int y, uint32_t color)
+	{
+		GetPixel(x, y) = color;
+	}
+
 	bool Graphics::PreFitXYRB(int& x, int& y, int& r, int& b) const
 	{
 		if (x > r) {int t = r; r = x; x = t;}
