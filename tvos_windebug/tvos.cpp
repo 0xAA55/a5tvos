@@ -8,7 +8,7 @@ using namespace TVOS;
 
 int main()
 {
-	auto FB = MyTestApp(true);
+	auto FB = MyTestApp(false);
 	auto GUI = UIElementBase(FB, "root");
 	FB.ClearScreen(0);
 
@@ -33,7 +33,7 @@ int main()
 		Sub->XPadding = 2;
 		Sub->YPadding = 2;
 		Sub->BorderColor = 0xFFFFFFFF;
-		// Sub->ExpandToParentX = true;
+		Sub->ExpandToParentX = true;
 		// Sub->LineBreak = true;
 		Sub->Transparent = true;
 		Sub->SetCaption(Sub->GetName());
