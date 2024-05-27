@@ -60,7 +60,7 @@ namespace TVOS
 		return YPadding + YBorder + YMargin;
 	}
 
-	void UIElementBase::ArrangeElements(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
+	void UIElementBase::ArrangeSubElements(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
 	{
 		int cx = 0;
 		using ElemRowType = std::vector<std::shared_ptr<UIElementBase>>;
