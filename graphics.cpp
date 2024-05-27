@@ -668,6 +668,8 @@ namespace TVOS
 	{
 		int x = 0;
 		int y = 0;
+		w = 0;
+		h = 0;
 		for (auto& ch : UTF::Utf8_to_Utf32(t))
 		{
 			int w_, h_;
