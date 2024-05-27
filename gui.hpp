@@ -54,6 +54,7 @@ namespace TVOS
 		int XMargin = 0;
 		int YMargin = 0;
 		bool Transparent = false;
+		bool ClipChildren = false;
 		uint32_t FillColor = 0xFFFFFFFF;
 		uint32_t BorderColor = 0;
 		Alignment alignment = Alignment::CenterCenter;

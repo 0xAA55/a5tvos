@@ -329,22 +329,32 @@ namespace TVOS
 		int ClientH = ClientB - ClientY;
 		if (ClientW > 0 && ClientH > 0)
 		{
-			auto ImageMask = FB.ReadPixels();
-			auto RectAreaImage = ImageBlock(FB.GetWidth(), FB.GetHeight(), 0);
-			for (int y = ClientY; y <= ClientB; y++)
+			if (ClipChildren)
 			{
-				for (int x = ClientX; x <= ClientR; x++)
+				auto ImageMask = FB.ReadPixels();
+				auto RectAreaImage = ImageBlock(FB.GetWidth(), FB.GetHeight(), 0);
+				for (int y = ClientY; y <= ClientB; y++)
 				{
-					RectAreaImage.PutPixel(x, y, 0xFFFFFFFF);
-					ImageMask.PutPixel(x, y, 0);
+					for (int x = ClientX; x <= ClientR; x++)
+					{
+						RectAreaImage.PutPixel(x, y, 0xFFFFFFFF);
+						ImageMask.PutPixel(x, y, 0);
+					}
+				}
+				for (auto& elem : SubElements)
+				{
+					elem->Render(elem->ArrangedAbsX, elem->ArrangedAbsY, elem->ArrangedWidth, elem->ArrangedHeight);
+				}
+				FB.DrawImageAnd(RectAreaImage, 0, 0);
+				FB.DrawImageOr(ImageMask, 0, 0);
+			}
+			else
+			{
+				for (auto& elem : SubElements)
+				{
+					elem->Render(elem->ArrangedAbsX, elem->ArrangedAbsY, elem->ArrangedWidth, elem->ArrangedHeight);
 				}
 			}
-			for (auto& elem : SubElements)
-			{
-				elem->Render(elem->ArrangedAbsX, elem->ArrangedAbsY, elem->ArrangedWidth, elem->ArrangedHeight);
-			}
-			FB.DrawImageAnd(RectAreaImage, 0, 0);
-			FB.DrawImageOr(ImageMask, 0, 0);
 		}
 	}
 
