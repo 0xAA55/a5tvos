@@ -81,6 +81,8 @@ namespace TVOS
 		if (y < 0) y = 0;
 		if (x >= Width || y >= Height) return false;
 		if (r < 0 || b < 0) return false;
+		if (r >= Width) r = Width - 1;
+		if (b >= Height) b = Height - 1;
 		return true;
 	}
 	
