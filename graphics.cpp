@@ -655,13 +655,36 @@ namespace TVOS
 		w = 0;
 		h = 0;
 
+		int maxw = 0;
+
 		for(auto& ch: UTF::Utf8_to_Utf32(t))
 		{
 			int w_, h_;
+			if (ch == '\t')
+			{
+				GetGlyphMetrics(' ', w_, h_);
+				w = ((w / (w_ * 8)) + 1) * (w_ * 8);
+			}
+			else if (ch == '\n')
+			{
+				GetGlyphMetrics(' ', w_, h_);
+				if (w > maxw) maxw = w;
+				w = 0;
+				h += h_;
+			}
+			else if (ch == '\r')
+			{
+				if (w > maxw) maxw = w;
+				w_ = h_ = w = 0;
+			}
+			else
+			{
 			GetGlyphMetrics(ch, w_, h_);
+			}
 			w += w_;
-			h = h < h_ ? h_ : h;
+			if (!h) h = h_;
 		}
+		w = maxw;
 	}
 
 	void Graphics::GetTextMetrics(const std::string& t, int xlimit, int& w, int& h) const
