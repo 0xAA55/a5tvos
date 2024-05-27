@@ -12,10 +12,12 @@ int main()
 	auto GUI = UIElementBase(FB, "root");
 	FB.ClearScreen(0);
 
-	GUI.XMargin = 10;
-	GUI.YMargin = 10;
+	GUI.XMargin = 2;
+	GUI.YMargin = 2;
 	GUI.XBorder = 2;
 	GUI.YBorder = 2;
+	GUI.XPadding = 0;
+	GUI.YPadding = 0;
 	GUI.BorderColor = 0xFFFFFFFF;
 	GUI.FillColor = 0;
 	GUI.Transparent = true;
