@@ -25,6 +25,7 @@ namespace TVOS
 		ImageBlock() = default;
 		ImageBlock(const ImageBlock& ib) = default;
 		ImageBlock(int width, int height);
+		ImageBlock(int width, int height, uint32_t color);
 
 		int GetStride() const;
 		bool operator == (const ImageBlock& other) const;

@@ -34,6 +34,14 @@ namespace TVOS
 		Pixels.resize(size_t(w) * h);
 	}
 
+	ImageBlock::ImageBlock(int width, int height, uint32_t color) :
+		w(width),
+		h(height)
+	{
+		Pixels.resize(size_t(w) * h);
+		for (auto& Pix : Pixels) Pix = color;
+	}
+
 	int ImageBlock::GetStride() const
 	{
 		return w * 4;
