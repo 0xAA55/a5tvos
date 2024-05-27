@@ -55,7 +55,9 @@ namespace TVOS
 		uint32_t FillColor = 0xFFFFFFFF;
 		uint32_t BorderColor = 0;
 		Alignment alignment = Alignment::CenterCenter;
-		bool ExpandToParent = true;
+		bool ExpandToParentX = true;
+		bool ExpandToParentY = true;
+		bool LineBreak = false;
 		std::map<std::string, std::shared_ptr<UIElementBase>> SubElements;
 
 		std::shared_ptr<UIElementBase> FindElement(const std::string& Name);
