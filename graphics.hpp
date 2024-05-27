@@ -87,6 +87,7 @@ namespace TVOS
 
 		ImageBlock ReadPixelsRect(int x, int y, int r, int b);
 		ImageBlock ReadPixels(int x, int y, int w, int h);
+		ImageBlock ReadPixels();
 
 		void PutPixel(int x, int y, uint32_t color);
 		void PutPixel(int x, int y, int cr, int cg, int cb);

@@ -130,6 +130,11 @@ namespace TVOS
 		return ReadPixelsRect(x, y, x + w - 1, y + h - 1);
 	}
 
+	ImageBlock Graphics::ReadPixels()
+	{
+		return ReadPixelsRect(0, 0, Width, Height);
+	}
+
 	Graphics::Graphics(const std::string& fbdev) :
 		Graphics(fbdev, Verbose)
 	{
