@@ -40,6 +40,8 @@ namespace TVOS
 		int ArrangedRelY = 0;
 		int ArrangedWidth = 0;
 		int ArrangedHeight = 0;
+		int ArrangedContentsWidth = 0;
+		int ArrangedContentsHeight = 0;
 		int ArrangedContainerWidth = 0;
 		int ArrangedContainerHeight = 0;
 		int ArrangedAbsX = 0;
@@ -55,10 +57,9 @@ namespace TVOS
 		uint32_t FillColor = 0xFFFFFFFF;
 		uint32_t BorderColor = 0;
 		Alignment alignment = Alignment::CenterCenter;
-		bool ExpandToParentX = true;
-		bool ExpandToParentY = true;
+		bool ExpandToParentX = false;
+		bool ExpandToParentY = false;
 		bool LineBreak = false;
-		std::map<std::string, std::shared_ptr<UIElementBase>> SubElements;
 
 		std::shared_ptr<UIElementBase> FindElement(const std::string& Name);
 

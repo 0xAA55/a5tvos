@@ -76,6 +76,7 @@ namespace TVOS
 		if (HeightLimit < 0) HeightLimit = 0;
 
 		// 先按照宽度限制将所有的子控件归类到对应的行里
+		RowsOfElements.push_back(ElemRowType());
 		for (auto& elem : SubElements)
 		{
 			// 当前行
@@ -83,47 +84,54 @@ namespace TVOS
 
 			// 取得子控件的宽度和高度
 			int w, h;
-			elem.second->ArrangedContainerWidth = WidthLimit - cx;
-			elem.second->ArrangeSubElements(elem.second->ArrangedContainerWidth, HeightLimit, w, h);
+			elem->ArrangedContainerWidth = WidthLimit - cx;
+			elem->ArrangeSubElements(elem->ArrangedContainerWidth, HeightLimit, w, h);
 
-			if (elem.second->ExpandToParentX)
+			if (elem->ExpandToParentX)
 			{
-				elem.second->ArrangedWidth = elem.second->ArrangedContainerWidth;
+				elem->ArrangedWidth = elem->ArrangedContainerWidth - GetFrameWidth() * 2;
+				elem->ArrangedContentsWidth = elem->ArrangedWidth - elem->GetFrameWidth() * 2;
 			}
 			else
 			{
-				elem.second->ArrangedWidth = w;
+				elem->ArrangedContentsWidth = w;
+				elem->ArrangedWidth = w + elem->GetFrameWidth() * 2;
 			}
-			if (elem.second->ExpandToParentY)
+			if (elem->ExpandToParentY)
 			{
-				elem.second->ArrangedHeight = HeightLimit;
-				elem.second->ArrangedContainerHeight = HeightLimit;
+				elem->ArrangedHeight = HeightLimit;
+				elem->ArrangedContentsHeight = HeightLimit - elem->GetFrameHeight() * 2;
+				elem->ArrangedContainerHeight = HeightLimit;
 			}
 			else
 			{
-				elem.second->ArrangedHeight = h;
+				elem->ArrangedContentsHeight = h;
+				elem->ArrangedHeight = h + elem->GetFrameHeight() * 2;
 			}
 
 			// 超出横向限制，换行
+			w += elem->GetFrameWidth() * 2;
 			if (cx + w >= WidthLimit)
 			{
 				cx = 0;
 				if (CurRow.size() == 0)
 				{ // 如果当前行没有任何控件就要换行，则强行插入控件。
-					CurRow.push_back(elem.second);
+					CurRow.push_back(elem);
 					RowsOfElements.push_back(ElemRowType());
+					elem->ArrangedRelX = cx + GetFrameWidth();
 				}
 				else
 				{ // 否则换行后，插入控件到新行
 					RowsOfElements.push_back(ElemRowType());
-					RowsOfElements.back().push_back(elem.second);
+					RowsOfElements.back().push_back(elem);
+					elem->ArrangedRelX = cx + GetFrameWidth();
+					cx += w;
 				}
-				elem.second->ArrangedRelX = cx;
 			}
 			else
 			{ // 没有超出横向限制，继续向右排布
-				CurRow.push_back(elem.second);
-				elem.second->ArrangedRelX = cx;
+				CurRow.push_back(elem);
+				elem->ArrangedRelX = cx + GetFrameWidth();
 				cx += w;
 			}
 		}
