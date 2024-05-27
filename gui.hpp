@@ -64,8 +64,13 @@ namespace TVOS
 		int GetFrameHeight() const;
 
 		// 使所有的子组件进行顺序位置的排列，然后统计出 Bounding Box 的大小。
-		// 子组件的 `ArrangedRelX` `ArrangedRelY` `ArrangedWidth` `ArrangedHeight` 会被修改。
+		// 子组件的 `ArrangedRelX` `ArrangedRelY` `ArrangedWidth` `ArrangedHeight` `ArrangedContainerWidth` `ArrangedContainerHeight` 会被修改。
 		void ArrangeSubElements(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight);
+
+		void ArrangeSubElementsAbsPos(int x, int y);
+
+		// 使自身和所有子组件进行顺序位置的排列。
+		void ArrangeElements(int x, int y, int w, int h);
 	 
 		virtual void Render(int x, int y, int w, int h);
 	};
@@ -86,7 +91,7 @@ namespace TVOS
 		const std::string& GetCaption() const;
 		void GetCaptionSize(int& w, int& h) const;
 
-		virtual void Render(int x, int y, int w, int h) const;
+		virtual void Render(int x, int y, int w, int h);
 	};
 
 
