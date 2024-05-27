@@ -69,10 +69,6 @@ namespace TVOS
 		using ElemRowType = std::vector<std::shared_ptr<UIElementBase>>;
 		std::vector<ElemRowType> RowsOfElements;
 
-		// 存储给予控件的宽度空间
-		int WidthSpace = WidthLimit;
-		int HeightSpace = HeightLimit;
-
 		WidthLimit -= GetFrameWidth() * 2;
 		if (WidthLimit < 0) WidthLimit = 0;
 		HeightLimit -= GetFrameHeight() * 2;
@@ -85,6 +81,8 @@ namespace TVOS
 			// 当前行
 			auto& CurRow = RowsOfElements.back();
 
+			bool LineBreak = elem->LineBreak;
+
 			// 取得子控件的宽度和高度
 			int w, h;
 			elem->ArrangedContainerWidth = WidthLimit - cx;
@@ -92,49 +90,50 @@ namespace TVOS
 
 			if (elem->ExpandToParentX)
 			{
-				elem->ArrangedWidth = elem->ArrangedContainerWidth - GetFrameWidth() * 2;
-				elem->ArrangedContentsWidth = elem->ArrangedWidth - elem->GetFrameWidth() * 2;
+				elem->ArrangedWidth = elem->ArrangedContainerWidth - XPadding * 2;
+				elem->ArrangedContentsWidth = elem->ArrangedWidth - elem->XPadding * 2;
+				LineBreak = true;
 			}
 			else
 			{
 				elem->ArrangedContentsWidth = w;
-				elem->ArrangedWidth = w + elem->GetFrameWidth() * 2;
+				elem->ArrangedWidth = w + elem->XPadding * 2;
 			}
 			if (elem->ExpandToParentY)
 			{
 				elem->ArrangedHeight = HeightLimit;
-				elem->ArrangedContentsHeight = HeightLimit - elem->GetFrameHeight() * 2;
+				elem->ArrangedContentsHeight = HeightLimit - elem->YPadding * 2;
 				elem->ArrangedContainerHeight = HeightLimit;
 			}
 			else
 			{
 				elem->ArrangedContentsHeight = h;
-				elem->ArrangedHeight = h + elem->GetFrameHeight() * 2;
+				elem->ArrangedHeight = h + elem->YPadding * 2;
 			}
 
 			// 超出横向限制，换行
-			w += elem->GetFrameWidth() * 2;
-			if (cx + w >= WidthLimit)
+			w += elem->XPadding * 2;
+			if (LineBreak || cx + w >= WidthLimit)
 			{
 				cx = 0;
 				if (CurRow.size() == 0)
 				{ // 如果当前行没有任何控件就要换行，则强行插入控件。
 					CurRow.push_back(elem);
 					RowsOfElements.push_back(ElemRowType());
-					elem->ArrangedRelX = cx + GetFrameWidth();
+					elem->ArrangedRelX = cx + XPadding;
 				}
 				else
 				{ // 否则换行后，插入控件到新行
 					RowsOfElements.push_back(ElemRowType());
 					RowsOfElements.back().push_back(elem);
-					elem->ArrangedRelX = cx + GetFrameWidth();
+					elem->ArrangedRelX = cx + XPadding;
 					cx += w;
 				}
 			}
 			else
 			{ // 没有超出横向限制，继续向右排布
 				CurRow.push_back(elem);
-				elem->ArrangedRelX = cx + GetFrameWidth();
+				elem->ArrangedRelX = cx + XPadding;
 				cx += w;
 			}
 		}
@@ -177,7 +176,7 @@ namespace TVOS
 			// 再设置这行每个控件的位置
 			for (auto& elem : Row)
 			{
-				elem->ArrangedRelY = cy + GetFrameHeight();
+				elem->ArrangedRelY = cy + YPadding;
 			}
 
 			cy += RowHeight;
@@ -273,9 +272,9 @@ namespace TVOS
 		if (XBorder > 0 || YBorder > 0)
 		{
 			int BorderLX = ArrangedAbsX + XMargin;
-			int BorderLY = ArrangedAbsY + YMargin + YBorder - 1;
+			int BorderLY = ArrangedAbsY + YMargin + YBorder;
 			int BorderLR = BorderLX + XBorder - 1;
-			int BorderLB = ArrangedAbsB - YMargin - YBorder + 1;
+			int BorderLB = ArrangedAbsB - YMargin - YBorder;
 			int BorderRX = ArrangedAbsR - XMargin - XBorder + 1;
 			int BorderRY = BorderLY;
 			int BorderRR = ArrangedAbsR - XMargin;
@@ -344,8 +343,8 @@ namespace TVOS
 			{
 				elem->Render(elem->ArrangedAbsX, elem->ArrangedAbsY, elem->ArrangedWidth, elem->ArrangedHeight);
 			}
-			FB.DrawImageAnd(RectAreaImage, 0, 0);
-			FB.DrawImageOr(ImageMask, 0, 0);
+			// FB.DrawImageAnd(RectAreaImage, 0, 0);
+			// FB.DrawImageOr(ImageMask, 0, 0);
 		}
 	}
 
