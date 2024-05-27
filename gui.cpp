@@ -41,10 +41,13 @@ namespace TVOS
 	std::shared_ptr<UIElementBase> UIElementBase::FindElement(const std::string& Name)
 	{
 		if (!SubElements.size()) return nullptr;
-		if (SubElements.count(Name)) return SubElements.at(Name);
+		if (SubElementsMap.count(Name))
+		{
+			return SubElementsMap.at(Name);
+		}
 		for (auto& elem : SubElements)
 		{
-			auto find = elem.second->FindElement(Name);
+			auto find = elem->FindElement(Name);
 			if (find) return find;
 		}
 		return nullptr;
@@ -174,7 +177,7 @@ namespace TVOS
 			// 再设置这行每个控件的位置
 			for (auto& elem : Row)
 			{
-				elem->ArrangedRelY = cy;
+				elem->ArrangedRelY = cy + GetFrameHeight();
 			}
 
 			cy += RowHeight;
@@ -198,29 +201,29 @@ namespace TVOS
 		{
 			if (IsLeft(alignment))
 			{
-				elem.second->ArrangedAbsX = x + elem.second->ArrangedRelX + ClientX;
+				elem->ArrangedAbsX = x + elem->ArrangedRelX + ClientX;
 			}
 			else if (IsRight(alignment))
 			{
-				elem.second->ArrangedAbsX = x + ArrangedContainerWidth - elem.second->ArrangedWidth - elem.second->ArrangedRelX - ClientX;
+				elem->ArrangedAbsX = x + ArrangedContainerWidth - elem->ArrangedWidth - elem->ArrangedRelX - ClientX;
 			}
 			else
 			{
-				elem.second->ArrangedAbsX = x + ArrangedContainerWidth / 2 - elem.second->ArrangedWidth / 2 + elem.second->ArrangedRelX + ClientX;
+				elem->ArrangedAbsX = x + ArrangedContainerWidth / 2 - elem->ArrangedWidth / 2 + elem->ArrangedRelX + ClientX;
 			}
 			if (IsTop(alignment))
 			{
-				elem.second->ArrangedAbsY = y + elem.second->ArrangedRelY + ClientY;
+				elem->ArrangedAbsY = y + elem->ArrangedRelY + ClientY;
 			}
 			else if (IsBottom(alignment))
 			{
-				elem.second->ArrangedAbsY = y + ArrangedContainerHeight - elem.second->ArrangedHeight - elem.second->ArrangedRelY - ClientY;
+				elem->ArrangedAbsY = y + ArrangedContainerHeight - elem->ArrangedHeight - elem->ArrangedRelY - ClientY;
 			}
 			else
 			{
-				elem.second->ArrangedAbsY = y + ArrangedContainerHeight / 2 - elem.second->ArrangedHeight / 2 + elem.second->ArrangedRelY + ClientY;
+				elem->ArrangedAbsY = y + ArrangedContainerHeight / 2 - elem->ArrangedHeight / 2 + elem->ArrangedRelY + ClientY;
 			}
-			elem.second->ArrangeSubElementsAbsPos(elem.second->ArrangedAbsX, elem.second->ArrangedAbsY);
+			elem->ArrangeSubElementsAbsPos(elem->ArrangedAbsX, elem->ArrangedAbsY);
 		}
 	}
 
@@ -232,6 +235,8 @@ namespace TVOS
 
 		ArrangedRelX = 0;
 		ArrangedRelY = 0;
+		ArrangedContentsWidth = cw;
+		ArrangedContentsHeight = ch;
 		ArrangedContainerWidth = w;
 		ArrangedContainerHeight = h;
 		ArrangedAbsX = x;
@@ -239,17 +244,15 @@ namespace TVOS
 		if (ExpandToParentX)
 			ArrangedWidth = w;
 		else
-			ArrangedWidth = cw;
+			ArrangedWidth = ArrangedContentsWidth + GetFrameWidth() * 2;
 		if (ExpandToParentY)
 			ArrangedHeight = h;
 		else
-			ArrangedHeight = ch;
+			ArrangedHeight = ArrangedContentsHeight + GetFrameHeight() * 2;
 	}
 
 	void UIElementBase::Render(int x, int y, int w, int h)
 	{
-		ArrangeElements(x, y, w, h);
-
 		int ArrangedAbsR = ArrangedAbsX + ArrangedWidth - 1;
 		int ArrangedAbsB = ArrangedAbsY + ArrangedHeight - 1;
 
@@ -316,11 +319,57 @@ namespace TVOS
 				}
 			}
 		}
+
+		int ClientX = GetFrameWidth();
+		int ClientY = GetFrameHeight();
+		int ClientW = w - ClientX - GetFrameWidth();
+		int ClientH = h - ClientY - GetFrameHeight();
+		for (auto& elem : SubElements)
+		{
+			elem->Render(elem->ArrangedAbsX, elem->ArrangedAbsY, elem->ArrangedWidth, elem->ArrangedHeight);
+		}
+	}
+
+	std::shared_ptr<UIElementBase> UIElementBase::GetElementByName(const std::string& Name)
+	{
+		return SubElementsMap.at(Name);
+	}
+
+	UIElementBase& UIElementBase::InsertElement(std::shared_ptr<UIElementBase> Element)
+	{
+		RemoveElement(Element->Name);
+		SubElementsMap[Element->Name] = Element;
+		SubElements.push_back(Element);
+		return *Element;
+	}
+
+	bool UIElementBase::RemoveElement(const std::string& Name)
+	{
+		if (SubElementsMap.count(Name))
+		{
+			for (auto Element = SubElements.begin(); Element != SubElements.end();)
+			{
+				if (Element->get()->Name == Name) SubElements.erase(Element);
+				else ++Element;
+			}
+			SubElementsMap.erase(Name);
+			return true;
+		}
+		return false;
 	}
 
 	UIElementLabel::UIElementLabel(Graphics& FB, const std::string& Name) :
 		UIElementBase(FB, Name)
 	{
+	}
+
+	void UIElementLabel::ArrangeSubElements(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
+	{
+		int w_, h_;
+		FB.GetTextMetrics(Caption, w_, h_);
+		UIElementBase::ArrangeSubElements(WidthLimit, HeightLimit, ActualWidth, TotalHeight);
+		if (ActualWidth < w_) ActualWidth = w_;
+		if (TotalHeight < h_) TotalHeight = h_;
 	}
 
 	void UIElementLabel::SetCaption(const std::string& Caption)
@@ -372,6 +421,8 @@ namespace TVOS
 		{
 			ty = y + h / 2 - th / 2;
 		}
+		tx += ArrangedAbsX;
+		ty += ArrangedAbsY;
 		FB.DrawText(tx, ty, Caption, true, FontColor);
 	}
 }
