@@ -7,7 +7,7 @@
 
 namespace TVOS
 {
-	enum class Alignment
+	enum class AlignmentType
 	{
 		LeftTop = 0,
 		LeftCenter = 1,
@@ -20,11 +20,11 @@ namespace TVOS
 		RightBottom = 10,
 	};
 
-	bool IsLeft(Alignment alignment);
-	bool IsTop(Alignment alignment);
-	bool IsRight(Alignment alignment);
-	bool IsBottom(Alignment alignment);
-	bool IsCenter(Alignment alignment);
+	bool IsLeft(AlignmentType alignment);
+	bool IsTop(AlignmentType alignment);
+	bool IsRight(AlignmentType alignment);
+	bool IsBottom(AlignmentType alignment);
+	bool IsCenter(AlignmentType alignment);
 
 	class UIElementBase
 	{
@@ -57,7 +57,7 @@ namespace TVOS
 		bool ClipChildren = false;
 		uint32_t FillColor = 0xFFFFFFFF;
 		uint32_t BorderColor = 0;
-		Alignment alignment = Alignment::CenterCenter;
+		AlignmentType Alignment = AlignmentType::LeftTop;
 		bool ExpandToParentX = false;
 		bool ExpandToParentY = false;
 		bool LineBreak = false;
@@ -117,7 +117,7 @@ namespace TVOS
 		virtual void Render(int x, int y, int w, int h);
 	};
 
-
+	
 
 
 
