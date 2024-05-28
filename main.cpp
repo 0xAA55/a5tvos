@@ -242,13 +242,13 @@ int main(int argc, char** argv, char** envp)
 
 					auto ListView = std::make_shared<UIElementListView>(FB, "ListView");
 					GUI.InsertElement(ListView);
-					ListView->XMargin = 0;
-					ListView->YMargin = 0;
-					ListView->XBorder = 0;
-					ListView->YBorder = 0;
-					ListView->XPadding = 2;
-					ListView->YPadding = 2;
-					ListView->BorderColor = 0xFFFFFFFF;
+					ListView->XMargin = 10;
+					ListView->YMargin = 10;
+					ListView->XBorder = 1;
+					ListView->YBorder = 1;
+					ListView->XPadding = 1;
+					ListView->YPadding = 1;
+					ListView->BorderColor = 0xFFC0C0C0;
 					ListView->ExpandToParentX = true;
 					ListView->ExpandToParentY = true;
 					ListView->LineBreak = false;
