@@ -23,6 +23,9 @@ struct GPIO_PeriphType
 
 protected:
 	void SetMode(int Port, uint32_t Mode);
+
+	static void WritePeriph(volatile uint32_t* Ptr, uint32_t Data);
+	static uint32_t ReadPeriph(const volatile uint32_t* Ptr);
 };
 
 GPIO_PeriphType * const GPIO_Periph = reinterpret_cast<GPIO_PeriphType * const>(0x01C20800);
