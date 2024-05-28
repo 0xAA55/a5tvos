@@ -171,6 +171,25 @@ namespace DIBWin
 		}
 	}
 
+	void Window::ProcessMessageNonBlocking()
+	{
+		MSG msg;
+		if (PeekMessageA(&msg, GetWindow(), 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessageA(&msg);
+		}
+		else
+		{
+			Sleep(0);
+		}
+	}
+
+	bool Window::GetWindowIsDestroyed() const
+	{
+		return WindowIsDestroyed;
+	}
+
 	int Window::MainLoop()
 	{
 		while (!WindowIsDestroyed)

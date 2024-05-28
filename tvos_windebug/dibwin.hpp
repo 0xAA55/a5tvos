@@ -51,6 +51,8 @@ namespace DIBWin
 		void RefreshFB();
 
 		void ProcessMessage();
+		void ProcessMessageNonBlocking();
+		bool GetWindowIsDestroyed() const;
 		virtual int MainLoop();
 
 	public:
