@@ -2,6 +2,11 @@
 
 #include <cstdio>
 #include <cstdlib>
+
+#if defined(_MSC_VER)
+#include <Windows.h>
+#endif
+
 bool GPIO_PeriphType::ReadBit(int Port) const
 {
 	return (ReadPeriph(&DATA) & (1 << Port)) ? true : false;
@@ -156,8 +161,18 @@ bool ReadGPIOD(int Port)
 
 bool ReadGPIOE(int Port)
 {
+#if !defined(_MSC_VER)
 	GPIO_Periph[GPIO_E].SetModeIn(Port);
 	return GPIO_Periph[GPIO_E].ReadBit(Port);
+#else
+	switch (Port)
+	{
+	case 1: return bool(GetAsyncKeyState('z'));
+	case 2: return bool(GetAsyncKeyState('x'));
+	case 3: return bool(GetAsyncKeyState('c'));
+	case 4: return bool(GetAsyncKeyState('v'));
+	}
+#endif
 }
 
 bool ReadGPIOF(int Port)
