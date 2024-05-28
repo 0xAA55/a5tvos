@@ -3,29 +3,69 @@
 
 namespace TVOS
 {
-	bool IsLeft(Alignment alignment)
+	bool IsLeft(AlignmentType alignment)
 	{
-		return int(alignment) & (int(Alignment::LeftTop) | int(Alignment::LeftCenter) | int(Alignment::LeftBottom)) ? true : false;
+		switch (alignment)
+		{
+		case AlignmentType::LeftTop:
+		case AlignmentType::LeftCenter:
+		case AlignmentType::LeftBottom:
+			return true;
+		default:
+			return false;
+	}
 	}
 
-	bool IsTop(Alignment alignment)
+	bool IsTop(AlignmentType alignment)
 	{
-		return int(alignment) & (int(Alignment::LeftTop) | int(Alignment::CenterTop) | int(Alignment::RightTop)) ? true : false;
+		switch (alignment)
+		{
+		case AlignmentType::LeftTop:
+		case AlignmentType::CenterTop:
+		case AlignmentType::RightTop:
+			return true;
+		default:
+			return false;
+	}
 	}
 
-	bool IsRight(Alignment alignment)
+	bool IsRight(AlignmentType alignment)
 	{
-		return int(alignment) & (int(Alignment::RightTop) | int(Alignment::RightCenter) | int(Alignment::RightBottom)) ? true : false;
+		switch (alignment)
+		{
+		case AlignmentType::RightTop:
+		case AlignmentType::RightCenter:
+		case AlignmentType::RightBottom:
+			return true;
+		default:
+			return false;
+	}
 	}
 
-	bool IsBottom(Alignment alignment)
+	bool IsBottom(AlignmentType alignment)
 	{
-		return int(alignment) & (int(Alignment::LeftBottom) | int(Alignment::CenterBottom) | int(Alignment::RightBottom)) ? true : false;
+		switch (alignment)
+		{
+		case AlignmentType::LeftBottom:
+		case AlignmentType::CenterBottom:
+		case AlignmentType::RightBottom:
+			return true;
+		default:
+			return false;
+	}
 	}
 
-	bool IsCenter(Alignment alignment)
+	bool IsCenter(AlignmentType alignment)
 	{
-		return int(alignment) & (int(Alignment::LeftCenter) | int(Alignment::CenterCenter) | int(Alignment::RightCenter)) ? true : false;
+		switch (alignment)
+		{
+		case AlignmentType::LeftCenter:
+		case AlignmentType::CenterCenter:
+		case AlignmentType::RightCenter:
+			return true;
+		default:
+			return false;
+	}
 	}
 
 	UIElementBase::UIElementBase(Graphics& FB, const std::string& Name) :
