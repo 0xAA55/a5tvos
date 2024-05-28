@@ -13,7 +13,7 @@ namespace TVOS
 			return true;
 		default:
 			return false;
-	}
+		}
 	}
 
 	bool IsTop(AlignmentType alignment)
@@ -26,7 +26,7 @@ namespace TVOS
 			return true;
 		default:
 			return false;
-	}
+		}
 	}
 
 	bool IsRight(AlignmentType alignment)
@@ -39,7 +39,7 @@ namespace TVOS
 			return true;
 		default:
 			return false;
-	}
+		}
 	}
 
 	bool IsBottom(AlignmentType alignment)
@@ -52,7 +52,7 @@ namespace TVOS
 			return true;
 		default:
 			return false;
-	}
+		}
 	}
 
 	bool IsCenter(AlignmentType alignment)
@@ -65,7 +65,7 @@ namespace TVOS
 			return true;
 		default:
 			return false;
-	}
+		}
 	}
 
 	UIElementBase::UIElementBase(Graphics& FB, const std::string& Name) :
@@ -256,11 +256,11 @@ namespace TVOS
 		int ClientY = GetFrameHeight();
 		for (auto& elem : SubElements)
 		{
-			if (IsLeft(alignment))
+			if (IsLeft(Alignment))
 			{
 				elem->ArrangedAbsX = x + elem->ArrangedRelX + ClientX;
 			}
-			else if (IsRight(alignment))
+			else if (IsRight(Alignment))
 			{
 				elem->ArrangedAbsX = x + ArrangedContainerWidth - elem->ArrangedWidth - elem->ArrangedRelX - ClientX;
 			}
@@ -268,11 +268,11 @@ namespace TVOS
 			{
 				elem->ArrangedAbsX = x + ArrangedContainerWidth / 2 - elem->ArrangedWidth / 2 + elem->ArrangedRelX + ClientX;
 			}
-			if (IsTop(alignment))
+			if (IsTop(Alignment))
 			{
 				elem->ArrangedAbsY = y + elem->ArrangedRelY + ClientY;
 			}
-			else if (IsBottom(alignment))
+			else if (IsBottom(Alignment))
 			{
 				elem->ArrangedAbsY = y + ArrangedContainerHeight - elem->ArrangedHeight - elem->ArrangedRelY - ClientY;
 			}
@@ -289,23 +289,6 @@ namespace TVOS
 		int cw, ch;
 		GetClientContentsSize(w, h, cw, ch);
 		ArrangeSubElementsAbsPos(x, y);
-
-		ArrangedRelX = 0;
-		ArrangedRelY = 0;
-		ArrangedContentsWidth = cw;
-		ArrangedContentsHeight = ch;
-		ArrangedContainerWidth = w;
-		ArrangedContainerHeight = h;
-		ArrangedAbsX = x;
-		ArrangedAbsY = y;
-		if (ExpandToParentX)
-			ArrangedWidth = w;
-		else
-			ArrangedWidth = ArrangedContentsWidth + GetFrameWidth() * 2;
-		if (ExpandToParentY)
-			ArrangedHeight = h;
-		else
-			ArrangedHeight = ArrangedContentsHeight + GetFrameHeight() * 2;
 	}
 
 	void UIElementBase::Render(int x, int y, int w, int h)
@@ -513,32 +496,30 @@ namespace TVOS
 		int tw = CaptionWidth, th = CaptionHeight;
 
 		int tx, ty;
-		if (IsLeft(alignment))
+		if (IsLeft(Alignment))
 		{
-			tx = GetFrameWidth();
+			tx = x + GetFrameWidth();
 		}
-		else if (IsRight(alignment))
+		else if (IsRight(Alignment))
 		{
-			tx = ArrangedWidth - GetFrameWidth() - tw;
+			tx = x + ArrangedWidth - GetFrameWidth() - tw;
 		}
 		else
 		{
 			tx = x + w / 2 - tw / 2;
 		}
-		if (IsTop(alignment))
+		if (IsTop(Alignment))
 		{
-			ty = GetFrameHeight();
+			ty = y + GetFrameHeight();
 		}
-		else if (IsBottom(alignment))
+		else if (IsBottom(Alignment))
 		{
-			ty = ArrangedHeight - GetFrameHeight() - th;
+			ty = y + ArrangedHeight - GetFrameHeight() - th;
 		}
 		else
 		{
 			ty = y + h / 2 - th / 2;
 		}
-		tx += ArrangedAbsX;
-		ty += ArrangedAbsY;
 		FB.DrawText(tx, ty, Caption, true, FontColor);
 	}
 }
