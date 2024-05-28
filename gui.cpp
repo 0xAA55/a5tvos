@@ -135,7 +135,7 @@ namespace TVOS
 
 			if (elem->ExpandToParentX)
 			{
-				elem->ArrangedWidth = elem->ArrangedContainerWidth;
+				elem->ArrangedWidth = elem->ArrangedContainerWidth - XPadding * 2;
 				LineBreak = true;
 			}
 			else
