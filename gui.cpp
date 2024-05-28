@@ -187,7 +187,7 @@ namespace TVOS
 		}
 
 		// 开始纵向排布控件
-		int cy = 0;
+		TotalHeight = 0;
 		ActualWidth = 0; // 统计宽度
 		for (auto& Row : RowsOfElements)
 		{
@@ -220,12 +220,7 @@ namespace TVOS
 				elem->ArrangedRelY = cy + YPadding;
 			}
 
-			cy += RowHeight;
-		}
-		TotalHeight = cy;
-		if (ExpandToParentX)
-		{
-			if (ActualWidth < WidthLimit) ActualWidth = WidthLimit;
+			TotalHeight += RowHeight;
 		}
 		if (ExpandToParentY)
 		{
