@@ -247,7 +247,7 @@ namespace TVOS
 		{
 			if (IsLeft(Alignment))
 			{
-				elem->ArrangedAbsX = x + elem->ArrangedRelX + ClientX;
+				elem->ArrangedAbsX = x + ClientX + elem->ArrangedRelX;
 			}
 			else if (IsRight(Alignment))
 			{
@@ -255,7 +255,7 @@ namespace TVOS
 			}
 			else
 			{
-				elem->ArrangedAbsX = x + ArrangedContainerWidth / 2 - elem->ArrangedWidth / 2 + elem->ArrangedRelX + ClientX;
+				elem->ArrangedAbsX = x + ClientX + ArrangedContainerWidth / 2 - ArrangedContentsWidth / 2 + elem->ArrangedRelX;
 			}
 			if (IsTop(Alignment))
 			{
@@ -267,7 +267,7 @@ namespace TVOS
 			}
 			else
 			{
-				elem->ArrangedAbsY = y + ArrangedContainerHeight / 2 - elem->ArrangedHeight / 2 + elem->ArrangedRelY + ClientY;
+				elem->ArrangedAbsY = y + ClientY + ArrangedContainerHeight / 2 - ArrangedContentsHeight / 2 + elem->ArrangedRelY;
 			}
 			elem->ArrangeSubElementsAbsPos(elem->ArrangedAbsX, elem->ArrangedAbsY);
 		}
