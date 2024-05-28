@@ -117,6 +117,8 @@ namespace TVOS
 		HeightLimit -= GetFrameHeight() * 2;
 		if (HeightLimit < 0) HeightLimit = 0;
 
+		int LastRowHeight = 0;
+
 		// 先按照宽度限制将所有的子控件归类到对应的行里
 		RowsOfElements.push_back(ElemRowType());
 		for (auto& elem : SubElements)
@@ -132,6 +134,8 @@ namespace TVOS
 			elem->GetClientContentsSize(elem->ArrangedContainerWidth, HeightLimit, w, h);
 			elem->ArrangedContentsWidth = w;
 			elem->ArrangedContentsHeight = h;
+
+			if (h > LastRowHeight) LastRowHeight = h;
 
 			if (elem->ExpandToParentX)
 			{
@@ -157,6 +161,8 @@ namespace TVOS
 			if (LineBreak || cx + w >= WidthLimit)
 			{
 				cx = 0;
+				HeightLimit -= LastRowHeight;
+				LastRowHeight = 0;
 				if (CurRow.size() == 0)
 				{ // 如果当前行没有任何控件就要换行，则强行插入控件。
 					CurRow.push_back(elem);
