@@ -40,65 +40,68 @@ int main(int argc, char** argv, char** envp)
 	GUI.ExpandToParentX = true;
 	GUI.ExpandToParentY = true;
 
-	for (int i = 0; i < 100; i++)
-	{
-		auto Sub = std::make_shared<UIElementLabel>(FB, std::string("test") + std::to_string(i));
-		GUI.InsertElement(Sub);
-		Sub->XMargin = 2;
-		Sub->YMargin = 2;
-		Sub->XBorder = 1;
-		Sub->YBorder = 1;
-		Sub->XPadding = 2;
-		Sub->YPadding = 2;
-		Sub->BorderColor = 0xFFFFFFFF;
-		Sub->ExpandToParentX = true;
-		Sub->LineBreak = false;
-		Sub->Transparent = true;
-		Sub->SetCaption(Sub->GetName());
-	}
-
-
 	while (true);
 	{
 		if (!std::filesystem::exists(std::filesystem::path("/dev/mmcblk0p1")))
 		{
 			if (Mounted)
 			{
+				GUI.ClearElements();
+
+				auto Sub = std::make_shared<UIElementLabel>(FB, "Title");
+				GUI.InsertElement(Sub);
+				Sub->XMargin = 0;
+				Sub->YMargin = 0;
+				Sub->XBorder = 0;
+				Sub->YBorder = 1;
+				Sub->XPadding = 2;
+				Sub->YPadding = 2;
+				Sub->BorderColor = 0xFFFFFFFF;
+				Sub->ExpandToParentX = true;
+				Sub->LineBreak = false;
+				Sub->Transparent = true;
+				Sub->Alignment = CenterTop;
+				Sub->SetCaption("A5-MiniTV 小电视");
 				if (umount("/mnt/sdcard") == 0)
 				{
 					Mounted = false;
+
+					auto Prompt = std::make_shared<UIElementLabel>(FB, "Prompt");
+					GUI.InsertElement(Prompt);
+					Prompt->XMargin = 0;
+					Prompt->YMargin = 0;
+					Prompt->XBorder = 0;
+					Prompt->YBorder = 0;
+					Prompt->XPadding = 0;
+					Prompt->YPadding = 0;
+					Prompt->BorderColor = 0xFFFFFFFF;
+					Prompt->ExpandToParentX = true;
+					Prompt->ExpandToParentY = true;
+					Prompt->LineBreak = false;
+					Prompt->Transparent = true;
+					Prompt->Alignment = CenterCenter;
+					Prompt->SetCaption("请插入 SD 卡");
 				}
+				else
+				{
+
+					auto Prompt = std::make_shared<UIElementLabel>(FB, "Prompt");
+					GUI.InsertElement(Prompt);
+					Prompt->XMargin = 0;
+					Prompt->YMargin = 0;
+					Prompt->XBorder = 0;
+					Prompt->YBorder = 0;
+					Prompt->XPadding = 0;
+					Prompt->YPadding = 0;
+					Prompt->BorderColor = 0xFFFFFFFF;
+					Prompt->ExpandToParentX = true;
+					Prompt->ExpandToParentY = true;
+					Prompt->LineBreak = false;
+					Prompt->Transparent = true;
+					Prompt->SetCaption("挂载 SD 卡失败。");
+				}
+				GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
 			}
-			GUI.ClearElements();
-
-			auto Sub = std::make_shared<UIElementLabel>(FB, "Title");
-			GUI.InsertElement(Sub);
-			Sub->XMargin = 0;
-			Sub->YMargin = 0;
-			Sub->XBorder = 0;
-			Sub->YBorder = 1;
-			Sub->XPadding = 2;
-			Sub->YPadding = 2;
-			Sub->BorderColor = 0xFFFFFFFF;
-			Sub->ExpandToParentX = true;
-			Sub->LineBreak = false;
-			Sub->Transparent = true;
-			Sub->SetCaption("A5-MiniTV 小电视");
-
-			auto Prompt = std::make_shared<UIElementLabel>(FB, "Prompt");
-			GUI.InsertElement(Prompt);
-			Prompt->XMargin = 0;
-			Prompt->YMargin = 0;
-			Prompt->XBorder = 0;
-			Prompt->YBorder = 0;
-			Prompt->XPadding = 0;
-			Prompt->YPadding = 0;
-			Prompt->BorderColor = 0xFFFFFFFF;
-			Prompt->ExpandToParentX = true;
-			Prompt->ExpandToParentY = true;
-			Prompt->LineBreak = false;
-			Prompt->Transparent = true;
-			Prompt->SetCaption("请插入 SD 卡");
 		}
 		else
 		{
@@ -110,17 +113,15 @@ int main(int argc, char** argv, char** envp)
 
 			if (!Mounted)
 			{
-				if (mount("/dev/mmcblk0p1", "/mnt/sdcard", "vfat", 0, "defaults,nofail") == 0)
+				if (mount("/dev/mmcblk0p1", "/mnt/sdcard", "vfat", MS_REMOUNT, "defaults,nofail") == 0)
 				{
 					Mounted = true;
 				}
 			}
 
-			GUI.ClearElements();
 			
 		}
 
-		GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
 		GUI.Render();
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
