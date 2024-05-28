@@ -548,6 +548,21 @@ namespace TVOS
 
 	void UIElementListView::EnsureSelectedVisible()
 	{
+		int SelectionPositionTop = 0;
+		int SelectionPositionBtm = 0;
+		for (int i = 0; i < Selection; i++)
+		{
+			SelectionPositionTop += SubElements[i]->ArrangedHeight;
+			SelectionPositionBtm = SelectionPositionTop + SubElements[i]->ArrangedHeight;
+		}
+		if (SelectionPositionTop + Scroll < 0)
+		{
+			Scroll = -SelectionPositionTop;
+		}
+		if (SelectionPositionBtm + Scroll > ArrangedHeight)
+		{
+			Scroll = -SelectionPositionBtm;
+		}
 	}
 
 	UIElementListView::UIElementListView(Graphics& FB, const std::string& Name) :
