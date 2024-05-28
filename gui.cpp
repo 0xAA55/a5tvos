@@ -230,11 +230,11 @@ namespace TVOS
 		ArrangedContainerWidth = WidthSpace;
 		ArrangedContainerHeight = HeightSpace;
 		if (ExpandToParentX)
-			ArrangedWidth = ArrangedContainerWidth;
+			ArrangedWidth = WidthSpace;
 		else
 			ArrangedWidth = ArrangedContentsWidth;
 		if (ExpandToParentY)
-			ArrangedHeight = ArrangedContainerHeight;
+			ArrangedHeight = HeightSpace;
 		else
 			ArrangedHeight = ArrangedContentsHeight;
 	}
