@@ -243,7 +243,7 @@ namespace TVOS
 	{
 		int ClientX = GetFrameWidth();
 		int ClientY = GetFrameHeight();
-		for (auto& elem : SubElements)
+ 		for (auto& elem : SubElements)
 		{
 			if (IsLeft(Alignment))
 			{
