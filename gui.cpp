@@ -649,7 +649,7 @@ namespace TVOS
 			int FillY = y + YMargin + YBorder + 1;
 			int FillR = x + ArrangedWidth - 1 - XMargin - XBorder - 1;
 			int FillB = y + ArrangedHeight - 1 - YMargin - YBorder - 1;
-			FB.FillRectXor(FillX, FillY, FillR, FillB);
+			FB.DrawRectXor(FillX, FillY, FillR, FillB);
 		}
 	}
 }
