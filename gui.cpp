@@ -206,7 +206,7 @@ namespace TVOS
 			}
 			for (auto& elem : Row)
 			{
-				if (!elem->ExpandToParentY)
+				if (!ExpandToParentY)
 				{
 					elem->ArrangedContainerHeight = RowHeight;
 				}
