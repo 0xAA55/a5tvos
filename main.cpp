@@ -5,6 +5,7 @@
 
 #if !defined(_MSC_VER)
 #include <sys/mount.h>
+#include <unistd.h>
 #endif
 
 #include <cstdio>
@@ -18,6 +19,97 @@
 #if defined(_MSC_VER)
 #include "tvos.hpp"
 #include <Windows.h>
+std::string GetLastErrorAsString()
+{
+	DWORD errorMessageID = GetLastError();
+	if (errorMessageID == 0) return "";
+
+	LPSTR messageBuffer = nullptr;
+
+	size_t size = FormatMessageA
+	(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		errorMessageID,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPSTR)&messageBuffer,
+		0,
+		NULL
+	);
+
+	auto ret = std::string(messageBuffer, size);
+	LocalFree(messageBuffer);
+	return ret;
+}
+#endif
+
+#if !defined(_MSC_VER)
+pid_t popen2(const char* command, int* infp, int* outfp)
+{
+	const int READ = 0;
+	const int WRITE = 1;
+	int p_stdin[2], p_stdout[2];
+	pid_t pid;
+
+	if (pipe(p_stdin) != 0 || pipe(p_stdout) != 0)
+		return -1;
+
+	pid = fork();
+
+	if (pid < 0)
+		return pid;
+	else if (pid == 0)
+	{
+		close(p_stdin[WRITE]);
+		dup2(p_stdin[READ], READ);
+		close(p_stdout[READ]);
+		dup2(p_stdout[WRITE], WRITE);
+
+		execl("/bin/sh", "sh", "-c", command, NULL);
+		perror("execl");
+		exit(1);
+	}
+
+	if (infp == NULL)
+		close(p_stdin[WRITE]);
+	else
+		*infp = p_stdin[WRITE];
+
+	if (outfp == NULL)
+		close(p_stdout[READ]);
+	else
+		*outfp = p_stdout[READ];
+
+	return pid;
+}
+#else
+using pid_t = ptrdiff_t;
+pid_t popen2(const char* command, int* infp, int* outfp)
+{
+	PROCESS_INFORMATION ProcInfo;
+	STARTUPINFOA StartupInfo =
+	{
+		sizeof(STARTUPINFOA), NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0,
+		STARTF_USESTDHANDLES,
+		0,
+		0,
+		NULL,
+		GetStdHandle(STD_INPUT_HANDLE),
+		GetStdHandle(STD_OUTPUT_HANDLE),
+		GetStdHandle(STD_ERROR_HANDLE)
+	};
+	if (CreateProcessA(NULL, const_cast<char*>(command), NULL, NULL, TRUE, 0, 0, NULL, &StartupInfo, &ProcInfo))
+	{
+		CloseHandle(ProcInfo.hThread);
+		CloseHandle(ProcInfo.hProcess);
+		return pid_t(ProcInfo.dwProcessId);
+	}
+	else
+	{
+		std::cerr << GetLastErrorAsString();
+		exit(-1);
+	}
+}
 #endif
 
 using namespace TVOS;
