@@ -222,10 +222,6 @@ namespace TVOS
 
 			TotalHeight += RowHeight;
 		}
-		if (ExpandToParentY)
-		{
-			if (TotalHeight < HeightLimit) TotalHeight = HeightLimit;
-		}
 
 		ArrangedRelX = 0;
 		ArrangedRelY = 0;
