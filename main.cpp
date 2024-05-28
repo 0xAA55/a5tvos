@@ -126,7 +126,7 @@ int main(int argc, char** argv, char** envp)
 #if !defined(_MSC_VER)
 	auto FB = Graphics(ResoW, ResoH, false);
 #else
-	auto FB = MyTestApp(true);
+	auto FB = MyTestApp(false);
 #endif
 	auto GUI = UIElementBase(FB, "root");
 	FB.ClearScreen(0);
