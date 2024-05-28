@@ -123,6 +123,11 @@ int main(int argc, char** argv, char** envp)
 
 	WriteGPIOE(0, true);
 
+	bool Key1 = false;
+	bool Key2 = false;
+	bool Key3 = false;
+	bool Key4 = false;
+
 #if !defined(_MSC_VER)
 	auto FB = Graphics(ResoW, ResoH, false);
 #else
@@ -266,13 +271,41 @@ int main(int argc, char** argv, char** envp)
 						{
 							auto ListItem = std::make_shared<UIElementListItem>(FB, FileNameString);
 							ListView->AddItem(FileNameString, FileNameString);
-				}
+						}
 					}
 				}
 				GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
 				FB.ClearScreen(0);
 			}
 
+			auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
+
+			if (ReadGPIOE(2))
+			{
+				if (Key2 == false)
+				{
+					Key2 = true;
+					GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
+					ListView.SelectPrev();
+				}
+			}
+			else
+			{
+				Key2 = false;
+			}
+			if (ReadGPIOE(3))
+			{
+				if (Key3 == false)
+				{
+					Key3 = true;
+					GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
+					ListView.SelectNext();
+				}
+			}
+			else
+			{
+				Key3 = false;
+			}
 
 		}
 
