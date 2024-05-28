@@ -122,10 +122,39 @@ namespace TVOS
 		virtual void Render(int x, int y, int w, int h);
 	};
 
-	
+	class UIElementListItem : public UIElementLabel
+	{
+	public:
+		UIElementListItem(Graphics& FB, const std::string& Name);
 
+		bool Selected = false;
+		virtual void Render(int x, int y, int w, int h);
+	};
 
+	class UIElementListView : public UIElementBase
+	{
+	protected:
+		int Scroll = 0;
+		int GetMaxScroll() const;
+		void EnsureSelectedVisible();
 
+	public:
+		UIElementListView(Graphics& FB, const std::string& Name);
+
+		uint32_t FontColor = 0xFFFFFFFF;
+
+		size_t Selection = 0;
+
+		size_t AddItem(const std::string& Key, const std::string& Caption);
+		bool RemoteItem(size_t Index);
+		UIElementListItem& GetItem(size_t Index) const;
+		UIElementListItem& GetSelectedItem() const;
+
+		void SelectNext();
+		void SelectPrev();
+
+		virtual void Render(int x, int y, int w, int h);
+	};
 
 }
 

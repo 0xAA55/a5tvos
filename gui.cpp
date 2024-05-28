@@ -538,4 +538,110 @@ namespace TVOS
 		}
 		FB.DrawText(tx, ty, Caption, true, FontColor);
 	}
+
+	int UIElementListView::GetMaxScroll() const
+	{
+		int MaxScroll = ArrangedHeight - ArrangedContentsHeight;
+		if (MaxScroll < 0) MaxScroll = 0;
+		return MaxScroll;
+	}
+
+	void UIElementListView::EnsureSelectedVisible()
+	{
+	}
+
+	UIElementListView::UIElementListView(Graphics& FB, const std::string& Name) :
+		UIElementBase(FB, Name)
+	{
+		ClipChildren = true;
+	}
+
+	size_t UIElementListView::AddItem(const std::string& Key, const std::string& Caption)
+	{
+		auto elem = std::make_shared<UIElementListItem>(FB, Key);
+		InsertElement(elem);
+		elem->ExpandToParentX = true;
+		elem->LineBreak = true;
+		elem->XMargin = 1;
+		elem->YMargin = 1;
+		elem->XBorder = 1;
+		elem->YBorder = 1;
+		elem->XPadding = 1;
+		elem->YPadding = 1;
+		elem->Transparent = true;
+		elem->Alignment = AlignmentType::LeftCenter;
+		elem->SetCaption(Caption);
+		return size();
+	}
+
+	bool UIElementListView::RemoteItem(size_t Index)
+	{
+		if (size() == 0) return false;
+		if (Index >= size()) return false;
+		auto& ElemName = SubElements[Index]->GetName();
+		return RemoveElement(ElemName);
+	}
+
+	UIElementListItem& UIElementListView::GetItem(size_t Index) const
+	{
+		if (Index < size())
+		{
+			return dynamic_cast<UIElementListItem&>(*SubElements[Index]);
+		}
+		throw std::invalid_argument(std::string(__func__) + ": Index out of bound: index=" + std::to_string(Index) + ", bound=" + std::to_string(size()));
+	}
+
+	UIElementListItem& UIElementListView::GetSelectedItem() const
+	{
+		if (Selection < size())
+		{
+			return dynamic_cast<UIElementListItem&>(*SubElements[Selection]);
+		}
+		throw std::invalid_argument(std::string(__func__) + ": Index out of bound: index=" + std::to_string(Selection) + ", bound=" + std::to_string(size()));
+	}
+
+	void UIElementListView::SelectNext()
+	{
+		if (!size()) return;
+		GetSelectedItem().Selected = false;
+		auto Prev = Selection++;
+		if (Selection >= size()) Selection = 0;
+		GetSelectedItem().Selected = true;
+		EnsureSelectedVisible();
+	}
+
+	void UIElementListView::SelectPrev()
+	{
+		if (!size()) return;
+		GetSelectedItem().Selected = false;
+		auto Prev = Selection;
+		if (Selection == 0) Selection = size();
+		Selection--;
+		GetSelectedItem().Selected = true;
+		EnsureSelectedVisible();
+	}
+
+	void UIElementListView::Render(int x, int y, int w, int h)
+	{
+		UIElementBase::Render(x - Scroll, y, w, h);
+	}
+
+	UIElementListItem::UIElementListItem(Graphics& FB, const std::string& Name) :
+		UIElementLabel(FB, Name)
+	{
+	}
+
+	void UIElementListItem::Render(int x, int y, int w, int h)
+	{
+		UIElementLabel::Render(x, y, w, h);
+
+		if (Selected)
+		{
+			int FillX = x + XMargin + XBorder + 1;
+			int FillY = y + YMargin + YBorder + 1;
+			int FillR = x + ArrangedWidth - 1 - XMargin - XBorder - 1;
+			int FillB = y + ArrangedHeight - 1 - YMargin - YBorder - 1;
+			FB.FillRectXor(FillX, FillY, FillR, FillB);
+		}
+	}
 }
