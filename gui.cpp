@@ -569,6 +569,7 @@ namespace TVOS
 		elem->XPadding = 1;
 		elem->YPadding = 1;
 		elem->Transparent = true;
+		elem->BorderColor = 0xFFA0A0A0;
 		elem->Alignment = AlignmentType::LeftCenter;
 		elem->SetCaption(Caption);
 		return size();
