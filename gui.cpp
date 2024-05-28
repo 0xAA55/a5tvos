@@ -580,6 +580,9 @@ namespace TVOS
 	void UIElementListView::GetClientContentsSize(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
 	{
 		UIElementBase::GetClientContentsSize(WidthLimit, HeightLimit, ActualWidth, TotalHeight);
+
+		ArrangedContainerWidth = WidthLimit;
+		ArrangedContainerHeight = HeightLimit;
 	}
 
 	size_t UIElementListView::AddItem(const std::string& Key, const std::string& Caption)
