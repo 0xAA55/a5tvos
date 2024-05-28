@@ -185,9 +185,9 @@
     <ClCompile Include="..\gpio.cpp" />
     <ClCompile Include="..\graphics.cpp" />
     <ClCompile Include="..\gui.cpp" />
+    <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\utf.cpp" />
     <ClCompile Include="dibwin.cpp" />
-    <ClCompile Include="tvos.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\font.hpp" />

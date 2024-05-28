@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="tvos.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="dibwin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -34,6 +31,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\gpio.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
