@@ -109,6 +109,9 @@ namespace TVOS
 		using ElemRowType = std::vector<std::shared_ptr<UIElementBase>>;
 		std::vector<ElemRowType> RowsOfElements;
 
+		auto WidthSpace = WidthLimit;
+		auto HeightSpace = HeightLimit;
+
 		WidthLimit -= GetFrameWidth() * 2;
 		if (WidthLimit < 0) WidthLimit = 0;
 		HeightLimit -= GetFrameHeight() * 2;
@@ -230,6 +233,21 @@ namespace TVOS
 		{
 			if (TotalHeight < HeightLimit) TotalHeight = HeightLimit;
 		}
+
+		ArrangedRelX = 0;
+		ArrangedRelY = 0;
+		ArrangedContentsWidth = ActualWidth;
+		ArrangedContentsHeight = TotalHeight;
+		ArrangedContainerWidth = WidthSpace;
+		ArrangedContainerHeight = HeightSpace;
+		if (ExpandToParentX)
+			ArrangedWidth = ArrangedContainerWidth;
+		else
+			ArrangedWidth = ArrangedContentsWidth;
+		if (ExpandToParentY)
+			ArrangedHeight = ArrangedContainerHeight;
+		else
+			ArrangedHeight = ArrangedContentsHeight;
 	}
 
 	void UIElementBase::ArrangeSubElementsAbsPos(int x, int y)
