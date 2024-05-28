@@ -573,6 +573,12 @@ namespace TVOS
 		elem->FillColor = 0xFF000000;
 		elem->Alignment = AlignmentType::LeftCenter;
 		elem->SetCaption(Caption);
+
+		if (size() == 1)
+		{
+			Selection = 0;
+			elem->Selected = true;
+		}
 		return size();
 	}
 
