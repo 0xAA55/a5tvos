@@ -167,10 +167,10 @@ bool ReadGPIOE(int Port)
 #else
 	switch (Port)
 	{
-	case 1: return bool(GetAsyncKeyState('z'));
-	case 2: return bool(GetAsyncKeyState('x'));
-	case 3: return bool(GetAsyncKeyState('c'));
-	case 4: return bool(GetAsyncKeyState('v'));
+	case 1: return bool(GetAsyncKeyState('Z'));
+	case 2: return bool(GetAsyncKeyState('X'));
+	case 3: return bool(GetAsyncKeyState('C'));
+	case 4: return bool(GetAsyncKeyState('V'));
 	}
 #endif
 }
