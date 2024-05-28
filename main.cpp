@@ -241,8 +241,8 @@ int main(int argc, char** argv, char** envp)
 					ListView->YMargin = 0;
 					ListView->XBorder = 0;
 					ListView->YBorder = 0;
-					ListView->XPadding = 0;
-					ListView->YPadding = 0;
+					ListView->XPadding = 2;
+					ListView->YPadding = 2;
 					ListView->BorderColor = 0xFFFFFFFF;
 					ListView->ExpandToParentX = true;
 					ListView->ExpandToParentY = true;
