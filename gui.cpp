@@ -217,7 +217,7 @@ namespace TVOS
 			// 再设置这行每个控件的位置
 			for (auto& elem : Row)
 			{
-				elem->ArrangedRelY = cy + YPadding;
+				elem->ArrangedRelY = TotalHeight + YPadding;
 			}
 
 			TotalHeight += RowHeight;
