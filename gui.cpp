@@ -447,6 +447,31 @@ namespace TVOS
 		return SubElements.end();
 	}
 
+	decltype(UIElementBase::SubElements.size()) UIElementBase::size() const
+	{
+		return SubElements.size();
+	}
+
+	decltype(UIElementBase::SubElements.front()) UIElementBase::front()
+	{
+		return SubElements.front();
+	}
+
+	decltype(UIElementBase::SubElements.back()) UIElementBase::back()
+	{
+		return SubElements.back();
+	}
+
+	decltype(UIElementBase::SubElements.at(size_t(0))) UIElementBase::at(size_t Index)
+	{
+		return SubElements.at(Index);
+	}
+
+	decltype(UIElementBase::SubElementsMap.at("")) UIElementBase::at(const std::string& Name)
+	{
+		return SubElementsMap.at(Name);
+	}
+
 	UIElementLabel::UIElementLabel(Graphics& FB, const std::string& Name) :
 		UIElementBase(FB, Name)
 	{
