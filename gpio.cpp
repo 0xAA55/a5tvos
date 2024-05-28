@@ -172,6 +172,7 @@ bool ReadGPIOE(int Port)
 	case 3: return bool(GetAsyncKeyState('C'));
 	case 4: return bool(GetAsyncKeyState('V'));
 	}
+	return false;
 #endif
 }
 
