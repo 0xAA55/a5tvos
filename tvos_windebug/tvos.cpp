@@ -23,8 +23,9 @@ int main()
 	GUI.Transparent = true;
 	GUI.ExpandToParentX = true;
 	GUI.ExpandToParentY = true;
+	GUI.Alignment = AlignmentType::CenterCenter;
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		auto Sub = std::make_shared<UIElementLabel>(FB, std::string("test") + std::to_string(i));
 		GUI.InsertElement(Sub);
@@ -38,6 +39,7 @@ int main()
 		Sub->ExpandToParentX = true;
 		Sub->LineBreak = false;
 		Sub->Transparent = true;
+		Sub->Alignment = AlignmentType::LeftCenter;
 		Sub->SetCaption(Sub->GetName());
 	}
 
