@@ -571,6 +571,11 @@ namespace TVOS
 		ClipChildren = true;
 	}
 
+	void UIElementListView::GetClientContentsSize(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight)
+	{
+		UIElementBase::GetClientContentsSize(WidthLimit, HeightLimit, ActualWidth, TotalHeight);
+	}
+
 	size_t UIElementListView::AddItem(const std::string& Key, const std::string& Caption)
 	{
 		auto elem = std::make_shared<UIElementListItem>(FB, Key);

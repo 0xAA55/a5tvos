@@ -143,6 +143,8 @@ namespace TVOS
 
 		uint32_t FontColor = 0xFFFFFFFF;
 
+		virtual void GetClientContentsSize(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight);
+
 		size_t Selection = 0;
 
 		size_t AddItem(const std::string& Key, const std::string& Caption);
