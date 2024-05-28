@@ -250,7 +250,24 @@ int main(int argc, char** argv, char** envp)
 					ListView->Transparent = true;
 					ListView->Alignment = AlignmentType::LeftTop;
 
+#if !defined(_MSC_VER)
+					auto media_path = "/mnt/sdcard";
+#else
+					auto media_path = "testsdcard";
+#endif
+					for (auto& directory : std::filesystem::directory_iterator(media_path))
+					{
+						// 跳过文件夹
+						if (directory.is_directory()) continue;
 
+						auto p = directory.path();
+						auto FileNameString = p.filename().string();
+						if (p.extension() == ".mp4" || p.extension() == ".MP4")
+						{
+							auto ListItem = std::make_shared<UIElementListItem>(FB, FileNameString);
+							ListView->AddItem(FileNameString, FileNameString);
+				}
+					}
 				}
 				GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
 				FB.ClearScreen(0);
