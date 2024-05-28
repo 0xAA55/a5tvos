@@ -130,27 +130,25 @@ namespace TVOS
 			int w, h;
 			elem->ArrangedContainerWidth = WidthLimit - cx;
 			elem->GetClientContentsSize(elem->ArrangedContainerWidth, HeightLimit, w, h);
+			elem->ArrangedContentsWidth = w;
+			elem->ArrangedContentsHeight = h;
 
 			if (elem->ExpandToParentX)
 			{
 				elem->ArrangedWidth = elem->ArrangedContainerWidth - XPadding * 2;
-				elem->ArrangedContentsWidth = elem->ArrangedWidth - elem->XPadding * 2;
 				LineBreak = true;
 			}
 			else
 			{
-				elem->ArrangedContentsWidth = w;
 				elem->ArrangedWidth = w + elem->XPadding * 2;
 			}
 			if (elem->ExpandToParentY)
 			{
 				elem->ArrangedHeight = HeightLimit;
-				elem->ArrangedContentsHeight = HeightLimit - elem->YPadding * 2;
 				elem->ArrangedContainerHeight = HeightLimit;
 			}
 			else
 			{
-				elem->ArrangedContentsHeight = h;
 				elem->ArrangedHeight = h + elem->YPadding * 2;
 			}
 
@@ -470,6 +468,8 @@ namespace TVOS
 		UIElementBase::GetClientContentsSize(WidthLimit, HeightLimit, ActualWidth, TotalHeight);
 		if (ActualWidth < TextW) ActualWidth = TextW;
 		if (TotalHeight < TextH) TotalHeight = TextH;
+		ArrangedContentsWidth = ActualWidth;
+		ArrangedContentsHeight = TotalHeight;
 	}
 
 	void UIElementLabel::SetCaption(const std::string& Caption)
