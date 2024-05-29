@@ -65,7 +65,7 @@ void GPIO_PeriphType::WritePeriph(volatile uint32_t* Ptr, uint32_t Data)
 	snprintf(cmd, sizeof(cmd), "devmem 0x%08x 32 0x%08x", uint32_t(reinterpret_cast<size_t>(Ptr)), Data);
 
 #if defined(_MSC_VER)
-	printf("%s\n", cmd);
+	// printf("%s\n", cmd);
 #else
 	system(cmd);
 #endif
@@ -77,7 +77,7 @@ uint32_t GPIO_PeriphType::ReadPeriph(const volatile uint32_t* Ptr)
 
 	snprintf(cmd, sizeof(cmd), "devmem 0x%08x", uint32_t(reinterpret_cast<size_t>(Ptr)));
 #if defined(_MSC_VER)
-	printf("%s\n", cmd);
+	// printf("%s\n", cmd);
 #else
 	FILE* fp = popen(cmd, "r");
 	if (fp == NULL)
