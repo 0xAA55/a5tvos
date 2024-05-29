@@ -372,19 +372,11 @@ int main(int argc, char** argv, char** envp)
 				auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
 				if (ReadGPIOE(1))
 				{
-					if (Key1 == false)
-					{
-						Key1 = true;
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
 						FB.ClearScreen(0);
 						if (PlayerProcess != -1) StopPlay(PlayerProcess);
 						PlayerProcess = PlayVideo(VideoFile);
 					}
-				}
-				else
-				{
-					Key1 = false;
-				}
 				if (ReadGPIOE(2))
 				{
 					ListView.SelectNext();
@@ -398,19 +390,11 @@ int main(int argc, char** argv, char** envp)
 				}
 				if (ReadGPIOE(4))
 				{
-					if (Key4 == false)
-					{
-						Key4 = true;
 						StopPlay(PlayerProcess);
 						FB.ClearScreen(0);
 						NeedRedraw = true;
 					}
 				}
-				else
-				{
-					Key4 = false;
-				}
-			}
 
 				if (PlayerProcess != -1 && !IsPlaying(PlayerProcess))
 				{
