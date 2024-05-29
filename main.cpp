@@ -165,6 +165,20 @@ void StopPlay(pid_t& pid)
 #endif
 	pid = -1;
 }
+
+bool IsPlaying(pid_t pid)
+{
+#ifdef _MSC_VER
+	const auto player = OpenProcess(PROCESS_QUERY_INFORMATION, false, pid);
+	DWORD ExitCode = 0;
+	GetExitCodeProcess(player, &ExitCode);
+	CloseHandle(player);
+	return ExitCode == STILL_ACTIVE;
+#else
+	return kill(pid, 0) == 0;
+#endif
+}
+
 int main(int argc, char** argv, char** envp)
 {
 	const int ResoW = 480;
