@@ -358,8 +358,6 @@ int main(int argc, char** argv, char** envp)
 			if (GUI.count("ListView"))
 			{
 			auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
-
-				/*
 			if (ReadGPIOE(1))
 			{
 				if (Key1 == false)
@@ -412,7 +410,7 @@ int main(int argc, char** argv, char** envp)
 			else
 			{
 				Key4 = false;
-				}*/
+				}
 
 			if (!IsPlaying(PlayerProcess))
 			{
