@@ -263,7 +263,7 @@ int main(int argc, char** argv, char** envp)
 #if !defined(_MSC_VER)
 		if (!std::filesystem::exists(std::filesystem::path("/dev/mmcblk0p1")))
 #else
-		if (!GetAsyncKeyState(VK_SPACE))
+		if (GetAsyncKeyState(VK_SPACE))
 #endif
 		{
 			if (Mounted)
