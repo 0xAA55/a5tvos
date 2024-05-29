@@ -160,10 +160,10 @@ bool ReadGPIOD(int Port)
 bool ReadGPIOE(int Port)
 {
 	GPIO_Periph[GPIO_E].SetModeIn(Port);
-#if defined(_MSC_VER)
-	GPIO_Periph[GPIO_E].ReadBit(Port);
-#else
+#if !defined(_MSC_VER)
 	return GPIO_Periph[GPIO_E].ReadBit(Port);
+#else
+	GPIO_Periph[GPIO_E].ReadBit(Port);
 	switch (Port)
 	{
 	case 1: return bool(GetAsyncKeyState('Z'));
