@@ -193,6 +193,8 @@ int main(int argc, char** argv, char** envp)
 	bool Key3 = false;
 	bool Key4 = false;
 
+	pid_t PlayerProcess = -1;
+
 #if !defined(_MSC_VER)
 	auto FB = Graphics(ResoW, ResoH, false);
 	FB.SetBackBufferMode();
@@ -224,6 +226,7 @@ int main(int argc, char** argv, char** envp)
 		{
 			if (Mounted)
 			{
+				if (PlayerProcess != -1) StopPlay(PlayerProcess);
 #if !defined(_MSC_VER)
 				if (umount2("/mnt/sdcard", MNT_FORCE) == 0)
 #else
@@ -369,6 +372,10 @@ int main(int argc, char** argv, char** envp)
 				Key3 = false;
 			}
 
+			if (!IsPlaying(PlayerProcess))
+			{
+				PlayerProcess = -1;
+		}
 		}
 
 		GUI.Render();
