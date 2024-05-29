@@ -195,6 +195,8 @@ int main(int argc, char** argv, char** envp)
 	bool Key3 = false;
 	bool Key4 = false;
 
+	bool NeedRedraw = true;
+
 	pid_t PlayerProcess = -1;
 
 #if !defined(_MSC_VER)
@@ -204,7 +206,6 @@ int main(int argc, char** argv, char** envp)
 	auto FB = MyTestApp(false);
 #endif
 	auto GUI = UIElementBase(FB, "root");
-	FB.ClearScreen(0);
 
 	GUI.XMargin = 2;
 	GUI.YMargin = 2;
@@ -267,6 +268,8 @@ int main(int argc, char** argv, char** envp)
 					Prompt->Transparent = true;
 					Prompt->Alignment = AlignmentType::CenterCenter;
 					Prompt->SetCaption("请插入 SD 卡");
+
+				NeedRedraw = true;
 				}
 			}
 		else
@@ -346,6 +349,8 @@ int main(int argc, char** argv, char** envp)
 							ListView->AddItem(FileNameString, FileNameString);
 						}
 					}
+
+					NeedRedraw = true;
 				}
 				else
 				{
@@ -363,7 +368,7 @@ int main(int argc, char** argv, char** envp)
 				if (Key1 == false)
 				{
 					Key1 = true;
-					FB.ClearScreen(0);
+						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
 					StopPlay(PlayerProcess);
 				}
 			}
@@ -376,7 +381,7 @@ int main(int argc, char** argv, char** envp)
 				if (Key2 == false)
 				{
 					Key2 = true;
-					FB.ClearScreen(0);
+						ListView.SelectNext();
 					ListView.SelectPrev();
 				}
 			}
@@ -389,7 +394,7 @@ int main(int argc, char** argv, char** envp)
 				if (Key3 == false)
 				{
 					Key3 = true;
-					FB.ClearScreen(0);
+						ListView.SelectPrev();
 					ListView.SelectNext();
 				}
 			}
@@ -402,7 +407,7 @@ int main(int argc, char** argv, char** envp)
 				if (Key4 == false)
 				{
 					Key4 = true;
-					FB.ClearScreen(0);
+						StopPlay(PlayerProcess);
 					auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
 					PlayerProcess = PlayVideo(VideoFile);
 				}
@@ -422,8 +427,11 @@ int main(int argc, char** argv, char** envp)
 #if !defined(_MSC_VER)
 		if (PlayerProcess == -1)
 		{
-			FB.ClearScreen(0);
+			if (NeedRedraw)
+			{
 			GUI.Render();
+				NeedRedraw = false;
+			}
 			// FB.RefreshFrontBuffer();
 		}
 		else
@@ -433,9 +441,11 @@ int main(int argc, char** argv, char** envp)
 #else
 		if (PlayerProcess == -1)
 		{
-			FB.ClearScreen(0);
+			if (NeedRedraw)
+			{
 			GUI.Render();
-			FB.RefreshFB();
+				NeedRedraw = false;
+			}
 		}
 		FB.ProcessMessageNonBlocking();
 		if (FB.GetWindowIsDestroyed()) break;
