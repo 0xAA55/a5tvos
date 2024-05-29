@@ -307,10 +307,10 @@ namespace TVOS
 
 		if (!Transparent)
 		{
-			int FillX = ArrangedAbsX + XMargin + XBorder + 1;
-			int FillY = ArrangedAbsY + YMargin + YBorder + 1;
-			int FillR = ArrangedAbsR - XMargin - XBorder - 1;
-			int FillB = ArrangedAbsB - YMargin - YBorder - 1;
+			int FillX = ArrangedAbsX + XMargin + XBorder;
+			int FillY = ArrangedAbsY + YMargin + YBorder;
+			int FillR = ArrangedAbsR - XMargin - XBorder;
+			int FillB = ArrangedAbsB - YMargin - YBorder;
 			int FillW = FillR + 1 - FillX;
 			int FillH = FillB + 1 - FillY;
 			if (FillW > 0 && FillH > 0)
@@ -609,15 +609,16 @@ namespace TVOS
 		InsertElement(elem);
 		elem->ExpandToParentX = true;
 		elem->LineBreak = true;
-		elem->XMargin = 1;
-		elem->YMargin = 1;
+		elem->XMargin = 0;
+		elem->YMargin = 0;
 		elem->XBorder = 1;
 		elem->YBorder = 1;
-		elem->XPadding = 1;
-		elem->YPadding = 1;
+		elem->XPadding = 0;
+		elem->YPadding = 0;
 		elem->Transparent = false;
-		elem->BorderColor = 0xFFA0A0A0;
+		elem->BorderColor = 0xFF000000;
 		elem->FillColor = 0xFF000000;
+		elem->FontColor = 0xFFFFFFFF;
 		elem->Alignment = AlignmentType::LeftCenter;
 		elem->SetCaption(Caption);
 
@@ -688,15 +689,18 @@ namespace TVOS
 
 	void UIElementListItem::Render(int x, int y, int w, int h)
 	{
-		UIElementLabel::Render(x, y, w, h);
-
 		if (Selected)
 		{
-			int FillX = x + XMargin + XBorder + 1;
-			int FillY = y + YMargin + YBorder + 1;
-			int FillR = x + ArrangedWidth - 1 - XMargin - XBorder - 1;
-			int FillB = y + ArrangedHeight - 1 - YMargin - YBorder - 1;
-			FB.DrawRectXor(FillX, FillY, FillR, FillB);
+			BorderColor = 0xFFFFFFFF;
+			FillColor = 0xFFFFFFFF;
+			FontColor = 0xFF000000;
 		}
+		else
+		{
+			BorderColor = 0xFF000000;
+			FillColor = 0xFF000000;
+			FontColor = 0xFFFFFFFF;
+		}
+		UIElementLabel::Render(x, y, w, h);
 	}
 }
