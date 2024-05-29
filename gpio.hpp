@@ -33,11 +33,11 @@ GPIO_PeriphType * const GPIO_Periph = reinterpret_cast<GPIO_PeriphType * const>(
 enum GPIO_GroupEnumType
 {
 	GPIO_A = 0,
-	GPIO_B = 0,
-	GPIO_C = 0,
-	GPIO_D = 0,
-	GPIO_E = 0,
-	GPIO_F = 0,
+	GPIO_B = 1,
+	GPIO_C = 2,
+	GPIO_D = 3,
+	GPIO_E = 4,
+	GPIO_F = 5,
 };
 
 void WriteGPIOA(int Port, bool Value);
