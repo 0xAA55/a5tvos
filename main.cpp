@@ -195,6 +195,7 @@ int main(int argc, char** argv, char** envp)
 
 #if !defined(_MSC_VER)
 	auto FB = Graphics(ResoW, ResoH, false);
+	FB.SetBackBufferMode();
 #else
 	auto FB = MyTestApp(false);
 #endif
