@@ -410,7 +410,12 @@ namespace TVOS
 	
 	void Graphics::RefreshFrontBuffer()
 	{
-		DrawImage(*BackBuffer, 0, 0);
+		if (BackBufferMode)
+		{
+			SetFrontBufferMode();
+			DrawImage(*BackBuffer, 0, 0);
+			SetBackBufferMode();
+		}
 	}
 
 	void Graphics::DrawVLine(int x, int y1, int y2, uint32_t color)
