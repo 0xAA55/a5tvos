@@ -266,7 +266,6 @@ int main(int argc, char** argv, char** envp)
 					Prompt->SetCaption("请插入 SD 卡");
 
 				}
-				GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
 				FB.ClearScreen(0);
 			}
 		}
@@ -340,7 +339,6 @@ int main(int argc, char** argv, char** envp)
 						}
 					}
 				}
-				GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
 				FB.ClearScreen(0);
 			}
 
