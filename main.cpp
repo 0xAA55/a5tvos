@@ -84,7 +84,7 @@ pid_t popen2(const char* command, int* infp, int* outfp)
 	return pid;
 }
 #else
-using pid_t = ptrdiff_t;
+using pid_t = int;
 pid_t popen2(const char* command, int* infp, int* outfp)
 {
 	PROCESS_INFORMATION ProcInfo;
@@ -157,7 +157,7 @@ pid_t PlayVideo(const std::string& VideoFile)
 void StopPlay(pid_t& pid)
 {
 #ifdef _MSC_VER
-	const auto player = OpenProcess(PROCESS_TERMINATE, false, pid);
+	const auto player = OpenProcess(PROCESS_TERMINATE, false, DWORD(pid));
 	TerminateProcess(player, 1);
 	CloseHandle(player);
 #else
@@ -169,7 +169,7 @@ void StopPlay(pid_t& pid)
 bool IsPlaying(pid_t pid)
 {
 #ifdef _MSC_VER
-	const auto player = OpenProcess(PROCESS_QUERY_INFORMATION, false, pid);
+	const auto player = OpenProcess(PROCESS_QUERY_INFORMATION, false, DWORD(pid));
 	DWORD ExitCode = 0;
 	GetExitCodeProcess(player, &ExitCode);
 	CloseHandle(player);
