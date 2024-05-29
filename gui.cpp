@@ -78,6 +78,13 @@ namespace TVOS
 		return Name;
 	}
 
+	int UIElementBase::GetMaxScroll() const
+	{
+		int MaxScroll = ArrangedHeight - ArrangedContentsHeight;
+		if (MaxScroll < 0) MaxScroll = 0;
+		return MaxScroll;
+	}
+
 	std::shared_ptr<UIElementBase> UIElementBase::FindElement(const std::string& Name)
 	{
 		if (!SubElements.size()) return nullptr;
@@ -275,7 +282,7 @@ namespace TVOS
 			{
 				elem->ArrangedAbsY = y + ArrangedContainerHeight / 2 - ArrangedContentsHeight / 2 + elem->ArrangedRelY;
 			}
-			elem->ArrangeSubElementsAbsPos(elem->ArrangedAbsX, elem->ArrangedAbsY);
+			elem->ArrangeSubElementsAbsPos(elem->ArrangedAbsX, elem->ArrangedAbsY - Scroll);
 		}
 	}
 
@@ -554,30 +561,14 @@ namespace TVOS
 		FB.DrawText(tx, ty, Caption, true, FontColor);
 	}
 
-	int UIElementListView::GetMaxScroll() const
-	{
-		int MaxScroll = ArrangedHeight - ArrangedContentsHeight;
-		if (MaxScroll < 0) MaxScroll = 0;
-		return MaxScroll;
-	}
-
 	void UIElementListView::EnsureSelectedVisible()
 	{
-		int SelectionPositionTop = 0;
-		int SelectionPositionBtm = 0;
-		for (int i = 0; i < Selection; i++)
-		{
-			SelectionPositionTop += SubElements[i]->ArrangedHeight;
-			SelectionPositionBtm = SelectionPositionTop + SubElements[i]->ArrangedHeight;
-		}
-		if (SelectionPositionTop + Scroll < 0)
-		{
-			Scroll = -SelectionPositionTop;
-		}
-		if (SelectionPositionBtm + Scroll > ArrangedHeight)
-		{
-			Scroll = -SelectionPositionBtm;
-		}
+		auto MaxScroll = GetMaxScroll();
+		if (MaxScroll)
+			Scroll = int(Selection * SubElements.size() / MaxScroll);
+		else
+			Scroll = 0;
+		ArrangeSubElementsAbsPos(ArrangedAbsX, ArrangedAbsY - Scroll);
 	}
 
 	UIElementListView::UIElementListView(Graphics& FB, const std::string& Name) :
@@ -669,7 +660,7 @@ namespace TVOS
 
 	void UIElementListView::Render(int x, int y, int w, int h)
 	{
-		UIElementBase::Render(x - Scroll, y, w, h);
+		UIElementBase::Render(x, y, w, h);
 	}
 
 	UIElementListItem::UIElementListItem(Graphics& FB, const std::string& Name) :

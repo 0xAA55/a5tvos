@@ -63,6 +63,9 @@ namespace TVOS
 		bool ExpandToParentY = false;
 		bool LineBreak = false;
 
+		int Scroll = 0;
+		int GetMaxScroll() const;
+
 		std::shared_ptr<UIElementBase> FindElement(const std::string& Name);
 
 		int GetFrameWidth() const;
@@ -135,8 +138,6 @@ namespace TVOS
 	class UIElementListView : public UIElementBase
 	{
 	protected:
-		int Scroll = 0;
-		int GetMaxScroll() const;
 		void EnsureSelectedVisible();
 
 	public:
