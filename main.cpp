@@ -272,17 +272,21 @@ int main(int argc, char** argv, char** envp)
 		else
 		{
 #if !defined(_MSC_VER)
-			auto SDCardPath = std::filesystem::path("/mnt/sdcard");
+			std::string media_path = "/mnt/sdcard";
+#else
+			std::string media_path = "testsdcard";
+#endif
+
+			auto SDCardPath = std::filesystem::path(media_path);
 			if (!std::filesystem::exists(SDCardPath))
 			{
 				std::filesystem::create_directories(SDCardPath);
 			}
-#endif
 
 			if (!Mounted)
 			{
 #if !defined(_MSC_VER)
-				if (mount("/dev/mmcblk0p1", "/mnt/sdcard", "vfat", MS_REMOUNT, "defaults,nofail") == 0)
+				if (mount("/dev/mmcblk0p1", media_path.c_str(), "vfat", MS_REMOUNT, "defaults,nofail") == 0)
 #else
 				if (1)
 #endif
@@ -319,12 +323,6 @@ int main(int argc, char** argv, char** envp)
 					ListView->LineBreak = false;
 					ListView->Transparent = true;
 					ListView->Alignment = AlignmentType::LeftTop;
-
-#if !defined(_MSC_VER)
-					auto media_path = "/mnt/sdcard";
-#else
-					auto media_path = "testsdcard";
-#endif
 					for (auto& directory : std::filesystem::directory_iterator(media_path))
 					{
 						// 跳过文件夹
