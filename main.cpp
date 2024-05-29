@@ -401,6 +401,7 @@ int main(int argc, char** argv, char** envp)
 			{
 				PlayerProcess = -1;
 				FB.ClearScreen(0);
+				NeedRedraw = true;
 			}
 		}
 
