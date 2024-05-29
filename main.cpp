@@ -218,6 +218,46 @@ int main(int argc, char** argv, char** envp)
 	GUI.ExpandToParentX = true;
 	GUI.ExpandToParentY = true;
 
+	do
+	{
+		auto Sub = std::make_shared<UIElementLabel>(FB, "Title");
+		GUI.InsertElement(Sub);
+		Sub->XMargin = 0;
+		Sub->YMargin = 0;
+		Sub->XBorder = 0;
+		Sub->YBorder = 1;
+		Sub->XPadding = 2;
+		Sub->YPadding = 2;
+		Sub->BorderColor = 0xFFFFFFFF;
+		Sub->FillColor = 0xFF000000;
+		Sub->FontColor = 0xFFFFFFFF;
+		Sub->ExpandToParentX = true;
+		Sub->LineBreak = false;
+		Sub->Transparent = false;
+		Sub->Alignment = AlignmentType::CenterTop;
+		Sub->SetCaption("A5-MiniTV 小电视");
+
+		auto Prompt = std::make_shared<UIElementLabel>(FB, "Prompt");
+		GUI.InsertElement(Prompt);
+		Prompt->XMargin = 0;
+		Prompt->YMargin = 0;
+		Prompt->XBorder = 0;
+		Prompt->YBorder = 0;
+		Prompt->XPadding = 0;
+		Prompt->YPadding = 0;
+		Prompt->BorderColor = 0xFFFFFFFF;
+		Sub->FillColor = 0xFF000000;
+		Sub->FontColor = 0xFFFFFFFF;
+		Prompt->ExpandToParentX = true;
+		Prompt->ExpandToParentY = true;
+		Prompt->LineBreak = false;
+		Prompt->Transparent = true;
+		Prompt->Alignment = AlignmentType::CenterCenter;
+		Prompt->SetCaption("请插入 SD 卡");
+
+		NeedRedraw = true;
+	} while (false);
+
 	while (true)
 	{
 #if !defined(_MSC_VER)
