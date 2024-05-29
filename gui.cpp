@@ -81,7 +81,7 @@ namespace TVOS
 
 	int UIElementBase::GetMaxScroll() const
 	{
-		int MaxScroll = ArrangedHeight - ArrangedContentsHeight;
+		int MaxScroll = ArrangedContentsHeight - ArrangedHeight + GetFrameHeight() * 2;
 		if (MaxScroll < 0) MaxScroll = 0;
 		return MaxScroll;
 	}
@@ -582,8 +582,8 @@ namespace TVOS
 	void UIElementListView::EnsureSelectedVisible()
 	{
 		auto MaxScroll = GetMaxScroll();
-		if (MaxScroll)
-			Scroll = int(Selection * SubElements.size() / MaxScroll);
+		if (size() > 1)
+			Scroll = int(Selection * MaxScroll / (size() - 1));
 		else
 			Scroll = 0;
 		ArrangeSubElementsAbsPos(ArrangedAbsX, ArrangedAbsY - Scroll);
