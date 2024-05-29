@@ -73,6 +73,7 @@ namespace TVOS
 		Name(Name)
 	{
 	}
+
 	const std::string& UIElementBase::GetName() const
 	{
 		return Name;
@@ -392,6 +393,9 @@ namespace TVOS
 				}
 				for (auto& elem : SubElements)
 				{
+					// 向上传递是否需要重新排列控件
+					NeedRearrange = elem->NeedRearrange;
+					elem->NeedRearrange = false;
 					elem->Render(elem->ArrangedAbsX, elem->ArrangedAbsY, elem->ArrangedWidth, elem->ArrangedHeight);
 				}
 				FB.DrawImageAnd(RectAreaImage, 0, 0);
@@ -401,9 +405,18 @@ namespace TVOS
 			{
 				for (auto& elem : SubElements)
 				{
+					// 向上传递是否需要重新排列控件
+					NeedRearrange = elem->NeedRearrange;
+					elem->NeedRearrange = false;
 					elem->Render(elem->ArrangedAbsX, elem->ArrangedAbsY, elem->ArrangedWidth, elem->ArrangedHeight);
 				}
 			}
+		}
+
+		if (NeedRearrange)
+		{
+			ArrangeElements(x, y, w, h);
+			NeedRearrange = false;
 		}
 	}
 
