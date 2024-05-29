@@ -288,6 +288,12 @@ namespace TVOS
 
 	void UIElementBase::Render(int x, int y, int w, int h)
 	{
+		if (NeedRearrange)
+		{
+			ArrangeElements(x, y, w, h);
+			NeedRearrange = false;
+		}
+
 		int ArrangedAbsR = ArrangedAbsX + ArrangedWidth - 1;
 		int ArrangedAbsB = ArrangedAbsY + ArrangedHeight - 1;
 
@@ -409,6 +415,7 @@ namespace TVOS
 		RemoveElement(Element->Name);
 		SubElementsMap[Element->Name] = Element;
 		SubElements.push_back(Element);
+		NeedRearrange = true;
 		return *Element;
 	}
 
@@ -422,6 +429,7 @@ namespace TVOS
 				else ++Element;
 			}
 			SubElementsMap.erase(Name);
+			NeedRearrange = true;
 			return true;
 		}
 		return false;
@@ -431,6 +439,7 @@ namespace TVOS
 	{
 		SubElementsMap.clear();
 		SubElements.clear();
+		NeedRearrange = true;
 	}
 
 	decltype(UIElementBase::SubElements.cbegin()) UIElementBase::cbegin() const

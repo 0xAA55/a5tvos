@@ -46,6 +46,7 @@ namespace TVOS
 		int ArrangedContainerHeight = 0;
 		int ArrangedAbsX = 0;
 		int ArrangedAbsY = 0;
+		bool NeedRearrange = true;
 
 		int XPadding = 0;
 		int YPadding = 0;
