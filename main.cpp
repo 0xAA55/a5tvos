@@ -229,12 +229,10 @@ int main(int argc, char** argv, char** envp)
 			if (Mounted)
 			{
 				if (PlayerProcess != -1) StopPlay(PlayerProcess);
+
 #if !defined(_MSC_VER)
-				if (umount2("/mnt/sdcard", MNT_FORCE) == 0)
-#else
-				if (1)
+				umount2("/mnt/sdcard", MNT_FORCE);
 #endif
-				{
 					Mounted = false;
 
 					GUI.ClearElements();
@@ -271,7 +269,6 @@ int main(int argc, char** argv, char** envp)
 					Prompt->SetCaption("请插入 SD 卡");
 				}
 			}
-		}
 		else
 		{
 #if !defined(_MSC_VER)
@@ -289,7 +286,17 @@ int main(int argc, char** argv, char** envp)
 			if (!Mounted)
 			{
 #if !defined(_MSC_VER)
-				if (mount("/dev/mmcblk0p1", media_path.c_str(), "vfat", MS_REMOUNT, "defaults,nofail") == 0)
+				int m = mount("/dev/mmcblk0p1", media_path.c_str(), "vfat", 0, "");
+				if (m != 0)
+				{
+					perror("mount()");
+					if (errno == EBUSY) m = mount("/dev/mmcblk0p1", media_path.c_str(), "vfat", MS_REMOUNT, "");
+					if (m != 0)
+					{
+						perror("mount()");
+					}
+				}
+				if (m == 0)
 #else
 				if (1)
 #endif
@@ -340,6 +347,12 @@ int main(int argc, char** argv, char** envp)
 						}
 					}
 				}
+				else
+				{
+#if !defined(_MSC_VER)
+					perror("mount()");
+#endif
+			}
 			}
 
 			if (GUI.count("ListView"))
