@@ -103,6 +103,7 @@ namespace TVOS
 		decltype(SubElements.back()) back();
 		decltype(SubElements.at(size_t(0))) at(size_t Index);
 		decltype(SubElementsMap.at("")) at(const std::string& Name);
+		decltype(SubElementsMap.count("")) count(const std::string& Name);
 	};
 
 	class UIElementLabel : public UIElementBase
