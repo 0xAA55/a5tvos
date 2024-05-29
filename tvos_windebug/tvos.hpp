@@ -15,6 +15,8 @@ public:
 	MyTestApp(int Width, int Height, bool Verbose);
 
 	void RefreshFB();
+
+	virtual void WriteData(const uint32_t* pixels, int Count) override;
 };
 
 MyTestApp::MyTestApp() :
@@ -43,4 +45,10 @@ void MyTestApp::RefreshFB()
 {
 	memcpy(GetFBPtr(), &BackBuffer->Pixels[0], BackBuffer->GetStride() * BackBuffer->h);
 	Window::RefreshFB();
+}
+
+void MyTestApp::WriteData(const uint32_t* pixels, int Count)
+{
+	Graphics::WriteData(pixels, Count);
+	RefreshFB();
 }
