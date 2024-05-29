@@ -124,7 +124,7 @@ size_t GetFileSize(const std::string& File)
 		auto size = ftell(fp);
 		fclose(fp);
 		return size;
-}
+	}
 	return 0;
 }
 
@@ -142,7 +142,7 @@ pid_t PlayVideo(const std::string& VideoFile)
 	{
 		snprintf(buf, sizeof buf, "cat %s > /dev/null", VideoFile.c_str());
 		system(buf);
-}
+	}
 #endif
 
 #ifndef _MSC_VER
@@ -402,14 +402,22 @@ int main(int argc, char** argv, char** envp)
 			if (!IsPlaying(PlayerProcess))
 			{
 				PlayerProcess = -1;
-		}
+			}
 		}
 
-		GUI.Render();
 #if !defined(_MSC_VER)
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		if (PlayerProcess == -1)
+		{
+			GUI.Render();
+			FB.RefreshFrontBuffer();
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 #else
-		FB.RefreshFB();
+		if (PlayerProcess == -1)
+		{
+			GUI.Render();
+			FB.RefreshFB();
+		}
 		FB.ProcessMessageNonBlocking();
 		if (FB.GetWindowIsDestroyed()) break;
 #endif
