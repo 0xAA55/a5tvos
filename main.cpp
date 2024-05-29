@@ -199,7 +199,7 @@ int main(int argc, char** argv, char** envp)
 
 #if !defined(_MSC_VER)
 	auto FB = Graphics(ResoW, ResoH, false);
-	FB.SetBackBufferMode();
+	// FB.SetBackBufferMode();
 #else
 	auto FB = MyTestApp(false);
 #endif
@@ -424,9 +424,12 @@ int main(int argc, char** argv, char** envp)
 		{
 			FB.ClearScreen(0);
 			GUI.Render();
-			FB.RefreshFrontBuffer();
+			// FB.RefreshFrontBuffer();
 		}
+		else
+		{
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
 #else
 		if (PlayerProcess == -1)
 		{
@@ -436,6 +439,7 @@ int main(int argc, char** argv, char** envp)
 		}
 		FB.ProcessMessageNonBlocking();
 		if (FB.GetWindowIsDestroyed()) break;
+		Sleep(100);
 #endif
 	}
 
