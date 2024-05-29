@@ -234,44 +234,44 @@ int main(int argc, char** argv, char** envp)
 #if !defined(_MSC_VER)
 				umount2("/mnt/sdcard", MNT_FORCE);
 #endif
-					Mounted = false;
+				Mounted = false;
 
-					GUI.ClearElements();
+				GUI.ClearElements();
 
-					auto Sub = std::make_shared<UIElementLabel>(FB, "Title");
-					GUI.InsertElement(Sub);
-					Sub->XMargin = 0;
-					Sub->YMargin = 0;
-					Sub->XBorder = 0;
-					Sub->YBorder = 1;
-					Sub->XPadding = 2;
-					Sub->YPadding = 2;
-					Sub->BorderColor = 0xFFFFFFFF;
-					Sub->ExpandToParentX = true;
-					Sub->LineBreak = false;
-					Sub->Transparent = true;
-					Sub->Alignment = AlignmentType::CenterTop;
-					Sub->SetCaption("A5-MiniTV 小电视");
+				auto Sub = std::make_shared<UIElementLabel>(FB, "Title");
+				GUI.InsertElement(Sub);
+				Sub->XMargin = 0;
+				Sub->YMargin = 0;
+				Sub->XBorder = 0;
+				Sub->YBorder = 1;
+				Sub->XPadding = 2;
+				Sub->YPadding = 2;
+				Sub->BorderColor = 0xFFFFFFFF;
+				Sub->ExpandToParentX = true;
+				Sub->LineBreak = false;
+				Sub->Transparent = true;
+				Sub->Alignment = AlignmentType::CenterTop;
+				Sub->SetCaption("A5-MiniTV 小电视");
 
-					auto Prompt = std::make_shared<UIElementLabel>(FB, "Prompt");
-					GUI.InsertElement(Prompt);
-					Prompt->XMargin = 0;
-					Prompt->YMargin = 0;
-					Prompt->XBorder = 0;
-					Prompt->YBorder = 0;
-					Prompt->XPadding = 0;
-					Prompt->YPadding = 0;
-					Prompt->BorderColor = 0xFFFFFFFF;
-					Prompt->ExpandToParentX = true;
-					Prompt->ExpandToParentY = true;
-					Prompt->LineBreak = false;
-					Prompt->Transparent = true;
-					Prompt->Alignment = AlignmentType::CenterCenter;
-					Prompt->SetCaption("请插入 SD 卡");
+				auto Prompt = std::make_shared<UIElementLabel>(FB, "Prompt");
+				GUI.InsertElement(Prompt);
+				Prompt->XMargin = 0;
+				Prompt->YMargin = 0;
+				Prompt->XBorder = 0;
+				Prompt->YBorder = 0;
+				Prompt->XPadding = 0;
+				Prompt->YPadding = 0;
+				Prompt->BorderColor = 0xFFFFFFFF;
+				Prompt->ExpandToParentX = true;
+				Prompt->ExpandToParentY = true;
+				Prompt->LineBreak = false;
+				Prompt->Transparent = true;
+				Prompt->Alignment = AlignmentType::CenterCenter;
+				Prompt->SetCaption("请插入 SD 卡");
 
 				NeedRedraw = true;
-				}
 			}
+		}
 		else
 		{
 #if !defined(_MSC_VER)
@@ -357,70 +357,70 @@ int main(int argc, char** argv, char** envp)
 #if !defined(_MSC_VER)
 					perror("mount()");
 #endif
-			}
+				}
 			}
 
 			if (GUI.count("ListView"))
 			{
-			auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
-			if (ReadGPIOE(1))
-			{
-				if (Key1 == false)
+				auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
+				if (ReadGPIOE(1))
 				{
-					Key1 = true;
+					if (Key1 == false)
+					{
+						Key1 = true;
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
 						PlayerProcess = PlayVideo(VideoFile);
+					}
 				}
-			}
-			else
-			{
-				Key1 = false;
-			}
-			if (ReadGPIOE(2))
-			{
-				if (Key2 == false)
+				else
 				{
-					Key2 = true;
+					Key1 = false;
+				}
+				if (ReadGPIOE(2))
+				{
+					if (Key2 == false)
+					{
+						Key2 = true;
 						ListView.SelectNext();
 						NeedRedraw = true;
+					}
 				}
-			}
-			else
-			{
-				Key2 = false;
-			}
-			if (ReadGPIOE(3))
-			{
-				if (Key3 == false)
+				else
 				{
-					Key3 = true;
+					Key2 = false;
+				}
+				if (ReadGPIOE(3))
+				{
+					if (Key3 == false)
+					{
+						Key3 = true;
 						ListView.SelectPrev();
 						NeedRedraw = true;
+					}
 				}
-			}
-			else
-			{
-				Key3 = false;
-			}
-			if (ReadGPIOE(4))
-			{
-				if (Key4 == false)
+				else
 				{
-					Key4 = true;
+					Key3 = false;
+				}
+				if (ReadGPIOE(4))
+				{
+					if (Key4 == false)
+					{
+						Key4 = true;
 						StopPlay(PlayerProcess);
 						NeedRedraw = true;
+					}
 				}
-			}
-			else
-			{
-				Key4 = false;
+				else
+				{
+					Key4 = false;
 				}
 
-			if (!IsPlaying(PlayerProcess))
-			{
-				PlayerProcess = -1;
+				if (!IsPlaying(PlayerProcess))
+				{
+					PlayerProcess = -1;
+				}
 			}
-		}
 		}
 
 #if !defined(_MSC_VER)
@@ -428,21 +428,21 @@ int main(int argc, char** argv, char** envp)
 		{
 			if (NeedRedraw)
 			{
-			GUI.Render();
+				GUI.Render();
 				NeedRedraw = false;
 			}
 			// FB.RefreshFrontBuffer();
 		}
 		else
 		{
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 #else
 		if (PlayerProcess == -1)
 		{
 			if (NeedRedraw)
 			{
-			GUI.Render();
+				GUI.Render();
 				NeedRedraw = false;
 			}
 		}
