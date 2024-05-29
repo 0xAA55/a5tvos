@@ -161,7 +161,7 @@ void StopPlay(pid_t& pid)
 	TerminateProcess(player, 1);
 	CloseHandle(player);
 #else
-	kill(pid, 9);
+	kill(pid, SIGINT);
 #endif
 	pid = -1;
 }
