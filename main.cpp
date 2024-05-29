@@ -147,9 +147,11 @@ pid_t PlayVideo(const std::string& VideoFile)
 
 #ifndef _MSC_VER
 	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -loglevel panic -i %s -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1 | tinyplay stdin -r 44100 -c 1", VideoFile.c_str());
+	printf("%s\n", buf);
 	return popen2(buf, nullptr, nullptr);
 #else
 	snprintf(buf, sizeof buf, "ffplay %s", VideoFile.c_str());
+	printf("%s\n", buf);
 	return popen2(buf, nullptr, nullptr);
 #endif
 }
