@@ -448,7 +448,7 @@ int main(int argc, char** argv, char** envp)
 		}
 		FB.ProcessMessageNonBlocking();
 		if (FB.GetWindowIsDestroyed()) break;
-		Sleep(100);
+		Sleep(10);
 #endif
 	}
 
