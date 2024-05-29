@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <csignal>
 #include <iostream>
 #include <filesystem>
 
@@ -151,6 +152,18 @@ pid_t PlayVideo(const std::string& VideoFile)
 	snprintf(buf, sizeof buf, "ffplay %s", VideoFile.c_str());
 	return popen2(buf, nullptr, nullptr);
 #endif
+}
+
+void StopPlay(pid_t& pid)
+{
+#ifdef _MSC_VER
+	const auto player = OpenProcess(PROCESS_TERMINATE, false, pid);
+	TerminateProcess(player, 1);
+	CloseHandle(player);
+#else
+	kill(pid, 9);
+#endif
+	pid = -1;
 }
 int main(int argc, char** argv, char** envp)
 {
