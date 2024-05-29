@@ -345,6 +345,19 @@ int main(int argc, char** argv, char** envp)
 
 			auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
 
+			if (ReadGPIOE(1))
+			{
+				if (Key1 == false)
+				{
+					Key1 = true;
+					FB.ClearScreen(0);
+					StopPlay(PlayerProcess);
+				}
+			}
+			else
+			{
+				Key1 = false;
+			}
 			if (ReadGPIOE(2))
 			{
 				if (Key2 == false)
@@ -370,6 +383,20 @@ int main(int argc, char** argv, char** envp)
 			else
 			{
 				Key3 = false;
+			}
+			if (ReadGPIOE(4))
+			{
+				if (Key4 == false)
+				{
+					Key4 = true;
+					FB.ClearScreen(0);
+					auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
+					PlayerProcess = PlayVideo(VideoFile);
+				}
+			}
+			else
+			{
+				Key4 = false;
 			}
 
 			if (!IsPlaying(PlayerProcess))
