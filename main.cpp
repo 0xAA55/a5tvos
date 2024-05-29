@@ -390,10 +390,10 @@ int main(int argc, char** argv, char** envp)
 					if (Key2 == false)
 					{
 						Key2 = true;
+					}
 						ListView.SelectNext();
 						NeedRedraw = true;
 					}
-				}
 				else
 				{
 					Key2 = false;
@@ -403,10 +403,10 @@ int main(int argc, char** argv, char** envp)
 					if (Key3 == false)
 					{
 						Key3 = true;
+					}
 						ListView.SelectPrev();
 						NeedRedraw = true;
 					}
-				}
 				else
 				{
 					Key3 = false;
