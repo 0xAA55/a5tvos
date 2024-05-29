@@ -144,10 +144,10 @@ namespace TVOS
 		int Height;
 		int Stride;
 
-		std::unordered_map<uint32_t, ImageBlock> Glyphs;
+		std::unordered_map<uint32_t, std::pair<ImageBlock, ImageBlock>> Glyphs;
 
 		void GetGlyphMetrics(uint32_t GlyphUnicode, int& w, int& h) const;
-		const ImageBlock& GetGlyph(uint32_t GlyphUnicode);
+		const ImageBlock& GetGlyph(uint32_t GlyphUnicode, bool InvertColor);
 		void DrawGlyph(int x, int y, uint32_t GlyphUnicode, bool Transparent, uint32_t GlyphColor);
 		void DrawGlyphXor(int x, int y, uint32_t GlyphUnicode);
 

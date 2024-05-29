@@ -634,7 +634,7 @@ namespace TVOS
 		GetGlyphSize('?', w, h, Verbose);
 	}
 
-	const ImageBlock& Graphics::GetGlyph(uint32_t GlyphUnicode)
+	const ImageBlock& Graphics::GetGlyph(uint32_t GlyphUnicode, bool InvertColor)
 	{
 		if (Glyphs.count(GlyphUnicode))
 		{
@@ -642,7 +642,7 @@ namespace TVOS
 			{
 				std::cout << "[INFO] Retrieving cached glyph U+" << std::hex << GlyphUnicode << std::dec << ".\n";
 			}
-			return Glyphs.at(GlyphUnicode);
+			return InvertColor == false ? Glyphs.at(GlyphUnicode).first : Glyphs.at(GlyphUnicode).second;
 		}
 		else
 		{
@@ -652,21 +652,23 @@ namespace TVOS
 			}
 
 			// 生成字体
-			if (!ExtractGlyph(Glyphs[GlyphUnicode], GlyphUnicode, 0xFF000000, 0xFFFFFFFF, Verbose))
+			if (!ExtractGlyph(Glyphs[GlyphUnicode].first, GlyphUnicode, 0xFF000000, 0xFFFFFFFF, Verbose))
 			{ // 不能显示的字符使用问号
 				if (Verbose)
 				{
 					std::cout << "[INFO] Create glyph cache U+" << std::hex << GlyphUnicode << std::dec << " failed.\n";
 				}
-				return GetGlyph('?');
+				return GetGlyph('?', InvertColor);
 			}
 
 			auto& GlyphImage = Glyphs[GlyphUnicode];
+			GlyphImage.second = GlyphImage.first;
+			GlyphImage.second.InvertPixelColors();
 			if (Verbose)
 			{
-				std::cout << "[INFO] Glyph cache U+" << std::hex << GlyphUnicode << std::dec << " has w=" << GlyphImage.w << ", h=" << GlyphImage.h << ".\n";
+				std::cout << "[INFO] Glyph cache U+" << std::hex << GlyphUnicode << std::dec << " has w=" << GlyphImage.first.w << ", h=" << GlyphImage.first.h << ".\n";
 			}
-			return GlyphImage;
+			return InvertColor == false ? GlyphImage.first : GlyphImage.second;
 		}
 	}
 
@@ -676,21 +678,21 @@ namespace TVOS
 		{
 			std::cout << "[INFO] Drawing a glyph U+" << std::hex << GlyphUnicode << std::dec << " at x=" << x << ", y=" << y << " with `Transparent=" << (Transparent ? "true" : "false") << "`.\n";
 		}
-		auto& GlyphImage = GetGlyph(GlyphUnicode);
 		if (!Transparent && GlyphColor == 0)
 		{
-			DrawImage(GlyphImage, x, y);
+			DrawImage(GetGlyph(GlyphUnicode, false), x, y);
 		}
 		else
 		{
+			auto& GlyphImageP = GetGlyph(GlyphUnicode, false);
+			auto& GlyphImageN = GetGlyph(GlyphUnicode, true);
 			if (Transparent)
 			{
-				DrawImageAnd(GlyphImage, x, y);
+				DrawImageAnd(GlyphImageP, x, y);
 			}
 			if (GlyphColor != 0)
 			{
-				ImageBlock NewGlyphImage = GlyphImage;
-				NewGlyphImage.InvertPixelColors();
+				ImageBlock NewGlyphImage = GlyphImageN;
 				if (GlyphColor != 0xFFFFFFFF) NewGlyphImage.ReplacePixelColors(0xFFFFFFFF, GlyphColor);
 				DrawImageOr(NewGlyphImage, x, y);
 			}
@@ -703,8 +705,7 @@ namespace TVOS
 		{
 			std::cout << "[INFO] Drawing a glyph U+" << std::hex << GlyphUnicode << std::dec << " at x=" << x << ", y=" << y << " with `XOR` opcode.\n";
 		}
-		ImageBlock GlyphImage = GetGlyph(GlyphUnicode);
-		GlyphImage.InvertPixelColors();
+		ImageBlock GlyphImage = GetGlyph(GlyphUnicode, true);
 		DrawImageXor(GlyphImage, x, y);
 	}
 
