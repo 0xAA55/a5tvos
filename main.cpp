@@ -455,7 +455,14 @@ int main(int argc, char** argv, char** envp)
 				NeedRedraw = false;
 			}
 			// FB.RefreshFrontBuffer();
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			if (!Mounted)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			}
+			else
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+			}
 		}
 		else
 		{
