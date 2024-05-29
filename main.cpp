@@ -191,8 +191,6 @@ int main(int argc, char** argv, char** envp)
 	WriteGPIOE(0, true);
 
 	bool Key1 = false;
-	bool Key2 = false;
-	bool Key3 = false;
 	bool Key4 = false;
 
 	bool NeedRedraw = true;
@@ -369,6 +367,8 @@ int main(int argc, char** argv, char** envp)
 
 			if (GUI.count("ListView"))
 			{
+				if (PlayerProcess == -1)
+				{
 				auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
 				if (ReadGPIOE(1))
 				{
@@ -387,29 +387,14 @@ int main(int argc, char** argv, char** envp)
 				}
 				if (ReadGPIOE(2))
 				{
-					if (Key2 == false)
-					{
-						Key2 = true;
-					}
 					ListView.SelectNext();
 					NeedRedraw = true;
 				}
-				else
-				{
-					Key2 = false;
-				}
 				if (ReadGPIOE(3))
 				{
-					if (Key3 == false)
-					{
-						Key3 = true;
-					}
 					ListView.SelectPrev();
 					NeedRedraw = true;
 				}
-				else
-				{
-					Key3 = false;
 				}
 				if (ReadGPIOE(4))
 				{
@@ -425,6 +410,7 @@ int main(int argc, char** argv, char** envp)
 				{
 					Key4 = false;
 				}
+			}
 
 				if (PlayerProcess != -1 && !IsPlaying(PlayerProcess))
 				{
@@ -432,7 +418,6 @@ int main(int argc, char** argv, char** envp)
 					FB.ClearScreen(0);
 				}
 			}
-		}
 
 #if !defined(_MSC_VER)
 		if (PlayerProcess == -1)
