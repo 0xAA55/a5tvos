@@ -5,6 +5,7 @@
 
 start() {
     printf "Starting TVOS: "
+    chmod +x /usr/bin/tvos
     start-stop-daemon -S -q -m -b -p /var/run/runtvos.pid -x /usr/bin/tvos
     sleep 1
     [ $? = 0 ] && echo "OK" || echo "FAIL"
