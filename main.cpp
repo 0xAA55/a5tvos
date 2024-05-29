@@ -391,9 +391,9 @@ int main(int argc, char** argv, char** envp)
 					{
 						Key2 = true;
 					}
-						ListView.SelectNext();
-						NeedRedraw = true;
-					}
+					ListView.SelectNext();
+					NeedRedraw = true;
+				}
 				else
 				{
 					Key2 = false;
@@ -404,9 +404,9 @@ int main(int argc, char** argv, char** envp)
 					{
 						Key3 = true;
 					}
-						ListView.SelectPrev();
-						NeedRedraw = true;
-					}
+					ListView.SelectPrev();
+					NeedRedraw = true;
+				}
 				else
 				{
 					Key3 = false;
