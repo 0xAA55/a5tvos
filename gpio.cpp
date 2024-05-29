@@ -166,10 +166,10 @@ bool ReadGPIOE(int Port)
 	GPIO_Periph[GPIO_E].ReadBit(Port);
 	switch (Port)
 	{
-	case 1: return bool(GetAsyncKeyState('Z'));
-	case 2: return bool(GetAsyncKeyState('X'));
-	case 3: return bool(GetAsyncKeyState('C'));
-	case 4: return bool(GetAsyncKeyState('V'));
+	case 1: return bool(GetAsyncKeyState('V'));
+	case 2: return bool(GetAsyncKeyState('C'));
+	case 3: return bool(GetAsyncKeyState('X'));
+	case 4: return bool(GetAsyncKeyState('Z'));
 	}
 	return false;
 #endif
