@@ -60,29 +60,25 @@ void GPIO_PeriphType::SetMode(int Port, uint32_t Mode)
 
 void GPIO_PeriphType::WritePeriph(volatile uint32_t* Ptr, uint32_t Data)
 {
-#if !defined(_MSC_VER)
 	char cmd[1024];
 
-	snprintf(cmd, sizeof(cmd), "devmem 0x%08x 32 0x%08x", reinterpret_cast<size_t>(Ptr), Data);
+	snprintf(cmd, sizeof(cmd), "devmem 0x%08x 32 0x%08x", uint32_t(reinterpret_cast<size_t>(Ptr)), Data);
 
-	FILE *fp = popen(cmd, "r");
-	if (fp == NULL)
-	{
-		fprintf(stderr, "%s: popen(%s) fail!\n", __func__, cmd);
-	}
-	fclose(fp);
+#if defined(_MSC_VER)
+	printf("%s\n", cmd);
+#else
+	system(cmd);
 #endif
 }
 
 uint32_t GPIO_PeriphType::ReadPeriph(const volatile uint32_t* Ptr)
 {
-#if !defined(_MSC_VER)
-	uint32_t value = 0;
 	char cmd[1024];
-	char buf[32];
 
-	snprintf(cmd, sizeof(cmd), "devmem 0x%08x", reinterpret_cast<size_t>(Ptr));
-
+	snprintf(cmd, sizeof(cmd), "devmem 0x%08x", uint32_t(reinterpret_cast<size_t>(Ptr)));
+#if defined(_MSC_VER)
+	printf("%s\n", cmd);
+#else
 	FILE* fp = popen(cmd, "r");
 	if (fp == NULL)
 	{
@@ -90,11 +86,13 @@ uint32_t GPIO_PeriphType::ReadPeriph(const volatile uint32_t* Ptr)
 	}
 	else
 	{
+		char buf[32];
+		uint32_t value = 0;
 		fread(buf, sizeof(char), sizeof(buf), fp);
 		sscanf(buf, "0x%x", &value);
 		pclose(fp);
+		return value;
 	}
-	return value;
 #endif
 	return 0;
 }
@@ -161,10 +159,11 @@ bool ReadGPIOD(int Port)
 
 bool ReadGPIOE(int Port)
 {
-#if !defined(_MSC_VER)
 	GPIO_Periph[GPIO_E].SetModeIn(Port);
-	return GPIO_Periph[GPIO_E].ReadBit(Port);
+#if defined(_MSC_VER)
+	GPIO_Periph[GPIO_E].ReadBit(Port);
 #else
+	return GPIO_Periph[GPIO_E].ReadBit(Port);
 	switch (Port)
 	{
 	case 1: return bool(GetAsyncKeyState('Z'));
