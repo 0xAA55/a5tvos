@@ -249,7 +249,7 @@ int main(int argc, char** argv, char** envp)
 				Sub->BorderColor = 0xFFFFFFFF;
 				Sub->ExpandToParentX = true;
 				Sub->LineBreak = false;
-				Sub->Transparent = true;
+				Sub->Transparent = false;
 				Sub->Alignment = AlignmentType::CenterTop;
 				Sub->SetCaption("A5-MiniTV 小电视");
 
@@ -318,7 +318,7 @@ int main(int argc, char** argv, char** envp)
 					Sub->BorderColor = 0xFFFFFFFF;
 					Sub->ExpandToParentX = true;
 					Sub->LineBreak = false;
-					Sub->Transparent = true;
+					Sub->Transparent = false;
 					Sub->Alignment = AlignmentType::CenterTop;
 					Sub->SetCaption("请选择要播放的曲目");
 
@@ -369,6 +369,8 @@ int main(int argc, char** argv, char** envp)
 					{
 						Key1 = true;
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
+						FB.ClearScreen(0);
+						if (PlayerProcess != -1) StopPlay(PlayerProcess);
 						PlayerProcess = PlayVideo(VideoFile);
 					}
 				}
@@ -408,6 +410,7 @@ int main(int argc, char** argv, char** envp)
 					{
 						Key4 = true;
 						StopPlay(PlayerProcess);
+						FB.ClearScreen(0);
 						NeedRedraw = true;
 					}
 				}
@@ -416,9 +419,10 @@ int main(int argc, char** argv, char** envp)
 					Key4 = false;
 				}
 
-				if (!IsPlaying(PlayerProcess))
+				if (PlayerProcess != -1 && !IsPlaying(PlayerProcess))
 				{
 					PlayerProcess = -1;
+					FB.ClearScreen(0);
 				}
 			}
 		}
@@ -435,7 +439,7 @@ int main(int argc, char** argv, char** envp)
 		}
 		else
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
 #else
 		if (PlayerProcess == -1)
