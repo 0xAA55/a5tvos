@@ -247,6 +247,8 @@ int main(int argc, char** argv, char** envp)
 				Sub->XPadding = 2;
 				Sub->YPadding = 2;
 				Sub->BorderColor = 0xFFFFFFFF;
+				Sub->FillColor = 0xFF000000;
+				Sub->FontColor = 0xFFFFFFFF;
 				Sub->ExpandToParentX = true;
 				Sub->LineBreak = false;
 				Sub->Transparent = false;
@@ -262,6 +264,8 @@ int main(int argc, char** argv, char** envp)
 				Prompt->XPadding = 0;
 				Prompt->YPadding = 0;
 				Prompt->BorderColor = 0xFFFFFFFF;
+				Sub->FillColor = 0xFF000000;
+				Sub->FontColor = 0xFFFFFFFF;
 				Prompt->ExpandToParentX = true;
 				Prompt->ExpandToParentY = true;
 				Prompt->LineBreak = false;
@@ -316,6 +320,8 @@ int main(int argc, char** argv, char** envp)
 					Sub->XPadding = 2;
 					Sub->YPadding = 2;
 					Sub->BorderColor = 0xFFFFFFFF;
+					Sub->FillColor = 0xFF000000;
+					Sub->FontColor = 0xFFFFFFFF;
 					Sub->ExpandToParentX = true;
 					Sub->LineBreak = false;
 					Sub->Transparent = false;
