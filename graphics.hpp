@@ -70,6 +70,9 @@ namespace TVOS
 		void SetReadPos(int x, int y);
 		void SetDrawPos(int x, int y);
 		void WriteData(uint32_t color, int Repeat);
+#if defined(_MSC_VER)
+		virtual // 测试绘制前台的效果。
+#endif
 		void WriteData(const uint32_t* pixels, int Count);
 		void WriteData(const std::vector<uint32_t>& pixels);
 		void WriteData(int cr, int cg, int cb, int Repeat);
