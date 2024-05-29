@@ -133,7 +133,7 @@ pid_t PlayVideo(const std::string& VideoFile)
 	char buf[4096];
 
 #ifndef _MSC_VER
-	system("tinymix set 1 0"); // 调试时设置音量为 0
+	// system("tinymix set 1 0"); // 调试时设置音量为 0
 	system("tinymix set 2 1");
 	system("tinymix set 13 0");
 
