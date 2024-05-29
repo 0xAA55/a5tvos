@@ -190,9 +190,6 @@ int main(int argc, char** argv, char** envp)
 
 	WriteGPIOE(0, true);
 
-	bool Key1 = false;
-	bool Key4 = false;
-
 	bool NeedRedraw = true;
 
 	pid_t PlayerProcess = -1;
