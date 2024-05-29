@@ -571,7 +571,7 @@ namespace TVOS
 			h += y;
 			y = 0;
 		}
-		if (srcx > ib.w || srcy > ib.h) return;
+		if (srcx >= ib.w || srcy >= ib.h) return;
 		if (x + w > Width) w = Width - x;
 		if (y + h > Height) h = Height - y;
 		if (w <= 0 || h <= 0) return;
