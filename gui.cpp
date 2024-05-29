@@ -509,7 +509,7 @@ namespace TVOS
 
 	decltype(UIElementBase::SubElementsMap.count("")) UIElementBase::count(const std::string& Name)
 	{
-		return SubElementsMap.count("");
+		return SubElementsMap.count(Name);
 	}
 
 	UIElementLabel::UIElementLabel(Graphics& FB, const std::string& Name) :
