@@ -126,6 +126,32 @@ size_t GetFileSize(const std::string& File)
 }
 	return 0;
 }
+
+pid_t PlayVideo(const std::string& VideoFile)
+{
+	char buf[4096];
+
+#ifndef _MSC_VER
+	system("tinymix set 1 48");
+	system("tinymix set 2 1");
+	system("tinymix set 13 0");
+
+	auto FileSize = GetFileSize(VideoFile);
+	if (FileSize > 0 && FileSize <= 16384 * 1024)
+	{
+		snprintf(buf, sizeof buf, "cat %s > /dev/null", VideoFile.c_str());
+		system(buf);
+}
+#endif
+
+#ifndef _MSC_VER
+	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -loglevel panic -i %s -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1 | tinyplay stdin -r 44100 -c 1", VideoFile.c_str());
+	return popen2(buf, nullptr, nullptr);
+#else
+	snprintf(buf, sizeof buf, "ffplay %s", VideoFile.c_str());
+	return popen2(buf, nullptr, nullptr);
+#endif
+}
 int main(int argc, char** argv, char** envp)
 {
 	const int ResoW = 480;
