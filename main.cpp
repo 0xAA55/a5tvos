@@ -237,6 +237,7 @@ int main(int argc, char** argv, char** envp)
 				Mounted = false;
 
 				GUI.ClearElements();
+				FB.ClearScreen(0);
 
 				auto Sub = std::make_shared<UIElementLabel>(FB, "Title");
 				GUI.InsertElement(Sub);
