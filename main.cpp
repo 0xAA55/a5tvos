@@ -392,6 +392,7 @@ int main(int argc, char** argv, char** envp)
 				if (ReadGPIOE(4))
 				{
 					StopPlay(PlayerProcess);
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
 					FB.ClearScreen(0);
 					NeedRedraw = true;
 				}
@@ -414,6 +415,7 @@ int main(int argc, char** argv, char** envp)
 				NeedRedraw = false;
 			}
 			// FB.RefreshFrontBuffer();
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		}
 		else
 		{
