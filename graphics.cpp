@@ -322,10 +322,6 @@ namespace TVOS
 
 	void Graphics::WriteData(const uint32_t* pixels, int Count)
 	{
-		// if (Verbose)
-		// {
-		// 	std::cout << "[INFO] Writting " << Count << " pixels from pointer " << std::hex << pixels << std::dec << ".\n";
-		// }
 		if (BackBufferMode)
 		{
 			auto* Buffer = BackBuffer.get();
