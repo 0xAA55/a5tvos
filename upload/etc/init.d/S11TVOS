@@ -5,14 +5,14 @@
 
 start() {
     printf "Starting TVOS: "
-    start-stop-daemon -S -q -m -b -p /var/run/runtvos.pid -x /root/runtvos
+    start-stop-daemon -S -q -m -b -p /var/run/runtvos.pid -x /usr/bin/tvos
     sleep 1
     [ $? = 0 ] && echo "OK" || echo "FAIL"
 }
 
 stop() {
     printf "Stopping TVOS: "
-    start-stop-daemon -K -q -p /var/run/runtvos.pid -x /root/runtvos
+    start-stop-daemon -K -q -p /var/run/runtvos.pid -x /usr/bin/tvos
     [ $? = 0 ] && echo "OK" || echo "FAIL"
 }
 
