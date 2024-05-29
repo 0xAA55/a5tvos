@@ -369,39 +369,39 @@ int main(int argc, char** argv, char** envp)
 			{
 				if (PlayerProcess == -1)
 				{
-				auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
-				if (ReadGPIOE(1))
-				{
+					auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
+					if (ReadGPIOE(1))
+					{
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
 						FB.ClearScreen(0);
 						if (PlayerProcess != -1) StopPlay(PlayerProcess);
 						PlayerProcess = PlayVideo(VideoFile);
 					}
-				if (ReadGPIOE(2))
-				{
-					ListView.SelectNext();
-					NeedRedraw = true;
-				}
-				if (ReadGPIOE(3))
-				{
-					ListView.SelectPrev();
-					NeedRedraw = true;
-				}
-				}
-				if (ReadGPIOE(4))
-				{
-						StopPlay(PlayerProcess);
-						FB.ClearScreen(0);
+					if (ReadGPIOE(2))
+					{
+						ListView.SelectNext();
+						NeedRedraw = true;
+					}
+					if (ReadGPIOE(3))
+					{
+						ListView.SelectPrev();
 						NeedRedraw = true;
 					}
 				}
-
-				if (PlayerProcess != -1 && !IsPlaying(PlayerProcess))
+				if (ReadGPIOE(4))
 				{
-					PlayerProcess = -1;
+					StopPlay(PlayerProcess);
 					FB.ClearScreen(0);
+					NeedRedraw = true;
 				}
 			}
+
+			if (PlayerProcess != -1 && !IsPlaying(PlayerProcess))
+			{
+				PlayerProcess = -1;
+				FB.ClearScreen(0);
+			}
+		}
 
 #if !defined(_MSC_VER)
 		if (PlayerProcess == -1)
