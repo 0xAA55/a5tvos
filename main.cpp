@@ -369,7 +369,7 @@ int main(int argc, char** argv, char** envp)
 				{
 					Key1 = true;
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
-					StopPlay(PlayerProcess);
+						PlayerProcess = PlayVideo(VideoFile);
 				}
 			}
 			else
@@ -382,7 +382,7 @@ int main(int argc, char** argv, char** envp)
 				{
 					Key2 = true;
 						ListView.SelectNext();
-					ListView.SelectPrev();
+						NeedRedraw = true;
 				}
 			}
 			else
@@ -395,7 +395,7 @@ int main(int argc, char** argv, char** envp)
 				{
 					Key3 = true;
 						ListView.SelectPrev();
-					ListView.SelectNext();
+						NeedRedraw = true;
 				}
 			}
 			else
@@ -408,8 +408,7 @@ int main(int argc, char** argv, char** envp)
 				{
 					Key4 = true;
 						StopPlay(PlayerProcess);
-					auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
-					PlayerProcess = PlayVideo(VideoFile);
+						NeedRedraw = true;
 				}
 			}
 			else
