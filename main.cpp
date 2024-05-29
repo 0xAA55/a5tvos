@@ -166,10 +166,8 @@ void StopPlay(pid_t& pid)
 	TerminateProcess(player, 1);
 	CloseHandle(player);
 #else
-	// 杀三下
 	kill(pid, SIGINT);
-	kill(pid, SIGINT);
-	kill(pid, SIGINT);
+	kill(-1, SIGINT); // 杀死其它管道进程
 #endif
 	pid = -1;
 }
