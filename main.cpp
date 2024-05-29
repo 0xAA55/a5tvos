@@ -267,9 +267,7 @@ int main(int argc, char** argv, char** envp)
 					Prompt->Transparent = true;
 					Prompt->Alignment = AlignmentType::CenterCenter;
 					Prompt->SetCaption("请插入 SD 卡");
-
 				}
-				FB.ClearScreen(0);
 			}
 		}
 		else
@@ -340,7 +338,6 @@ int main(int argc, char** argv, char** envp)
 						}
 					}
 				}
-				FB.ClearScreen(0);
 			}
 
 			auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
@@ -408,6 +405,7 @@ int main(int argc, char** argv, char** envp)
 #if !defined(_MSC_VER)
 		if (PlayerProcess == -1)
 		{
+			FB.ClearScreen(0);
 			GUI.Render();
 			FB.RefreshFrontBuffer();
 		}
@@ -415,6 +413,7 @@ int main(int argc, char** argv, char** envp)
 #else
 		if (PlayerProcess == -1)
 		{
+			FB.ClearScreen(0);
 			GUI.Render();
 			FB.RefreshFB();
 		}
