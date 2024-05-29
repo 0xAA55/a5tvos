@@ -349,7 +349,7 @@ int main(int argc, char** argv, char** envp)
 				if (Key2 == false)
 				{
 					Key2 = true;
-					GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
+					FB.ClearScreen(0);
 					ListView.SelectPrev();
 				}
 			}
@@ -362,7 +362,7 @@ int main(int argc, char** argv, char** envp)
 				if (Key3 == false)
 				{
 					Key3 = true;
-					GUI.ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
+					FB.ClearScreen(0);
 					ListView.SelectNext();
 				}
 			}
