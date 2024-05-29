@@ -114,6 +114,18 @@ pid_t popen2(const char* command, int* infp, int* outfp)
 
 using namespace TVOS;
 
+size_t GetFileSize(const std::string& File)
+{
+	FILE* fp = fopen(File.c_str(), "rb");
+	if (fp)
+	{
+		fseek(fp, 0, SEEK_END);
+		auto size = ftell(fp);
+		fclose(fp);
+		return size;
+}
+	return 0;
+}
 int main(int argc, char** argv, char** envp)
 {
 	const int ResoW = 480;
