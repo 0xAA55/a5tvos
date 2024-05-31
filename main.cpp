@@ -193,6 +193,10 @@ int main(int argc, char** argv, char** envp)
 	bool Mounted = false;
 
 	WriteGPIOE(0, true);
+	GPIO_Periph[GPIO_E].SetModeIn(1);
+	GPIO_Periph[GPIO_E].SetModeIn(2);
+	GPIO_Periph[GPIO_E].SetModeIn(3);
+	GPIO_Periph[GPIO_E].SetModeIn(4);
 
 	bool NeedRedraw = true;
 
@@ -200,10 +204,11 @@ int main(int argc, char** argv, char** envp)
 
 #if !defined(_MSC_VER)
 	auto FB = Graphics(ResoW, ResoH, false);
-	// FB.SetBackBufferMode();
+	FB.SetBackBufferMode();
 #else
 	auto FB = MyTestApp(false);
 #endif
+	FB.ClearScreen(0);
 	auto GUI = UIElementBase(FB, "root");
 
 	GUI.XMargin = 2;
@@ -389,11 +394,8 @@ int main(int argc, char** argv, char** envp)
 
 						auto p = directory.path();
 						auto FileNameString = p.filename().string();
-						if (p.extension() == ".mp4" || p.extension() == ".MP4")
-						{
-							auto ListItem = std::make_shared<UIElementListItem>(FB, FileNameString);
-							ListView->AddItem(FileNameString, FileNameString);
-						}
+						auto ListItem = std::make_shared<UIElementListItem>(FB, FileNameString);
+						ListView->AddItem(FileNameString, FileNameString);
 					}
 
 					NeedRedraw = true;
@@ -411,25 +413,25 @@ int main(int argc, char** argv, char** envp)
 				if (PlayerProcess == -1)
 				{
 					auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
-					if (ReadGPIOE(1))
+					if (GPIO_Periph[GPIO_E].ReadBit(1))
 					{
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
 						FB.ClearScreen(0);
 						if (PlayerProcess != -1) StopPlay(PlayerProcess);
 						PlayerProcess = PlayVideo(VideoFile);
 					}
-					if (ReadGPIOE(2))
+					if (GPIO_Periph[GPIO_E].ReadBit(2))
 					{
 						ListView.SelectNext();
 						NeedRedraw = true;
 					}
-					if (ReadGPIOE(3))
+					if (GPIO_Periph[GPIO_E].ReadBit(3))
 					{
 						ListView.SelectPrev();
 						NeedRedraw = true;
 					}
 				}
-				if (ReadGPIOE(4))
+				if (GPIO_Periph[GPIO_E].ReadBit(4))
 				{
 					StopPlay(PlayerProcess);
 					std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -454,7 +456,7 @@ int main(int argc, char** argv, char** envp)
 				GUI.Render();
 				NeedRedraw = false;
 			}
-			// FB.RefreshFrontBuffer();
+			FB.RefreshFrontBuffer();
 			if (!Mounted)
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -466,7 +468,7 @@ int main(int argc, char** argv, char** envp)
 		}
 		else
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 		}
 #else
 		if (PlayerProcess == -1)
