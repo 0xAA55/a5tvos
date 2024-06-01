@@ -168,16 +168,16 @@ int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio)
 #ifndef _MSC_VER
 	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -i \"%s\" -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1 | tinyplay stdin -r 44100 -c 1", VideoFile.c_str());
 	DbgPrintf("%s\n", buf);
-	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -i \"%s\" - an - pix_fmt bgra - f fbdev / dev / fb0 - vn - f wav pipe : 1 - ar 44100 - ac 1", VideoFile.c_str());
+	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -i \"%s\" -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1", VideoFile.c_str());
 	RunPipedCommand(buf, "tinyplay stdin -r 44100 -c 1", PidVideo, PidAudio);
 #else
-	snprintf(buf, sizeof buf, "ffplay -hide_banner \"%s\"", VideoFile.c_str());
+	snprintf(buf, sizeof buf, "ffplay -hide_banner %s", VideoFile.c_str());
 	DbgPrintf("%s\n", buf);
 	PidVideo = RunCommand(buf);
 	PidAudio = -1;
 #endif
-	DbgPrintf("Video Player PID: %u\n", PidVideo);
-	DbgPrintf("Audio Player PID: %u\n", PidAudio);
+	DbgPrintf("Video Player PID: %d\n", PidVideo);
+	DbgPrintf("Audio Player PID: %d\n", PidAudio);
 	return 0;
 }
 
@@ -521,6 +521,7 @@ int main(int argc, char** argv, char** envp)
 				NeedRedraw = false;
 			}
 		}
+		FB.RefreshFB();
 		FB.ProcessMessageNonBlocking();
 		if (FB.GetWindowIsDestroyed()) break;
 		Sleep(10);
