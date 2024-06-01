@@ -1,0 +1,12 @@
+#!/bin/sh
+
+cp tvos /usr/bin/
+cp tinyplay /usr/bin/
+cp S11TVOS /etc/init.d/
+
+chmod +x /usr/bin/tvos
+chmod +x /usr/bin/tinyplay
+chmod +x /etc/init.d/S11TVOS
+
+/etc/init.d/S11TVOS stop
+/etc/init.d/S11TVOS start
