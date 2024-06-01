@@ -166,12 +166,12 @@ int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio)
 #endif
 
 #ifndef _MSC_VER
-	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -loglevel panic -i %s -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1 | tinyplay stdin -r 44100 -c 1", VideoFile.c_str());
+	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -loglevel panic -i \"%s\" -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1 | tinyplay stdin -r 44100 -c 1", VideoFile.c_str());
 	DbgPrintf("%s\n", buf);
-	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -loglevel panic -i %s -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1", VideoFile.c_str());
+	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -loglevel panic -i \"%s\" - an - pix_fmt bgra - f fbdev / dev / fb0 - vn - f wav pipe : 1 - ar 44100 - ac 1", VideoFile.c_str());
 	RunPipedCommand(buf, "tinyplay stdin -r 44100 -c 1", PidVideo, PidAudio);
 #else
-	snprintf(buf, sizeof buf, "ffplay -hide_banner -loglevel panic %s", VideoFile.c_str());
+	snprintf(buf, sizeof buf, "ffplay -hide_banner -loglevel panic \"%s\"", VideoFile.c_str());
 	DbgPrintf("%s\n", buf);
 	PidVideo = RunCommand(buf);
 	PidAudio = -1;
@@ -457,8 +457,9 @@ int main(int argc, char** argv, char** envp)
 					if (GPIO_Periph[GPIO_E].ReadBit(1))
 					{
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
-						FB.ClearScreen(0);
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
+						FB.ClearScreen(0);
+						FB.RefreshFrontBuffer();
 						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID);
 					}
 					if (GPIO_Periph[GPIO_E].ReadBit(2))
