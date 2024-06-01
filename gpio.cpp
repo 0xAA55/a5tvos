@@ -9,6 +9,18 @@
 
 bool GPIO_PeriphType::ReadBit(int Port) const
 {
+#ifdef _MSC_VER
+	if (this == &GPIO_Periph[GPIO_E])
+	{
+		switch (Port)
+		{
+		case 1: return bool(GetAsyncKeyState('V'));
+		case 2: return bool(GetAsyncKeyState('C'));
+		case 3: return bool(GetAsyncKeyState('X'));
+		case 4: return bool(GetAsyncKeyState('Z'));
+		}
+	}
+#endif
 	return (ReadPeriph(&DATA) & (1 << Port)) ? true : false;
 }
 
