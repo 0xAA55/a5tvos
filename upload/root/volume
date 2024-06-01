@@ -1,5 +1,0 @@
-#!/bin/sh
-
-tinymix set 1 $1 
-
-

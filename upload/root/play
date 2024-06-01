@@ -1,7 +1,0 @@
-#!/bin/sh
-mount -a
-#tinymix set 1 48
-tinymix set 2 1
-tinymix set 13 0
-echo /mnt/sdcard/$1 > /dev/null
-ffmpeg -hide_banner -loglevel panic -i /mnt/sdcard/$1 -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1 | tinyplay stdin -r 44100 -c 1

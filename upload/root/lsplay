@@ -1,3 +1,0 @@
-#!/bin/sh
-mount -a
-ls -l /mnt/sdcard/
