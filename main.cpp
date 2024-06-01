@@ -5,10 +5,12 @@
 
 #if !defined(_MSC_VER)
 #include <sys/mount.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #endif
 
 #include <cstdio>
+#include <cstdarg>
 #include <cstdlib>
 #include <csignal>
 #include <iostream>
@@ -44,48 +46,66 @@ std::string GetLastErrorAsString()
 }
 #endif
 
-#if !defined(_MSC_VER)
-pid_t popen2(const char* command, int* infp, int* outfp)
+void DbgPrintf(const char* format, ...)
 {
-	const int READ = 0;
-	const int WRITE = 1;
-	int p_stdin[2], p_stdout[2];
-	pid_t pid;
+	va_list ap;
+	va_start(ap, format);
+	vprintf(format, ap);
+	va_end(ap);
+}
 
-	if (pipe(p_stdin) != 0 || pipe(p_stdout) != 0)
-		return -1;
+#if defined(_MSC_VER)
+using pid_t = int;
+#endif
 
-	pid = fork();
-
-	if (pid < 0)
-		return pid;
-	else if (pid == 0)
+#if !defined(_MSC_VER)
+int RunPipedCommand(const char* CmdPipeWriter, const char* CmdPipeReader, int& PidVideo, int& PidAudio)
+{
+	int pipefd[2];
+	PidVideo = -1;
+	PidAudio = -1;
+	if (pipe(pipefd) == -1)
 	{
-		close(p_stdin[WRITE]);
-		dup2(p_stdin[READ], READ);
-		close(p_stdout[READ]);
-		dup2(p_stdout[WRITE], WRITE);
-
-		execl("/bin/sh", "sh", "-c", command, NULL);
-		perror("execl");
-		exit(1);
+		perror("pipe");
+		return -1;
 	}
 
-	if (infp == NULL)
-		close(p_stdin[WRITE]);
-	else
-		*infp = p_stdin[WRITE];
+	PidVideo = fork();
+	if (PidVideo < 0) goto FailExit;
 
-	if (outfp == NULL)
-		close(p_stdout[READ]);
-	else
-		*outfp = p_stdout[READ];
+	if (PidVideo == 0)
+	{
+		close(pipefd[0]);
+		dup2(pipefd[1], STDOUT_FILENO);
 
-	return pid;
+		execl("/bin/sh", "sh", "-c", CmdPipeWriter, NULL);
+		perror("execl()");
+		exit(-1);
+	}
+
+	PidAudio = fork();
+	if (PidAudio < 0) goto FailExit;
+
+	if (PidAudio == 0)
+	{
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[1]);
+
+		execl("/bin/sh", "sh", "-c", CmdPipeReader, NULL);
+		perror("execl()");
+		exit(-1);
+	}
+
+	return 0;
+FailExit:
+	close(pipefd[0]);
+	close(pipefd[1]);
+	if (PidVideo > 0) exit(-1);
+	if (PidAudio > 0) exit(-1);
+	return -1;
 }
 #else
-using pid_t = int;
-pid_t popen2(const char* command, int* infp, int* outfp)
+pid_t RunCommand(const char* command)
 {
 	PROCESS_INFORMATION ProcInfo;
 	STARTUPINFOA StartupInfo =
@@ -108,7 +128,7 @@ pid_t popen2(const char* command, int* infp, int* outfp)
 	else
 	{
 		std::cerr << GetLastErrorAsString();
-		exit(-1);
+		return -1;
 	}
 }
 #endif
@@ -128,7 +148,7 @@ size_t GetFileSize(const std::string& File)
 	return 0;
 }
 
-pid_t PlayVideo(const std::string& VideoFile)
+int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio)
 {
 	char buf[4096];
 
@@ -147,29 +167,46 @@ pid_t PlayVideo(const std::string& VideoFile)
 
 #ifndef _MSC_VER
 	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -loglevel panic -i %s -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1 | tinyplay stdin -r 44100 -c 1", VideoFile.c_str());
-	printf("%s\n", buf);
+	DbgPrintf("%s\n", buf);
+	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -loglevel panic -i %s -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1", VideoFile.c_str());
+	RunPipedCommand(buf, "tinyplay stdin -r 44100 -c 1", PidVideo, PidAudio);
 #else
 	snprintf(buf, sizeof buf, "ffplay -hide_banner -loglevel panic %s", VideoFile.c_str());
-	printf("%s\n", buf);
+	DbgPrintf("%s\n", buf);
+	PidVideo = RunCommand(buf);
+	PidAudio = -1;
 #endif
-	auto pid = popen2(buf, nullptr, nullptr);
-	printf("Player PID: %u\n", pid);
-	return pid;
+	DbgPrintf("Video Player PID: %u\n", PidVideo);
+	DbgPrintf("Audio Player PID: %u\n", PidAudio);
+	return 0;
 }
 
-void StopPlay(pid_t& pid)
+void StopPlay(pid_t& VideoPlayerPID, pid_t& AudioPlayerPID)
 {
-	if (pid == -1) return;
-	printf("Killing player PID: %u\n", pid);
-#ifdef _MSC_VER
-	const auto player = OpenProcess(PROCESS_TERMINATE, false, DWORD(pid));
+	if (VideoPlayerPID == -1 && AudioPlayerPID == -1) return;
+
+#ifndef _MSC_VER
+	if (VideoPlayerPID != -1)
+	{
+		DbgPrintf("Killing video player PID: %u\n", VideoPlayerPID);
+		kill(VideoPlayerPID, SIGINT);
+		VideoPlayerPID = -1;
+	}
+	if (AudioPlayerPID != -1)
+	{
+		DbgPrintf("Killing video player PID: %u\n", AudioPlayerPID);
+		kill(AudioPlayerPID, SIGINT);
+		AudioPlayerPID = -1;
+	}
+	kill(-1, SIGINT); // 杀死其它管道进程
+	kill(-1, SIGTERM);
+#else
+	const auto player = OpenProcess(PROCESS_TERMINATE, false, DWORD(VideoPlayerPID));
 	TerminateProcess(player, 1);
 	CloseHandle(player);
-#else
-	kill(pid, SIGINT);
-	kill(-1, SIGINT); // 杀死其它管道进程
+	VideoPlayerPID = -1;
+	AudioPlayerPID = -1;
 #endif
-	pid = -1;
 }
 
 bool IsPlaying(pid_t pid)
@@ -181,7 +218,10 @@ bool IsPlaying(pid_t pid)
 	CloseHandle(player);
 	return ExitCode == STILL_ACTIVE;
 #else
-	return kill(pid, 0) == 0;
+	int wstatus;
+	auto wpid = waitpid(pid, &wstatus, WNOHANG);
+	if (wpid == pid && WIFEXITED(wstatus)) return false;
+	return true;
 #endif
 }
 
@@ -200,7 +240,8 @@ int main(int argc, char** argv, char** envp)
 
 	bool NeedRedraw = true;
 
-	pid_t PlayerProcess = -1;
+	pid_t VideoPlayerPID = -1;
+	pid_t AudioPlayerPID = -1;
 
 #if !defined(_MSC_VER)
 	auto FB = Graphics(ResoW, ResoH, false);
@@ -273,7 +314,7 @@ int main(int argc, char** argv, char** envp)
 		{
 			if (Mounted)
 			{
-				if (PlayerProcess != -1) StopPlay(PlayerProcess);
+				StopPlay(VideoPlayerPID, AudioPlayerPID);
 
 #if !defined(_MSC_VER)
 				umount2("/mnt/sdcard", MNT_FORCE);
@@ -410,15 +451,15 @@ int main(int argc, char** argv, char** envp)
 
 			if (GUI.count("ListView"))
 			{
-				if (PlayerProcess == -1)
+				if (VideoPlayerPID == -1 && AudioPlayerPID == -1)
 				{
 					auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
 					if (GPIO_Periph[GPIO_E].ReadBit(1))
 					{
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
 						FB.ClearScreen(0);
-						if (PlayerProcess != -1) StopPlay(PlayerProcess);
-						PlayerProcess = PlayVideo(VideoFile);
+						StopPlay(VideoPlayerPID, AudioPlayerPID);
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID);
 					}
 					if (GPIO_Periph[GPIO_E].ReadBit(2))
 					{
@@ -433,23 +474,23 @@ int main(int argc, char** argv, char** envp)
 				}
 				if (GPIO_Periph[GPIO_E].ReadBit(4))
 				{
-					StopPlay(PlayerProcess);
+					StopPlay(VideoPlayerPID, AudioPlayerPID);
 					std::this_thread::sleep_for(std::chrono::milliseconds(100));
 					FB.ClearScreen(0);
 					NeedRedraw = true;
 				}
 			}
 
-			if (PlayerProcess != -1 && !IsPlaying(PlayerProcess))
+			if ((VideoPlayerPID != -1 || AudioPlayerPID != -1) && (!IsPlaying(VideoPlayerPID) || !IsPlaying(AudioPlayerPID)))
 			{
-				PlayerProcess = -1;
+				StopPlay(VideoPlayerPID, AudioPlayerPID);
 				FB.ClearScreen(0);
 				NeedRedraw = true;
 			}
 		}
 
 #if !defined(_MSC_VER)
-		if (PlayerProcess == -1)
+		if (VideoPlayerPID == -1 && AudioPlayerPID == -1)
 		{
 			if (NeedRedraw)
 			{
@@ -471,7 +512,7 @@ int main(int argc, char** argv, char** envp)
 			std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 		}
 #else
-		if (PlayerProcess == -1)
+		if (VideoPlayerPID == -1)
 		{
 			if (NeedRedraw)
 			{
