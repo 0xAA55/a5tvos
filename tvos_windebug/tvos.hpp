@@ -50,5 +50,5 @@ void MyTestApp::RefreshFB()
 void MyTestApp::WriteData(const uint32_t* pixels, int Count)
 {
 	Graphics::WriteData(pixels, Count);
-	RefreshFB();
+	// RefreshFB();
 }
