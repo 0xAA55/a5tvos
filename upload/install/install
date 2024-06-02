@@ -3,6 +3,7 @@
 cp tvos /usr/bin/
 cp tinyplay /usr/bin/
 cp S11TVOS /etc/init.d/
+cp gstomx.conf /etc/xdg/
 
 chmod +x /usr/bin/tvos
 chmod +x /usr/bin/tinyplay
