@@ -172,10 +172,10 @@ int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio)
 	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -i \"%s\" -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1", VideoFile.c_str());
 	RunPipedCommand(buf, "tinyplay stdin -r 44100 -c 1", PidVideo, PidAudio);
 #else
-	snprintf(buf, sizeof buf, "ffplay -hide_banner %s", VideoFile.c_str());
+	snprintf(buf, sizeof buf, "ffplay %s", VideoFile.c_str());
 	DbgPrintf("%s\n", buf);
 	PidVideo = RunCommand(buf);
-	PidAudio = -1;
+	PidAudio = PidVideo;
 #endif
 	DbgPrintf("Video Player PID: %d\n", PidVideo);
 	DbgPrintf("Audio Player PID: %d\n", PidAudio);
