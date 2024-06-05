@@ -18,6 +18,7 @@
 
 #include <chrono>
 #include <thread>
+#include <set>
 
 #if defined(_MSC_VER)
 #include "tvos.hpp"
@@ -428,6 +429,8 @@ int main(int argc, char** argv, char** envp)
 					ListView->LineBreak = false;
 					ListView->Transparent = true;
 					ListView->Alignment = AlignmentType::LeftTop;
+
+					auto Files = std::set<std::string>();
 					for (auto& directory : std::filesystem::directory_iterator(media_path))
 					{
 						// 跳过文件夹
@@ -435,8 +438,12 @@ int main(int argc, char** argv, char** envp)
 
 						auto p = directory.path();
 						auto FileNameString = p.filename().string();
-						auto ListItem = std::make_shared<UIElementListItem>(FB, FileNameString);
-						ListView->AddItem(FileNameString, FileNameString);
+						Files.insert(FileNameString);
+					}
+					for (auto& filename : Files)
+					{
+						auto ListItem = std::make_shared<UIElementListItem>(FB, filename);
+						ListView->AddItem(filename, filename);
 					}
 
 					NeedRedraw = true;
