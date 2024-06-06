@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Start TVOS....
+#
+
+start() {
+    printf "Starting TVOS: "
+    start-stop-daemon -S -q -m -b -p /var/run/runtvos.pid -x /root/runtvos
+    sleep 1
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+stop() {
+    printf "Stopping TVOS: "
+    start-stop-daemon -K -q -p /var/run/runtvos.pid -x /root/runtvos
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+case "$1" in
+    start)
+    start
+    ;;
+    stop)
+    stop
+    ;;
+    restart|reload)
+    stop
+    sleep 1
+    start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?
