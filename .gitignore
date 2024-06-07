@@ -4,3 +4,4 @@ tools
 *.a
 tvos_windebug/.vs
 tvos_windebug/out
+testsdcard/*
