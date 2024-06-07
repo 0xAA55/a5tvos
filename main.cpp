@@ -459,9 +459,9 @@ int main(int argc, char** argv, char** envp)
 
 			if (GUI.count("ListView"))
 			{
+				auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
 				if (VideoPlayerPID == -1 && AudioPlayerPID == -1)
 				{
-					auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
 					if (GPIO_Periph[GPIO_E].ReadBit(1))
 					{
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
@@ -481,6 +481,22 @@ int main(int argc, char** argv, char** envp)
 						NeedRedraw = true;
 					}
 				}
+				else
+				{
+					if (GPIO_Periph[GPIO_E].ReadBit(2))
+					{
+						StopPlay(VideoPlayerPID, AudioPlayerPID);
+						ListView.SelectNext();
+						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID);
+					}
+					if (GPIO_Periph[GPIO_E].ReadBit(3))
+					{
+						StopPlay(VideoPlayerPID, AudioPlayerPID);
+						ListView.SelectPrev();
+						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID);
+					}
 				if (GPIO_Periph[GPIO_E].ReadBit(4))
 				{
 					StopPlay(VideoPlayerPID, AudioPlayerPID);
@@ -488,6 +504,7 @@ int main(int argc, char** argv, char** envp)
 					FB.ClearScreen(0);
 					NeedRedraw = true;
 				}
+			}
 			}
 
 			if ((VideoPlayerPID != -1 || AudioPlayerPID != -1) && (!IsPlaying(VideoPlayerPID) || !IsPlaying(AudioPlayerPID)))
