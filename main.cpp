@@ -515,7 +515,6 @@ int main(int argc, char** argv, char** envp)
 			}
 		}
 
-#if !defined(_MSC_VER)
 		if (VideoPlayerPID == -1 && AudioPlayerPID == -1)
 		{
 			if (NeedRedraw)
@@ -523,7 +522,9 @@ int main(int argc, char** argv, char** envp)
 				GUI.Render();
 				NeedRedraw = false;
 			}
+#if !defined(_MSC_VER)
 			FB.RefreshFrontBuffer();
+#endif
 			if (!Mounted)
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -537,15 +538,7 @@ int main(int argc, char** argv, char** envp)
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 		}
-#else
-		if (VideoPlayerPID == -1)
-		{
-			if (NeedRedraw)
-			{
-				GUI.Render();
-				NeedRedraw = false;
-			}
-		}
+#if defined(_MSC_VER)
 		FB.RefreshFB();
 		FB.ProcessMessageNonBlocking();
 		if (FB.GetWindowIsDestroyed()) break;
