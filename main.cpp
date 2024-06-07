@@ -497,14 +497,14 @@ int main(int argc, char** argv, char** envp)
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
 						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID);
 					}
-				if (GPIO_Periph[GPIO_E].ReadBit(4))
-				{
-					StopPlay(VideoPlayerPID, AudioPlayerPID);
-					std::this_thread::sleep_for(std::chrono::milliseconds(100));
-					FB.ClearScreen(0);
-					NeedRedraw = true;
+					if (GPIO_Periph[GPIO_E].ReadBit(4))
+					{
+						StopPlay(VideoPlayerPID, AudioPlayerPID);
+						std::this_thread::sleep_for(std::chrono::milliseconds(100));
+						FB.ClearScreen(0);
+						NeedRedraw = true;
+					}
 				}
-			}
 			}
 
 			if ((VideoPlayerPID != -1 || AudioPlayerPID != -1) && (!IsPlaying(VideoPlayerPID) || !IsPlaying(AudioPlayerPID)))
