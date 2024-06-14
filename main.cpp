@@ -199,8 +199,6 @@ void StopPlay(pid_t& VideoPlayerPID, pid_t& AudioPlayerPID)
 		kill(AudioPlayerPID, SIGINT);
 		AudioPlayerPID = -1;
 	}
-	kill(-1, SIGINT); // 杀死其它管道进程
-	kill(-1, SIGTERM);
 #else
 	const auto player = OpenProcess(PROCESS_TERMINATE, false, DWORD(VideoPlayerPID));
 	TerminateProcess(player, 1);
