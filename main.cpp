@@ -191,12 +191,14 @@ void StopPlay(pid_t& VideoPlayerPID, pid_t& AudioPlayerPID)
 	{
 		DbgPrintf("Killing video player PID: %u\n", VideoPlayerPID);
 		kill(VideoPlayerPID, SIGINT);
+		kill(VideoPlayerPID, SIGTERM);
 		VideoPlayerPID = -1;
 	}
 	if (AudioPlayerPID != -1)
 	{
-		DbgPrintf("Killing video player PID: %u\n", AudioPlayerPID);
+		DbgPrintf("Killing audio player PID: %u\n", AudioPlayerPID);
 		kill(AudioPlayerPID, SIGINT);
+		kill(AudioPlayerPID, SIGTERM);
 		AudioPlayerPID = -1;
 	}
 #else
@@ -219,7 +221,11 @@ bool IsPlaying(pid_t pid)
 #else
 	int wstatus;
 	auto wpid = waitpid(pid, &wstatus, WNOHANG);
-	if (wpid == pid && WIFEXITED(wstatus)) return false;
+	if (wpid == pid)
+	{
+		if (WIFEXITED(wstatus)) return false;
+		printf("Exit code: %d", WEXITSTATUS(wstatus));
+	}
 	return true;
 #endif
 }
