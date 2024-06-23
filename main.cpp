@@ -191,13 +191,13 @@ void StopPlay(pid_t& VideoPlayerPID, pid_t& AudioPlayerPID)
 	{
 		DbgPrintf("Killing video player PID: %u\n", VideoPlayerPID);
 		kill(VideoPlayerPID, SIGINT);
-		kill(VideoPlayerPID, SIGTERM);
 		VideoPlayerPID = -1;
 	}
 	if (AudioPlayerPID != -1)
 	{
 		DbgPrintf("Killing audio player PID: %u\n", AudioPlayerPID);
 		kill(AudioPlayerPID, SIGINT);
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 		kill(AudioPlayerPID, SIGTERM);
 		AudioPlayerPID = -1;
 	}
@@ -224,7 +224,7 @@ bool IsPlaying(pid_t pid)
 	if (wpid == pid)
 	{
 		if (WIFEXITED(wstatus)) return false;
-		printf("Exit code: %d", WEXITSTATUS(wstatus));
+		printf("Exit code: %d\n", WEXITSTATUS(wstatus));
 	}
 	return true;
 #endif
@@ -304,7 +304,7 @@ int main(int argc, char** argv, char** envp)
 		Prompt->LineBreak = false;
 		Prompt->Transparent = true;
 		Prompt->Alignment = AlignmentType::CenterCenter;
-		Prompt->SetCaption("请插入 SD 卡");
+		Prompt->SetCaption("请插入 SD 卡。可在播放时随时拔出 SD 卡。\n");
 
 		NeedRedraw = true;
 	} while (false);
@@ -362,7 +362,7 @@ int main(int argc, char** argv, char** envp)
 				Prompt->LineBreak = false;
 				Prompt->Transparent = true;
 				Prompt->Alignment = AlignmentType::CenterCenter;
-				Prompt->SetCaption("请插入 SD 卡");
+				Prompt->SetCaption("请插入 SD 卡。可在播放时随时拔出 SD 卡。\n");
 
 				NeedRedraw = true;
 			}
