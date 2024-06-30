@@ -443,11 +443,20 @@ namespace TVOS
 	{
 		if (SubElementsMap.count(Name))
 		{
+			bool Removed = false;
+			do
+			{
 			for (auto Element = SubElements.begin(); Element != SubElements.end();)
 			{
-				if (Element->get()->Name == Name) SubElements.erase(Element);
+					if (Element->get()->Name == Name)
+					{
+						SubElements.erase(Element);
+						Removed = true;
+						break;
+					}
 				else ++Element;
 			}
+			} while (Removed);
 			SubElementsMap.erase(Name);
 			NeedRearrange = true;
 			return true;
