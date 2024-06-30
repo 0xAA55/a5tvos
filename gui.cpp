@@ -686,6 +686,21 @@ namespace TVOS
 		EnsureSelectedVisible();
 	}
 
+	void UIElementListView::SelectByIndex(size_t Index)
+	{
+		if (!size()) return;
+		GetSelectedItem().Selected = false;
+		Selection = Index;
+		if (Selection >= size()) Selection = size() - 1;
+		GetSelectedItem().Selected = true;
+		EnsureSelectedVisible();
+	}
+
+	size_t UIElementListView::GetSelectionIndex() const
+	{
+		return Selection;
+	}
+
 	void UIElementListView::Render(int x, int y, int w, int h)
 	{
 		UIElementBase::Render(x, y, w, h);
