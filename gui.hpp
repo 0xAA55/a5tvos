@@ -82,6 +82,7 @@ namespace TVOS
 	 
 		virtual void Render(int x, int y, int w, int h);
 		void Render();
+		void RearrangeElementsAsRoot();
 
 	protected:
 		std::map<std::string, std::shared_ptr<UIElementBase>> SubElementsMap;

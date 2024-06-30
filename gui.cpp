@@ -425,6 +425,11 @@ namespace TVOS
 		Render(0, 0, FB.GetWidth(), FB.GetHeight());
 	}
 
+	void UIElementBase::RearrangeElementsAsRoot()
+	{
+		ArrangeElements(0, 0, FB.GetWidth(), FB.GetHeight());
+	}
+
 	std::shared_ptr<UIElementBase> UIElementBase::GetElementByName(const std::string& Name)
 	{
 		return SubElementsMap.at(Name);
