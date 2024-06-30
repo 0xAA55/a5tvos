@@ -149,7 +149,7 @@ size_t GetFileSize(const std::string& File)
 	return 0;
 }
 
-int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio, int volume = 48)
+int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio, int volume)
 {
 	char buf[4096];
 
@@ -501,7 +501,7 @@ int main(int argc, char** argv, char** envp)
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
 						FB.ClearScreen(0);
 						FB.RefreshFrontBuffer();
-						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID);
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume);
 					}
 					if (GPIO_Periph[GPIO_E].ReadBit(2))
 					{
@@ -550,14 +550,14 @@ int main(int argc, char** argv, char** envp)
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
 						ListView.SelectNext();
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
-						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID);
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume);
 					}
 					if (GPIO_Periph[GPIO_E].ReadBit(3))
 					{
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
 						ListView.SelectPrev();
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
-						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID);
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume);
 					}
 					if (GPIO_Periph[GPIO_E].ReadBit(4))
 					{
