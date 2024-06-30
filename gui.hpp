@@ -141,14 +141,14 @@ namespace TVOS
 	protected:
 		void EnsureSelectedVisible();
 
+		size_t Selection = 0;
+
 	public:
 		UIElementListView(Graphics& FB, const std::string& Name);
 
 		uint32_t FontColor = 0xFFFFFFFF;
 
 		virtual void GetClientContentsSize(int WidthLimit, int HeightLimit, int& ActualWidth, int& TotalHeight);
-
-		size_t Selection = 0;
 
 		size_t AddItem(const std::string& Key, const std::string& Caption);
 		bool RemoteItem(size_t Index);
@@ -157,6 +157,8 @@ namespace TVOS
 
 		void SelectNext();
 		void SelectPrev();
+		void SelectByIndex(size_t Index);
+		size_t GetSelectionIndex() const;
 
 		virtual void Render(int x, int y, int w, int h);
 	};
