@@ -149,12 +149,13 @@ size_t GetFileSize(const std::string& File)
 	return 0;
 }
 
-int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio)
+int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio, int volume = 48)
 {
 	char buf[4096];
 
 #ifndef _MSC_VER
-	system("tinymix set 1 48");
+	snprintf(buf, sizeof buf, "tinymix set 1 %d", volume);
+	system(buf);
 	system("tinymix set 2 1");
 	system("tinymix set 13 0");
 
@@ -261,6 +262,8 @@ int main(int argc, char** argv, char** envp)
 
 	bool NeedRedraw = true;
 	bool NeedRelist = true;
+
+	int Volume = 48;
 
 	pid_t VideoPlayerPID = -1;
 	pid_t AudioPlayerPID = -1;
@@ -435,7 +438,24 @@ int main(int argc, char** argv, char** envp)
 					Sub->LineBreak = false;
 					Sub->Transparent = false;
 					Sub->Alignment = AlignmentType::CenterTop;
-					Sub->SetCaption("请选择要播放的曲目");
+					switch (Volume)
+					{
+					case 63:
+						Sub->SetCaption("请选择要播放的曲目（200% 音量）");
+						break;
+					case 56:
+						Sub->SetCaption("请选择要播放的曲目（100% 音量）");
+						break;
+					case 48:
+						Sub->SetCaption("请选择要播放的曲目（50% 音量）");
+						break;
+					case 0:
+						Sub->SetCaption("请选择要播放的曲目（0% 音量）");
+						break;
+					default:
+						Sub->SetCaption("请选择要播放的曲目");
+						break;
+					}
 
 					auto ListView = std::make_shared<UIElementListView>(FB, "ListView");
 					GUI.InsertElement(ListView);
@@ -471,6 +491,7 @@ int main(int argc, char** argv, char** envp)
 
 			if (GUI.count("ListView"))
 			{
+				auto& Title = dynamic_cast<UIElementLabel&>(*GUI.at("Title"));
 				auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
 				if (VideoPlayerPID == -1 && AudioPlayerPID == -1)
 				{
@@ -490,6 +511,35 @@ int main(int argc, char** argv, char** envp)
 					if (GPIO_Periph[GPIO_E].ReadBit(3))
 					{
 						ListView.SelectPrev();
+						NeedRedraw = true;
+					}
+					if (GPIO_Periph[GPIO_E].ReadBit(4))
+					{
+						switch (Volume)
+						{
+						case 63: Volume = 0; break;
+						case 56: Volume = 63; break;
+						case 48: Volume = 56; break;
+						default: Volume = 48; break;
+						}
+						switch (Volume)
+						{
+						case 63:
+							Title.SetCaption("请选择要播放的曲目（200% 音量）");
+							break;
+						case 56:
+							Title.SetCaption("请选择要播放的曲目（100% 音量）");
+							break;
+						case 48:
+							Title.SetCaption("请选择要播放的曲目（50% 音量）");
+							break;
+						case 0:
+							Title.SetCaption("请选择要播放的曲目（0% 音量）");
+							break;
+						default:
+							Title.SetCaption("请选择要播放的曲目");
+							break;
+						}
 						NeedRedraw = true;
 					}
 				}
