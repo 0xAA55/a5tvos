@@ -230,6 +230,22 @@ bool IsPlaying(pid_t pid)
 #endif
 }
 
+std::set<std::string> IterateDirectory(const std::string& media_path)
+{
+	auto Files = std::set<std::string>();
+	for (auto& directory : std::filesystem::directory_iterator(media_path))
+	{
+		// 跳过文件夹
+		if (directory.is_directory()) continue;
+
+		auto p = directory.path();
+		auto FileNameString = p.filename().string();
+		Files.insert(FileNameString);
+	}
+
+	return Files;
+}
+
 int main(int argc, char** argv, char** envp)
 {
 	const int ResoW = 480;
@@ -244,9 +260,16 @@ int main(int argc, char** argv, char** envp)
 	GPIO_Periph[GPIO_E].SetModeIn(4);
 
 	bool NeedRedraw = true;
+	bool NeedRelist = true;
 
 	pid_t VideoPlayerPID = -1;
 	pid_t AudioPlayerPID = -1;
+
+#if !defined(_MSC_VER)
+	std::string media_path = "/mnt/sdcard";
+#else
+	std::string media_path = "testsdcard";
+#endif
 
 #if !defined(_MSC_VER)
 	auto FB = Graphics(ResoW, ResoH, false);
@@ -369,12 +392,6 @@ int main(int argc, char** argv, char** envp)
 		}
 		else
 		{
-#if !defined(_MSC_VER)
-			std::string media_path = "/mnt/sdcard";
-#else
-			std::string media_path = "testsdcard";
-#endif
-
 			auto SDCardPath = std::filesystem::path(media_path);
 			if (!std::filesystem::exists(SDCardPath))
 			{
@@ -435,17 +452,8 @@ int main(int argc, char** argv, char** envp)
 					ListView->Transparent = true;
 					ListView->Alignment = AlignmentType::LeftTop;
 
-					auto Files = std::set<std::string>();
-					for (auto& directory : std::filesystem::directory_iterator(media_path))
-					{
-						// 跳过文件夹
-						if (directory.is_directory()) continue;
-
-						auto p = directory.path();
-						auto FileNameString = p.filename().string();
-						Files.insert(FileNameString);
-					}
-					for (auto& filename : Files)
+					ListView->ClearElements();
+					for (auto& filename : IterateDirectory(media_path))
 					{
 						auto ListItem = std::make_shared<UIElementListItem>(FB, filename);
 						ListView->AddItem(filename, filename);
@@ -506,7 +514,7 @@ int main(int argc, char** argv, char** envp)
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
 						std::this_thread::sleep_for(std::chrono::milliseconds(100));
 						FB.ClearScreen(0);
-						NeedRedraw = true;
+						NeedRelist = true;
 					}
 				}
 			}
@@ -515,12 +523,30 @@ int main(int argc, char** argv, char** envp)
 			{
 				StopPlay(VideoPlayerPID, AudioPlayerPID);
 				FB.ClearScreen(0);
-				NeedRedraw = true;
+				NeedRelist = true;
 			}
 		}
 
 		if (VideoPlayerPID == -1 && AudioPlayerPID == -1)
 		{
+			if (NeedRelist)
+			{
+				if (GUI.count("ListView"))
+				{
+					auto& ListView = dynamic_cast<UIElementListView&>(*GUI.at("ListView"));
+					auto CurSelection = ListView.GetSelectionIndex();
+					ListView.ClearElements();
+					for (auto& filename : IterateDirectory(media_path))
+					{
+						auto ListItem = std::make_shared<UIElementListItem>(FB, filename);
+						ListView.AddItem(filename, filename);
+					}
+					GUI.RearrangeElementsAsRoot();
+					ListView.SelectByIndex(CurSelection);
+				}
+				NeedRelist = false;
+				NeedRedraw = true;
+			}
 			if (NeedRedraw)
 			{
 				GUI.Render();
