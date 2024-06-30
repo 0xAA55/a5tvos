@@ -546,7 +546,7 @@ int main(int argc, char** argv, char** envp)
 				}
 				else
 				{
-					if (GPIO_Periph[GPIO_E].ReadBit(2))
+					if (GPIO_Periph[GPIO_E].ReadBit(1))
 					{
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
 						StartSec += 60;
