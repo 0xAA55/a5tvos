@@ -149,7 +149,7 @@ size_t GetFileSize(const std::string& File)
 	return 0;
 }
 
-int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio, int volume)
+int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio, int volume, int start_sec)
 {
 	char buf[4096];
 
@@ -168,9 +168,9 @@ int PlayVideo(const std::string& VideoFile, int& PidVideo, int& PidAudio, int vo
 #endif
 
 #ifndef _MSC_VER
-	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -i \"%s\" -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1 | tinyplay stdin -r 44100 -c 1", VideoFile.c_str());
+	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -ss %d -i \"%s\" -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1 | tinyplay stdin -r 44100 -c 1", start_sec, VideoFile.c_str());
 	DbgPrintf("%s\n", buf);
-	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -i \"%s\" -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1", VideoFile.c_str());
+	snprintf(buf, sizeof buf, "ffmpeg -hide_banner -ss %d -i \"%s\" -an -pix_fmt bgra -f fbdev /dev/fb0 -vn -f wav pipe:1 -ar 44100 -ac 1", start_sec, VideoFile.c_str());
 	RunPipedCommand(buf, "tinyplay stdin -r 44100 -c 1", PidVideo, PidAudio);
 #else
 	snprintf(buf, sizeof buf, "ffplay %s", VideoFile.c_str());
@@ -264,6 +264,7 @@ int main(int argc, char** argv, char** envp)
 	bool NeedRelist = true;
 
 	int Volume = 48;
+	int StartSec = 0;
 
 	pid_t VideoPlayerPID = -1;
 	pid_t AudioPlayerPID = -1;
@@ -501,7 +502,7 @@ int main(int argc, char** argv, char** envp)
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
 						FB.ClearScreen(0);
 						FB.RefreshFrontBuffer();
-						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume);
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume, StartSec);
 					}
 					if (GPIO_Periph[GPIO_E].ReadBit(2))
 					{
@@ -540,7 +541,7 @@ int main(int argc, char** argv, char** envp)
 							Title.SetCaption("请选择要播放的曲目");
 							break;
 						}
-						NeedRedraw = true;
+						NeedRelist = true;
 					}
 				}
 				else
@@ -548,20 +549,30 @@ int main(int argc, char** argv, char** envp)
 					if (GPIO_Periph[GPIO_E].ReadBit(2))
 					{
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
+						StartSec += 60;
+						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume, StartSec);
+					}
+					if (GPIO_Periph[GPIO_E].ReadBit(2))
+					{
+						StopPlay(VideoPlayerPID, AudioPlayerPID);
+						StartSec = 0;
 						ListView.SelectNext();
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
-						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume);
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume, StartSec);
 					}
 					if (GPIO_Periph[GPIO_E].ReadBit(3))
 					{
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
+						StartSec = 0;
 						ListView.SelectPrev();
 						auto VideoFile = (SDCardPath / ListView.GetSelectedItem().GetCaption()).string();
-						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume);
+						PlayVideo(VideoFile, VideoPlayerPID, AudioPlayerPID, Volume, StartSec);
 					}
 					if (GPIO_Periph[GPIO_E].ReadBit(4))
 					{
 						StopPlay(VideoPlayerPID, AudioPlayerPID);
+						StartSec = 0;
 						std::this_thread::sleep_for(std::chrono::milliseconds(100));
 						FB.ClearScreen(0);
 						NeedRelist = true;
@@ -572,6 +583,7 @@ int main(int argc, char** argv, char** envp)
 			if ((VideoPlayerPID != -1 || AudioPlayerPID != -1) && (!IsPlaying(VideoPlayerPID) || !IsPlaying(AudioPlayerPID)))
 			{
 				StopPlay(VideoPlayerPID, AudioPlayerPID);
+				StartSec = 0;
 				FB.ClearScreen(0);
 				NeedRelist = true;
 			}
