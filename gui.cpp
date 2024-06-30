@@ -451,16 +451,16 @@ namespace TVOS
 			bool Removed = false;
 			do
 			{
-			for (auto Element = SubElements.begin(); Element != SubElements.end();)
-			{
+				for (auto Element = SubElements.begin(); Element != SubElements.end();)
+				{
 					if (Element->get()->Name == Name)
 					{
 						SubElements.erase(Element);
 						Removed = true;
 						break;
 					}
-				else ++Element;
-			}
+					else ++Element;
+				}
 			} while (Removed);
 			SubElementsMap.erase(Name);
 			NeedRearrange = true;
