@@ -5,6 +5,10 @@
 
 #if defined(_MSC_VER)
 #include <Windows.h>
+#else
+#include <fcntl.h>
+#include <sys/mman.h>
+int MemFD = open("/dev/mem", O_RDWR | O_SYNC);
 #endif
 
 bool GPIO_PeriphType::ReadBit(int Port) const
@@ -72,25 +76,55 @@ void GPIO_PeriphType::SetMode(int Port, uint32_t Mode)
 
 void GPIO_PeriphType::WritePeriph(volatile uint32_t* Ptr, uint32_t Data)
 {
+	const uint32_t MapSize = 4096;
+	const uint32_t MapMask = MapSize - 1;
+	volatile uint32_t* VirtAddr = nullptr;
+	uint32_t Addr = uint32_t(reinterpret_cast<size_t>(Ptr));
+	uint32_t* MapPtr = nullptr;
+
+#if !defined(_MSC_VER)
+	if (MemFD == -1) goto NotAbleToMap;
+
+	MapPtr = (uint32_t*)mmap(0, MapSize, PROT_READ | PROT_WRITE, MAP_SHARED, MemFD, Addr & ~MapMask);
+	if (MapPtr == (uint32_t*)-1) goto NotAbleToMap;
+
+	VirtAddr = reinterpret_cast<volatile uint32_t*>(reinterpret_cast<char *>(MapPtr) + (Addr & MapMask));
+	*VirtAddr = Data;
+
+	munmap(MapPtr, MapSize);
+	return;
+
+NotAbleToMap:
 	char cmd[1024];
-
 	snprintf(cmd, sizeof(cmd), "devmem 0x%08x 32 0x%08x", uint32_t(reinterpret_cast<size_t>(Ptr)), Data);
-
-#if defined(_MSC_VER)
-	// printf("%s\n", cmd);
-#else
 	system(cmd);
 #endif
 }
 
 uint32_t GPIO_PeriphType::ReadPeriph(const volatile uint32_t* Ptr)
 {
-	char cmd[1024];
+	const uint32_t MapSize = 4096;
+	const uint32_t MapMask = MapSize - 1;
+	volatile uint32_t* VirtAddr = nullptr;
+	uint32_t Addr = uint32_t(reinterpret_cast<size_t>(Ptr));
+	uint32_t* MapPtr = nullptr;
+	uint32_t Data = 0;
 
+#if !defined(_MSC_VER)
+	if (MemFD == -1) goto NotAbleToMap;
+
+	MapPtr = (uint32_t*)mmap(0, MapSize, PROT_READ | PROT_WRITE, MAP_SHARED, MemFD, Addr & ~MapMask);
+	if (MapPtr == (uint32_t*)-1) goto NotAbleToMap;
+
+	VirtAddr = reinterpret_cast<volatile uint32_t*>(reinterpret_cast<char*>(MapPtr) + (Addr & MapMask));
+	Data = *VirtAddr;
+
+	munmap(MapPtr, MapSize);
+	return Data;
+
+NotAbleToMap:
+	char cmd[1024];
 	snprintf(cmd, sizeof(cmd), "devmem 0x%08x", uint32_t(reinterpret_cast<size_t>(Ptr)));
-#if defined(_MSC_VER)
-	// printf("%s\n", cmd);
-#else
 	FILE* fp = popen(cmd, "r");
 	if (fp == NULL)
 	{
