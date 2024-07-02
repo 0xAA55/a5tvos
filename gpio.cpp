@@ -7,6 +7,7 @@
 #include <Windows.h>
 #else
 #include <fcntl.h>
+#include <unistd.h>
 #include <sys/mman.h>
 int MemFD = open("/dev/mem", O_RDWR | O_SYNC);
 #endif
@@ -76,13 +77,13 @@ void GPIO_PeriphType::SetMode(int Port, uint32_t Mode)
 
 void GPIO_PeriphType::WritePeriph(volatile uint32_t* Ptr, uint32_t Data)
 {
-	const uint32_t MapSize = 4096;
+#if !defined(_MSC_VER)
+	const uint32_t MapSize = getpagesize();
 	const uint32_t MapMask = MapSize - 1;
 	volatile uint32_t* VirtAddr = nullptr;
 	uint32_t Addr = uint32_t(reinterpret_cast<size_t>(Ptr));
 	uint32_t* MapPtr = nullptr;
 
-#if !defined(_MSC_VER)
 	if (MemFD == -1) goto NotAbleToMap;
 
 	MapPtr = (uint32_t*)mmap(0, MapSize, PROT_READ | PROT_WRITE, MAP_SHARED, MemFD, Addr & ~MapMask);
@@ -103,14 +104,14 @@ NotAbleToMap:
 
 uint32_t GPIO_PeriphType::ReadPeriph(const volatile uint32_t* Ptr)
 {
-	const uint32_t MapSize = 4096;
+#if !defined(_MSC_VER)
+	const uint32_t MapSize = getpagesize();
 	const uint32_t MapMask = MapSize - 1;
 	volatile uint32_t* VirtAddr = nullptr;
 	uint32_t Addr = uint32_t(reinterpret_cast<size_t>(Ptr));
 	uint32_t* MapPtr = nullptr;
 	uint32_t Data = 0;
 
-#if !defined(_MSC_VER)
 	if (MemFD == -1) goto NotAbleToMap;
 
 	MapPtr = (uint32_t*)mmap(0, MapSize, PROT_READ | PROT_WRITE, MAP_SHARED, MemFD, Addr & ~MapMask);
