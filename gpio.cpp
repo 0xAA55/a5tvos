@@ -114,7 +114,7 @@ uint32_t GPIO_PeriphType::ReadPeriph(const volatile uint32_t* Ptr)
 
 	if (MemFD == -1) goto NotAbleToMap;
 
-	MapPtr = (uint32_t*)mmap(0, MapSize, PROT_READ | PROT_WRITE, MAP_SHARED, MemFD, Addr & ~MapMask);
+	MapPtr = (uint32_t*)mmap(0, MapSize, PROT_READ, MAP_SHARED, MemFD, Addr & ~MapMask);
 	if (MapPtr == (uint32_t*)-1) goto NotAbleToMap;
 
 	VirtAddr = reinterpret_cast<volatile uint32_t*>(reinterpret_cast<char*>(MapPtr) + (Addr & MapMask));
