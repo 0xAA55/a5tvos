@@ -90,3 +90,7 @@ The system is developed in **C++**, directly writing to `/dev/fb0` for rendering
 * Source code uses conditional compilation to deploy on F1C200S:
 	* Renders interface via `/dev/fb0`.
 	* Uses `FFmpeg` + `tinyalsa` for audio/video playback.
+
+## Compilation
+* On Windows: Extract `tools.zip` to the current directory. Double-click `build.bat`, which invokes Windows Subsystem for Linux (WSL) to execute `build.sh` for compilation.
+* On Linux: Ensure the system has GCC capable of cross-compiling for the target CPU architecture `-march=armv5t`.

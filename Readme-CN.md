@@ -88,3 +88,7 @@
 ### 实机调试环境
 * F1C200S 的命令行走 USB 虚拟 UART 与主机通讯。
 * 源码使用条件编译，在 F1C200S 上使用 `/dev/fb0` 绘制界面并使用 `FFmpeg` + `tinyalsa` 进行音视频播放。
+
+## 编译
+* Windows 下，解压 `tools.zip` 到当前路径。双击 `build.bat`，其调用 `wsl` 执行 `build.sh` 进行编译。
+* Linux 下，具备能交叉编译到 `-march=armv5t` 的 CPU 的 gcc 即可。
