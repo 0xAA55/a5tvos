@@ -79,6 +79,7 @@ The system is developed in **C++**, directly writing to `/dev/fb0` for rendering
 * Access to `/dev/mem` to enable `mmap()` for direct peripheral memory reads/writes. If unavailable, the `devmem` executable must be provided as a fallback.
 * Support for `mount()` and `umount()` functions.
 * Media files must be enumerable and accessible from `/mnt/sdcard`.
+* Media files must be in AVI format, using MJPEG @30 fps video encoding and PCM S16LE audio encoding. Video quality must be set to "High" to reduce the computational power required for JPEG decompression and improve smoothness and clarity.
 
 ## Debugging Environments
 
